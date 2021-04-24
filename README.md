@@ -1,4 +1,4 @@
-
+mailto:tehadro@gmail.com
 <p align="center">
   <a href="https://github.com/realsarius/todo-again">
     <img src="resources/images/files.png" alt="Logo" width="80" height="80">
@@ -70,15 +70,15 @@ The project developed with IntelliJ so you can just import and start project.
 
 This is an example of how to list things you need to use the software and how to install them.
 * JDK 8
- * Arch
-  ```sh
-  sudo pacman -S jdk8-openjdk
-  ```
-  * Ubuntu/Debian
-  ```sh
-  sudo apt-get update
-  sudo apt-get install openjdk-8-jdk-headless
-  ```
+   * Arch
+    ```sh
+    sudo pacman -S jdk8-openjdk
+    ```
+    * Ubuntu/Debian
+    ```sh
+    sudo apt-get update
+    sudo apt-get install openjdk-8-jdk-headless
+    ```
 * JavaFX (11 or later)
   * Arch
   ```sh
