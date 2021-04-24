@@ -3,30 +3,16 @@ package yapilacaklarListesi.pomodoro.model;
 import java.util.concurrent.TimeUnit;
 
 public class Attempt {
-    private String mMessage;
     private int mRemainingSeconds;
-    private AttemptKind mKind;
+    private final AttemptKind mKind;
 
-    public Attempt(AttemptKind kind, String message) {
+    public Attempt(AttemptKind kind) {
         mKind = kind;
-        mMessage = message;
         mRemainingSeconds = kind.getTotalSeconds();
     }
 
     public AttemptKind getKind() {
         return mKind;
-    }
-
-    public String getMessage() {
-        return mMessage;
-    }
-
-    public int getRemainingSeconds() {
-        return mRemainingSeconds;
-    }
-
-    public void setMessage(String message) {
-        mMessage = message;
     }
 
     public void tick() {

@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import yapilacaklarListesi.veriler.YapilacakVeri;
 import java.io.IOException;
@@ -34,6 +35,7 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("test.fxml")));
         primaryStage.setTitle("Yapılacaklar Listesi");
         primaryStage.setScene(new Scene(root, 960, 550));
+        primaryStage.getIcons().add(new Image("images/files.png"));
         primaryStage.show();
 
     }

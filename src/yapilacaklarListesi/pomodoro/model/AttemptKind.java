@@ -1,22 +1,16 @@
 package yapilacaklarListesi.pomodoro.model;
 
 public enum AttemptKind {
-    FOCUS(25 * 60, "Thời gian tập trung"),
-    BREAK(5 * 60, "Giờ giải lao");
+    FOCUS(25 * 60),
+    BREAK(5 * 60);
 
-    private int mTotalSeconds;
-    private String mDisplayName;
+    private final int mTotalSeconds;
 
-    AttemptKind(int totalSeconds, String displayName) {
+    AttemptKind(int totalSeconds) {
         mTotalSeconds = totalSeconds;
-        mDisplayName = displayName;
     }
 
     public int getTotalSeconds() {
         return mTotalSeconds;
-    }
-
-    public String getDisplayName() {
-        return mDisplayName;
     }
 }

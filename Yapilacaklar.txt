@@ -1,15 +1,16 @@
-Ödevi tamamla   Yapay Ögrenme dersinin odevini tamamlayacağım.  01-04-2021
-Alışveriş   Süt alınacak.   04-04-2021
-Rambo   Rambo Netflix'e geldi.  03-04-2021
-Dişçi   Diş kontrolüne gideceğim.   05-04-2021
-Projeye hazırlık yap    Nesneye yönelik yazılım müh. dersinin projesine başla.  10-04-2021
-Alışveriş   doritos, et, kola alınacak. 11-04-2021
-Proje odevi Proje ödevini erkenden tamamlasam iyi olacak.   22-04-2021
-İnternet Programcılığı  Ödev için hazırlık yap. 08-04-2021
-İngilizce Yazışma ödevi Ödev var mı diye kontrol et.    17-04-2021
-Ayakkabı alınacak   asdasasdsasas sa das sa dasd    17-04-2021
-Ajandayı tamamla    adadsaddadsas asd asdasd ds 18-04-2021
-Film    Daha sonra izlemek için film indir. 08-04-2021
-Spor    HIIT ve strenth training yapmayı unutma.    18-04-2021
-Kitap okumaya devam et  Kitap okuma alışkanlığı edinsem iyi olacak. 19-04-2021
-Hatırlatma! İzlediğin film ve dizileri tekrar tekrar izlemeyi bırak.    20-04-2021
+Ödevi tamamla	Yapay Ögrenme dersinin odevini tamamlayacağım. Bitirmek üzereyim.	04-04-2021
+Alışveriş	Süt alınacak.	06-04-2021
+Rambo	Rambo Netflix'e geldi.	11-04-2021
+Dişçi	Diş kontrolüne gideceğim. Geç olmaya başladı.	05-04-2021
+Projeye hazırlık yap	Nesneye yönelik yazılım müh. projesini yapmaya devam et.	12-04-2021
+Alışveriş	doritos, et, kola alınacak.	15-04-2021
+Proje odevi	Proje ödevini erkenden tamamlasam iyi olacak.	17-04-2021
+İnternet Programcılığı	Ödev için hazırlık yap.	18-04-2021
+İngilizce Yazışma ödevi	Ödev var mı diye kontrol et.	19-04-2021
+Ayakkabı alınacak	Yeni bir ayakkabıya ihtiyacım var.	25-04-2021
+Ajandayı tamamla	Eksik kalan yerleri doldur.	19-04-2021
+Film	Daha sonra izlemek için film indir.	26-04-2021
+Kitap okumaya devam et	Kitap okuma alışkanlığı edinsem iyi olacak.	29-04-2021
+Hatırlatma!	İzlediğin film ve dizileri tekrar tekrar izlemeyi bırak.	24-04-2021
+Spor	HIIT ve strenth training yapmayı unutma.	21-04-2021
+Nesneye yönelik proje	Projeyi yapmaya devam ediyorum.	24-04-2021
