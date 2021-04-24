@@ -1,4 +1,4 @@
-mailto:tehadro@gmail.com
+
 <p align="center">
   <a href="https://github.com/realsarius/todo-again">
     <img src="resources/images/files.png" alt="Logo" width="80" height="80">
