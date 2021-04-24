@@ -1,7 +1,7 @@
 
 <p align="center">
   <a href="https://github.com/realsarius/todo-again">
-    <img src="resources/images/files.png" alt="Logo" width="80" height="80">
+    <img src="resources/images/files.png" alt="Logo" widthmailto:tehadro@gmail.com="80" height="80">
   </a>
 
   <h3 align="center">todo-again</h3>
@@ -41,7 +41,7 @@
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
-mailto:tehadro@gmail.com    <li><a href="#contact">Contact</a></li>
+    <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
 </details>
