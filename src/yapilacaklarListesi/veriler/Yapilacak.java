@@ -4,9 +4,9 @@ import java.time.LocalDate;
 
 public class Yapilacak {
 
-    private String aciklama;
+    private final String aciklama;
     private String detay;
-    private LocalDate tarih;
+    private final LocalDate tarih;
 
     public Yapilacak(String aciklama, String detay, LocalDate tarih) {
         this.aciklama = aciklama;
@@ -16,10 +16,6 @@ public class Yapilacak {
 
     public String getAciklama() {
         return aciklama;
-    }
-
-    public void setAciklama(String aciklama) {
-        this.aciklama = aciklama;
     }
 
     public String getDetay() {
@@ -32,10 +28,6 @@ public class Yapilacak {
 
     public LocalDate getTarih() {
         return tarih;
-    }
-
-    public void setTarih(LocalDate tarih) {
-        this.tarih = tarih;
     }
 
     @Override

@@ -11,20 +11,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Iterator;
-import java.util.List;
 
 public class YapilacakVeri {
 
-    private static YapilacakVeri ornek = new YapilacakVeri();
-    private static String dosyaAdi = "Yapilacaklar.txt";
+    private static final YapilacakVeri ornek = new YapilacakVeri();
+    private static final String dosyaAdi = "Yapilacaklar.txt";
     private ObservableList<Yapilacak> yapilacaklar;
-    private DateTimeFormatter dateTimeFormatter;
+    private final DateTimeFormatter dateTimeFormatter;
 
     public static YapilacakVeri getInstance() {
         return ornek;
     }
-
 
     private YapilacakVeri() {
         this.dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -41,9 +38,8 @@ public class YapilacakVeri {
     public void yapilacaklariCagir() throws IOException {
         yapilacaklar = FXCollections.observableArrayList();
         Path dosyaYolu = Paths.get(dosyaAdi);
-        BufferedReader bufferedReader = Files.newBufferedReader(dosyaYolu);
-        String input;
-        try {
+        try (BufferedReader bufferedReader = Files.newBufferedReader(dosyaYolu)) {
+            String input;
             while ((input = bufferedReader.readLine()) != null) {
                 String[] yapilacakParcalar = input.split("\t");
 
@@ -57,29 +53,18 @@ public class YapilacakVeri {
 
             }
 
-        } finally {
-            if (bufferedReader != null) {
-                bufferedReader.close();
-            }
         }
     }
 
     public void yapilacaklariKaydet() throws IOException {
         Path dosyaYolu = Paths.get(dosyaAdi);
-        BufferedWriter bufferedWriter = Files.newBufferedWriter(dosyaYolu);
-        try {
-            Iterator<Yapilacak> iterator = yapilacaklar.iterator();
-            while (iterator.hasNext()) {
-                Yapilacak yapilacak = iterator.next();
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(dosyaYolu)) {
+            for (Yapilacak yapilacak : yapilacaklar) {
                 bufferedWriter.write(String.format("%s\t%s\t%s",
                         yapilacak.getAciklama(),
                         yapilacak.getDetay(),
                         yapilacak.getTarih().format(dateTimeFormatter)));
                 bufferedWriter.newLine();
-            }
-        } finally {
-            if (bufferedWriter != null) {
-                bufferedWriter.close();
             }
         }
     }

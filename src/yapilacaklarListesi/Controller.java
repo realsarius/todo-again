@@ -11,6 +11,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
@@ -19,10 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.KeyCode;
+import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +29,6 @@ import yapilacaklarListesi.pomodoro.model.AttemptKind;
 import yapilacaklarListesi.muzik.MuzikOynatici;
 import yapilacaklarListesi.veriler.Yapilacak;
 import yapilacaklarListesi.veriler.YapilacakVeri;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -41,6 +38,8 @@ import java.util.function.Predicate;
 
 public class Controller {
 
+    @FXML private MenuItem kaydetFXML;
+    @FXML private MenuItem silFXML;
     @FXML private MenuItem kesFXML;
     @FXML private MenuItem kopyalaFXML;
     @FXML private MenuItem yapistirFXML;
@@ -50,15 +49,15 @@ public class Controller {
     @FXML private JFXListView<Yapilacak> yapilacakListeFXML;
     @FXML private Label tarihLabel;
     @FXML private TextArea detayFXML;
-    @FXML private ContextMenu icerikListeMenu;
 
     private FilteredList<Yapilacak> yapilacakFilteredList;
     private Predicate<Yapilacak> tumYapilacaklarPredicate;
     private Predicate<Yapilacak> bugunYapilacaklarPredicate;
     Clipboard systemClipboard = Clipboard.getSystemClipboard();
 
+
     private Attempt mCurrentAttempt;
-    private StringProperty mTimerText;
+    private final StringProperty mTimerText;
     private Timeline mTimeline;
 
     public Controller(){
@@ -68,14 +67,6 @@ public class Controller {
 
     public void initialize() {
 
-        icerikListeMenu = new ContextMenu();
-        MenuItem silinmisMenuYapilacak = new MenuItem("Sil");
-        silinmisMenuYapilacak.setOnAction(actionEvent -> {
-            Yapilacak yapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
-            yapilacakSil(yapilacak);
-        });
-        icerikListeMenu.getItems().addAll(silinmisMenuYapilacak);
-
         // Yapılacak seçildiğinde detayın da gelmesi için kullanılan metod
         yapilacakListeFXML.getSelectionModel().selectedItemProperty().addListener((observable, eskiDeger, yeniDeger) -> {
             if (yeniDeger != null) {
@@ -83,7 +74,32 @@ public class Controller {
                 detayFXML.setText(yapilacak.getDetay());
                 DateTimeFormatter df = DateTimeFormatter.ofPattern("d MMMM, yyyy");
                 tarihLabel.setText(df.format(yapilacak.getTarih()));
+
             }
+        });
+
+
+        detayFXML.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.isControlDown() && keyEvent.getCode().equals(KeyCode.S)) {
+                try {
+                    Yapilacak yapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+                    yapilacak.setDetay(detayFXML.getText());
+                    YapilacakVeri.getInstance().yapilacaklariKaydet();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        silFXML.setOnAction((ActionEvent e) -> {
+            Yapilacak yapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+            yapilacakSil(yapilacak);
+        });
+
+        kaydetFXML.setOnAction((ActionEvent e) -> {
+            Yapilacak yapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+            yapilacak.setDetay(detayFXML.getText());
+            yapilacakKaydet();
         });
 
         tumYapilacaklarPredicate = yapilacak -> true;
@@ -92,7 +108,6 @@ public class Controller {
         yapilacakFilteredList = new FilteredList<>(YapilacakVeri.getInstance().getYapilacaklar(), tumYapilacaklarPredicate);
 
         SortedList<Yapilacak> sortedList = new SortedList<>(yapilacakFilteredList, Comparator.comparing(Yapilacak::getTarih));
-
 
         pomodoroToggleButtonFXML.setOnAction(observable -> {
             if (pomodoroToggleButtonFXML.isSelected()){
@@ -106,15 +121,36 @@ public class Controller {
         yapilacakListeFXML.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         yapilacakListeFXML.getSelectionModel().selectFirst();
 
+    }
 
+    @FXML
+    public void yapilacakAlertsizKaydet() {
+        try {
+            YapilacakVeri.getInstance().yapilacaklariKaydet();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    private void yapilacakKaydet() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Yapilacakları Kaydet");
+        alert.setContentText("Yapılacakları kaydetmek istediğinizden emin misiniz?");
+        Optional<ButtonType> sonuc = alert.showAndWait();
+        if (sonuc.isPresent() && (sonuc.get() == ButtonType.OK)) {
+            try {
+                YapilacakVeri.getInstance().yapilacaklariKaydet();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @FXML
     public void prepareAttempt(AttemptKind kind) {
         reset();
 
-        mCurrentAttempt = new Attempt(kind, "");
+        mCurrentAttempt = new Attempt(kind);
         mTimeline = new Timeline();
         mTimeline.setCycleCount(kind.getTotalSeconds());
         mTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), e -> {
@@ -128,7 +164,6 @@ public class Controller {
     }
 
     private void saveCurrentAttempt() {
-        mCurrentAttempt.setMessage(pomodoroToggleButtonFXML.getText());
         mCurrentAttempt.save();
     }
 
@@ -143,10 +178,8 @@ public class Controller {
     }
 
     private void reset() {
-
         if (mTimeline != null && mTimeline.getStatus() == Animation.Status.RUNNING) {
             mTimeline.stop();
-
         }
     }
 
@@ -236,14 +269,6 @@ public class Controller {
                 yapilacakSil(secilenYapilacak);
     }
 
-    @FXML
-    public void detaylariGoster() {
-        Yapilacak yapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
-        this.detayFXML.setText(yapilacak.getDetay());
-        this.tarihLabel.setText(yapilacak.getTarih().toString());
-
-    }
-
     public void yapilacakSil(Yapilacak yapilacak) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Yapilacagi Sil");
@@ -285,7 +310,7 @@ public class Controller {
         Alert al = new Alert(Alert.AlertType.INFORMATION);
         al.setTitle("Hakkında");
         al.setHeaderText("Hakkında");
-        al.setContentText("Emeği Geçenler:\n\nBerkan Sözer");
+        al.setContentText("Emeği Geçenler:\n\nBerkan Sözer\n");
         al.showAndWait();
     }
 
@@ -414,6 +439,5 @@ public class Controller {
         kesFXML.setDisable(true);
         kopyalaFXML.setDisable(true);
     }
-
 
 }

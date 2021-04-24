@@ -50,43 +50,43 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="vbox" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.282-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="yapilacaklarListesi.Controller">
+<VBox fx:id="vbox" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.282-ea"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="yapilacaklarListesi.Controller">
     <HBox VBox.vgrow="SOMETIMES">
         <MenuBar>
             <Menu mnemonicParsing="false" text="Dosya">
-                <MenuItem mnemonicParsing="false" onAction="#yeniYapilacakDialog" text="Yeni" />
-                <MenuItem mnemonicParsing="false" text="Aç" />
-                <SeparatorMenuItem mnemonicParsing="false" />
-                <MenuItem mnemonicParsing="false" text="Kapat" />
-                <MenuItem mnemonicParsing="false" text="Kaydet" />
-                <SeparatorMenuItem mnemonicParsing="false" />
-                <MenuItem mnemonicParsing="false" text="Ayarlar" />
-                <SeparatorMenuItem mnemonicParsing="false" />
-                <MenuItem mnemonicParsing="false" onAction="#kapat" text="Çıkış" />
+                <MenuItem mnemonicParsing="false" onAction="#yeniYapilacakDialog" text="Yeni"/>
+                <SeparatorMenuItem mnemonicParsing="false"/>
+                <MenuItem mnemonicParsing="false" fx:id="silFXML" text="Sil"/>
+                <MenuItem mnemonicParsing="false" fx:id="kaydetFXML" text="Kaydet"/>
+                <SeparatorMenuItem mnemonicParsing="false"/>
+                <MenuItem mnemonicParsing="false" text="Ayarlar"/>
+                <SeparatorMenuItem mnemonicParsing="false"/>
+                <MenuItem mnemonicParsing="false" onAction="#kapat" text="Çıkış"/>
             </Menu>
             <Menu mnemonicParsing="false" onShowing="#showingEditMenu" text="Düzenle">
-                <MenuItem fx:id="kesFXML" mnemonicParsing="false" onAction="#kes" text="Kes" />
-                <MenuItem fx:id="kopyalaFXML" mnemonicParsing="false" onAction="#kopyala" text="Kopyala" />
-                <MenuItem fx:id="yapistirFXML" mnemonicParsing="false" onAction="#yapistir" text="Yapıştır" />
-                <MenuItem mnemonicParsing="false" onAction="#sil" text="Sil" />
-                <SeparatorMenuItem mnemonicParsing="false" />
-                <MenuItem mnemonicParsing="false" onAction="#hepsiniSec" text="Hepsini seç" />
-                <MenuItem mnemonicParsing="false" onAction="#hicbiriniSecme" text="Hiçbirini seçme" />
+                <MenuItem fx:id="kesFXML" mnemonicParsing="false" onAction="#kes" text="Kes"/>
+                <MenuItem fx:id="kopyalaFXML" mnemonicParsing="false" onAction="#kopyala" text="Kopyala"/>
+                <MenuItem fx:id="yapistirFXML" mnemonicParsing="false" onAction="#yapistir" text="Yapıştır"/>
+                <MenuItem mnemonicParsing="false" onAction="#sil" text="Sil"/>
+                <SeparatorMenuItem mnemonicParsing="false"/>
+                <MenuItem mnemonicParsing="false" onAction="#hepsiniSec" text="Hepsini seç"/>
+                <MenuItem mnemonicParsing="false" onAction="#hicbiriniSecme" text="Hiçbirini seçme"/>
             </Menu>
             <Menu mnemonicParsing="false" text="Yardım">
-                <MenuItem mnemonicParsing="false" onAction="#emailGonderMetodu" text="E-Mail Gonder" />
-                <MenuItem mnemonicParsing="false" onAction="#hakkindaMetodu" text="Hakkımda" />
+                <MenuItem mnemonicParsing="false" onAction="#emailGonderMetodu" text="E-Mail Gonder"/>
+                <MenuItem mnemonicParsing="false" onAction="#hakkindaMetodu" text="Hakkımda"/>
             </Menu>
         </MenuBar>
-        <Pane blendMode="RED" HBox.hgrow="ALWAYS" />
-      <JFXToggleButton fx:id="pomodoroToggleButtonFXML" size="4.0" text="Pomodoro">
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </JFXToggleButton>
+        <Pane blendMode="RED" HBox.hgrow="ALWAYS"/>
+        <JFXToggleButton fx:id="pomodoroToggleButtonFXML" size="4.0" text="Pomodoro">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </JFXToggleButton>
         <JFXToggleButton fx:id="bugunToggleButton" onAction="#bugunYapilacakGoster" size="4.0" text="Bugün">
             <cursor>
-                <Cursor fx:constant="HAND" />
+                <Cursor fx:constant="HAND"/>
             </cursor>
         </JFXToggleButton>
     </HBox>
@@ -94,31 +94,32 @@
         <AnchorPane>
             <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" style="&#10;" text="Details" textAlignment="CENTER">
                 <font>
-                    <Font size="18.0" />
+                    <Font size="18.0"/>
                 </font>
                 <textFill>
-                    <Color red="0.624" green="0.624" blue="0.624" />
+                    <Color red="0.624" green="0.624" blue="0.624"/>
                 </textFill>
             </Label>
         </AnchorPane>
         <VBox prefHeight="200.0" prefWidth="100.0">
-            <TextArea fx:id="detayFXML" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+            <TextArea fx:id="detayFXML" onKeyPressed="#yapilacakAlertsizKaydet" prefHeight="200.0" prefWidth="200.0"
+                      VBox.vgrow="ALWAYS" wrapText="true"/>
         </VBox>
         <VBox prefHeight="200.0" prefWidth="100.0">
-            <JFXListView fx:id="yapilacakListeFXML" onKeyPressed="#tusaBasildiginda" VBox.vgrow="ALWAYS" />
+            <JFXListView fx:id="yapilacakListeFXML" onKeyPressed="#tusaBasildiginda" VBox.vgrow="ALWAYS"/>
         </VBox>
     </SplitPane>
     <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
         <padding>
-            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
         </padding>
-        <Pane HBox.hgrow="ALWAYS" />
+        <Pane HBox.hgrow="ALWAYS"/>
         <Label fx:id="tarihLabel" HBox.hgrow="NEVER">
             <font>
-                <Font size="11.0" />
+                <Font size="11.0"/>
             </font>
             <textFill>
-                <Color red="0.625" green="0.625" blue="0.625" />
+                <Color red="0.625" green="0.625" blue="0.625"/>
             </textFill>
         </Label>
     </HBox>
