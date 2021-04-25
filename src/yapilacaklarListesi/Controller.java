@@ -12,6 +12,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
@@ -22,6 +23,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
 import yapilacaklarListesi.pomodoro.model.Attempt;
@@ -29,15 +32,25 @@ import yapilacaklarListesi.pomodoro.model.AttemptKind;
 import yapilacaklarListesi.muzik.MuzikOynatici;
 import yapilacaklarListesi.veriler.Yapilacak;
 import yapilacaklarListesi.veriler.YapilacakVeri;
-import java.io.IOException;
+
+import java.awt.*;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Controller {
 
+    @FXML private MenuItem farkliKaydetFXML;
     @FXML private MenuItem kaydetFXML;
     @FXML private MenuItem silFXML;
     @FXML private MenuItem kesFXML;
@@ -55,7 +68,6 @@ public class Controller {
     private Predicate<Yapilacak> bugunYapilacaklarPredicate;
     Clipboard systemClipboard = Clipboard.getSystemClipboard();
 
-
     private Attempt mCurrentAttempt;
     private final StringProperty mTimerText;
     private Timeline mTimeline;
@@ -67,6 +79,20 @@ public class Controller {
 
     public void initialize() {
 
+        farkliKaydetFXML.setOnAction(actionEvent -> {
+            Stage stage = new Stage();
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Text");
+            File file = fileChooser.showSaveDialog(stage);
+            final String content = detayFXML.getText();
+            try (final BufferedWriter writer = Files.newBufferedWriter(file.getAbsoluteFile().toPath(), StandardCharsets.UTF_8, StandardOpenOption.CREATE)) {
+                writer.write(content);
+                writer.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
         // Yapılacak seçildiğinde detayın da gelmesi için kullanılan metod
         yapilacakListeFXML.getSelectionModel().selectedItemProperty().addListener((observable, eskiDeger, yeniDeger) -> {
             if (yeniDeger != null) {
@@ -77,7 +103,6 @@ public class Controller {
 
             }
         });
-
 
         detayFXML.setOnKeyPressed(keyEvent -> {
             if (keyEvent.isControlDown() && keyEvent.getCode().equals(KeyCode.S)) {
