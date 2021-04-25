@@ -59,6 +59,7 @@
                 <SeparatorMenuItem mnemonicParsing="false"/>
                 <MenuItem mnemonicParsing="false" fx:id="silFXML" text="Sil"/>
                 <MenuItem mnemonicParsing="false" fx:id="kaydetFXML" text="Kaydet"/>
+                <MenuItem mnemonicParsing="false" fx:id="farkliKaydetFXML" text="Farklı Kaydet"/>
                 <SeparatorMenuItem mnemonicParsing="false"/>
                 <MenuItem mnemonicParsing="false" text="Ayarlar"/>
                 <SeparatorMenuItem mnemonicParsing="false"/>
