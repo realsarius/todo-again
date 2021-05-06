@@ -5,15 +5,24 @@
       <options>
         <option name="appClass" value="yapilacaklarListesi.Main" />
         <option name="description" value="" />
+        <option name="height" value="550" />
         <option name="htmlPlaceholderId" value="" />
-        <option name="title" value="" />
+        <option name="icons">
+          <JavaFxApplicationIcons>
+            <option name="linuxIcon" value="$PROJECT_DIR$/resources/images/files.png" />
+          </JavaFxApplicationIcons>
+        </option>
+        <option name="title" value="Yapılacaklar Listesi" />
         <option name="vendor" value="" />
         <option name="version" value="" />
+        <option name="width" value="960" />
       </options>
     </properties>
     <root id="root">
       <element id="archive" name="todo_again.jar">
         <element id="module-output" name="todo-again" />
+        <element id="library" level="project" name="jfoenix-8.0.10" />
+        <element id="library" level="project" name="org.apache.commons:commons-lang3:3.3.2" />
       </element>
     </root>
   </artifact>

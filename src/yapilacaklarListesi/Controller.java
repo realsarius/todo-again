@@ -12,7 +12,6 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
@@ -27,27 +26,21 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
-import yapilacaklarListesi.pomodoro.model.Attempt;
-import yapilacaklarListesi.pomodoro.model.AttemptKind;
-import yapilacaklarListesi.muzik.MuzikOynatici;
+import yapilacaklarListesi.pomodoro.model.Pomodoro;
+import yapilacaklarListesi.pomodoro.model.PomodoroEnum;
 import yapilacaklarListesi.veriler.Yapilacak;
 import yapilacaklarListesi.veriler.YapilacakVeri;
-
-import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+// Controller kısmının içerisinde nesneye yönelik kısmı ile ilgili bir şey yok ancak açıklamaları yapacağım.
 public class Controller {
 
     @FXML private MenuItem farkliKaydetFXML;
@@ -66,17 +59,18 @@ public class Controller {
     private FilteredList<Yapilacak> yapilacakFilteredList;
     private Predicate<Yapilacak> tumYapilacaklarPredicate;
     private Predicate<Yapilacak> bugunYapilacaklarPredicate;
-    Clipboard systemClipboard = Clipboard.getSystemClipboard();
+    Clipboard sistemPanosu = Clipboard.getSystemClipboard();
 
-    private Attempt mCurrentAttempt;
-    private final StringProperty mTimerText;
-    private Timeline mTimeline;
+    private Pomodoro suankiPomodoro;
+    private final StringProperty zamanlayiciText;
+    private Timeline timeLine;
 
     public Controller(){
-        mTimerText = new SimpleStringProperty();
+        zamanlayiciText = new SimpleStringProperty();
         setTimerText(0);
     }
 
+    // Program başlarken yapılacaklar
     public void initialize() {
 
         farkliKaydetFXML.setOnAction(actionEvent -> {
@@ -172,72 +166,70 @@ public class Controller {
     }
 
     @FXML
-    public void prepareAttempt(AttemptKind kind) {
+    public void prepareAttempt(PomodoroEnum pomodoroHatirlatici) {
         reset();
 
-        mCurrentAttempt = new Attempt(kind);
-        mTimeline = new Timeline();
-        mTimeline.setCycleCount(kind.getTotalSeconds());
-        mTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), e -> {
-            mCurrentAttempt.tick();
-            pomodoroToggleButtonFXML.setText(mCurrentAttempt.toString());
+        suankiPomodoro = new Pomodoro(pomodoroHatirlatici);
+        timeLine = new Timeline();
+        timeLine.setCycleCount(pomodoroHatirlatici.getToplamSaniye());
+        timeLine.getKeyFrames().add(new KeyFrame(Duration.seconds(1), e -> {
+            suankiPomodoro.tik();
+            pomodoroToggleButtonFXML.setText(suankiPomodoro.toString());
         }));
-        mTimeline.setOnFinished(e -> {
-            saveCurrentAttempt();
-            prepareAttempt((mCurrentAttempt.getKind() == AttemptKind.FOCUS) ? AttemptKind.BREAK : AttemptKind.FOCUS);
+        timeLine.setOnFinished(e -> {
+            zamanlayiciyiKaydet();
+            prepareAttempt((suankiPomodoro.getPomodoroEnum() == PomodoroEnum.FOCUS) ? PomodoroEnum.BREAK : PomodoroEnum.FOCUS);
         });
     }
 
-    private void saveCurrentAttempt() {
-        mCurrentAttempt.save();
+    private void zamanlayiciyiKaydet() {
+        suankiPomodoro.kaydet();
     }
 
-    public void setTimerText(String timerText) {
-        this.mTimerText.set(timerText);
+    public void setZamanlayiciText(String zamanlayiciText) {
+        this.zamanlayiciText.set(zamanlayiciText);
     }
 
-    public void setTimerText(int remainingSeconds) {
-        int minutes = remainingSeconds / 60;
-        int seconds = remainingSeconds % 60;
-        setTimerText(String.format("%02d:%02d", minutes, seconds));
+    public void setTimerText(int geriyeKalanSaniye) {
+        int dakika = geriyeKalanSaniye / 60;
+        int saniye = geriyeKalanSaniye % 60;
+        setZamanlayiciText(String.format("%02d:%02d", dakika, saniye));
     }
 
     private void reset() {
-        if (mTimeline != null && mTimeline.getStatus() == Animation.Status.RUNNING) {
-            mTimeline.stop();
+        if (timeLine != null && timeLine.getStatus() == Animation.Status.RUNNING) {
+            timeLine.stop();
         }
     }
 
-    public void playTimer() {
-        mTimeline.play();
+    public void zamanlayiciyiBaslat() {
+        timeLine.play();
     }
 
-    public void pauseTimer() {
-        mTimeline.pause();
+    public void zamanlayiciyiDuraklat() {
+        timeLine.pause();
     }
 
-
-
-    public void handleRestart() {
-        prepareAttempt(AttemptKind.FOCUS);
-        playTimer();
+    public void zamanlayiciRestart() {
+        prepareAttempt(PomodoroEnum.FOCUS);
+        zamanlayiciyiBaslat();
     }
 
     public void baslat() {
-        if (mCurrentAttempt == null) {
-            handleRestart();
+        if (suankiPomodoro == null) {
+            zamanlayiciRestart();
         } else {
-            playTimer();
+            zamanlayiciyiBaslat();
         }
     }
 
     public void durdur() {
-        pauseTimer();
+        zamanlayiciyiDuraklat();
     }
 
+    // Yeni yapılacak eklemek için yapılmış yeni bir dialog
     @FXML
     public void yeniYapilacakDialog() {
-        MuzikOynatici.dialogMuzikOynat();
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Yeni Yapılacak");
         dialog.setHeaderText("Yeni yapılacak aktiviteyi buradan oluşturabilirsiniz.");
@@ -259,19 +251,19 @@ public class Controller {
             DialogController controller = fxmlLoader.getController();
             Yapilacak yeniYapilacak = controller.ciktiyiGoster();
             yapilacakListeFXML.getSelectionModel().select(yeniYapilacak);
-            MuzikOynatici.okMuzigiOynat();
-        } else {
-            MuzikOynatici.cancelMuzigiOynat();
+
         }
     }
 
+    // İnternet'ten araştırıp bulduğum bir metod. Önce Mail göndermeyi denemiştim ancak kimlik doğrulama ile ilgili sorunlar çıktı.
+    // Tarayici açıp
     @FXML
     public void emailGonderMetodu() {
         try {
             Runtime rt = Runtime.getRuntime();
             String url = "mailto:tehadro@gmail.com?subject=Program%20Hakkinda";
             String[] browsers = { "epiphany", "firefox", "mozilla", "konqueror",
-                    "netscape", "opera", "links", "lynx" };
+                    "netscape", "opera", "links", "lynx", "chrome", "operagx" };
 
             StringBuilder cmd = new StringBuilder();
             for (int i = 0; i < browsers.length; i++)
@@ -286,6 +278,7 @@ public class Controller {
         }
     }
 
+    // Klavyemizden DELETE tuşuna bastığımızda, ListView'de hangi yapılacak seçili ise onu siliyor.
     @FXML
     public void tusaBasildiginda(javafx.scene.input.KeyEvent keyEvent) {
         Yapilacak secilenYapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
@@ -294,6 +287,9 @@ public class Controller {
                 yapilacakSil(secilenYapilacak);
     }
 
+    // Yapılacak silinirken bir Alert sahnesi gösteriyor. OK butonu ile parametresi ile birlikte yapilacakSil metodu çağrılıyor.
+    // ListView'den seçili olan yapılacak siliniyor. Dikkat edilmesi gerekn kısımlardan bir tanesi ise
+    // Yapılacaklar kaydedilirken newLine'da eklendiği için yapılacak silinirken boşluk kalmıyor.
     public void yapilacakSil(Yapilacak yapilacak) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Yapilacagi Sil");
@@ -306,6 +302,7 @@ public class Controller {
         }
     }
 
+    // Bu metod ListView'deki herhangi bir yapılacağın Acik
     @FXML
     public void bugunYapilacakGoster() {
         Yapilacak secilmisYapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
@@ -326,11 +323,7 @@ public class Controller {
 
     }
 
-    @FXML
-    public void programdanCik() {
-        Platform.exit();
-    }
-
+    // Alert sahnesi ile yapılan Hakkımda metodu.
     public void hakkindaMetodu() {
         Alert al = new Alert(Alert.AlertType.INFORMATION);
         al.setTitle("Hakkında");
@@ -339,6 +332,8 @@ public class Controller {
         al.showAndWait();
     }
 
+    // Programdan çıkış yaparken Alert veriyor. showAndWait ile Alert'i bekletmek zorundayız yoksa hemen kapanıyor.
+    // CANCEL tuşuna bastığımızda hiçbir şey yapmıyor ancak OK tuşuna bastığımızda Platform.exit() metodunu çağırarak programdan çıkabiliyoruz.
     public void kapat() {
         Alert cikisAlert = new Alert(Alert.AlertType.CONFIRMATION);
         cikisAlert.setTitle("Çıkış Yap");
@@ -351,49 +346,53 @@ public class Controller {
         }
     }
 
+    // detayFXML'de seçilen yeri kesme metodu
     @FXML
     public void kes() {
         String text = detayFXML.getSelectedText();
 
         ClipboardContent content = new ClipboardContent();
         content.putString(text);
-        systemClipboard.setContent(content);
+        sistemPanosu.setContent(content);
+
+        // Buraya kadar olan kısımda seçilen texti sistem panosuna ekliyor. Geri kalan kısmında ise seçilen yeri(baslangic'tan son'a kadar) siliyor.
 
         IndexRange range = detayFXML.getSelection();
         String origText = detayFXML.getText();
-        String firstPart = StringUtils.substring(origText, 0, range.getStart());
-        String lastPart = StringUtils.substring(origText, range.getEnd(), StringUtils.length(origText));
-        detayFXML.setText(firstPart + lastPart);
+        String baslangic = StringUtils.substring(origText, 0, range.getStart());
+        String son = StringUtils.substring(origText, range.getEnd(), StringUtils.length(origText));
 
+        detayFXML.setText(baslangic + son);
         detayFXML.positionCaret(range.getStart());
 
     }
 
+    // Basit bir işlem. detayFXML'in içeriğini boş bir string ile değiştiriyor.
     @FXML
     public void sil(){
         detayFXML.replaceSelection("");
     }
 
+    // detayFXML'de seçilen texti content nesnesine putString ile atıyoruz. systemClipboard ise işletim sisteminin clipboard'u.
     @FXML
     public void kopyala() {
         String text = detayFXML.getSelectedText();
         ClipboardContent content = new ClipboardContent();
         content.putString(text);
-        systemClipboard.setContent(content);
+        sistemPanosu.setContent(content);
     }
 
+    // Sistem panosunda bir içerik varsa yapıştırıyoruz. stackoverflow'da bulduğum kodu kendi programıma uyarladım.
+    // Metodun sonlarına doğru sistem panosunda olan içeriği, detayFXML'e yapıştırıyor
     @FXML
     public void yapistir() {
-        if (!systemClipboard.hasContent(DataFormat.PLAIN_TEXT)) {
-            adjustForEmptyClipboard();
+        if (!sistemPanosu.hasContent(DataFormat.PLAIN_TEXT)) {
+            bosPanoIcinAyarlar();
             return;
         }
 
-        String clipboardText = systemClipboard.getString();
-
-//        TextField focusedTF = getFocusedTextField();
+        String clipboardText = sistemPanosu.getString();
         IndexRange range = detayFXML.getSelection();
-
         String orjinalText = detayFXML.getText();
 
         int bitisPozisyonu;
@@ -413,28 +412,32 @@ public class Controller {
         detayFXML.positionCaret(bitisPozisyonu);
     }
 
+    // detayFXML'deki tüm text seç
     @FXML
     public void hepsiniSec(){
         detayFXML.selectAll();
     }
+
+    // detayFXML'deki hiçbir texti seçme
     @FXML
     public void hicbiriniSecme(){
         detayFXML.deselect();
     }
 
+    // Geriye kalan metodlar şuanda kullanılmıyor. Amaç kopyalanacakya da kesilecek bir şey yok ise "Kopyala" ya da "Kes" butonlarının setDisable(true) olması yani basılabilir olmaması
     @FXML
-    public void showingEditMenu() {
-        if (systemClipboard == null) {
-            systemClipboard = Clipboard.getSystemClipboard();
+    public void duzenleMenuyuGoster() {
+        if (sistemPanosu == null) {
+            sistemPanosu = Clipboard.getSystemClipboard();
         }
 
-        if (systemClipboard.hasString()) {
-            adjustForClipboardContents();
+        if (sistemPanosu.hasString()) {
+            panoIceriginiAyarla();
         } else {
-            adjustForEmptyClipboard();
+            bosPanoIcinAyarlar();
         }
 
-        if (anythingSelected()) {
+        if (birSeySeciliMi()) {
             adjustForSelection();
 
         } else {
@@ -442,17 +445,17 @@ public class Controller {
         }
     }
 
-    private boolean anythingSelected() {
+    private boolean birSeySeciliMi() {
         TextField textField = new TextField();
         return textField.getSelectedText().isEmpty();
     }
 
-    private void adjustForEmptyClipboard() {
-        kopyalaFXML.setDisable(true);  // nothing to paste
+    private void bosPanoIcinAyarlar() {
+        kopyalaFXML.setDisable(true);  // Yapıştırılacak bir şey yok ise
     }
 
-    private void adjustForClipboardContents() {
-        yapistirFXML.setDisable(false);  // something to paste
+    private void panoIceriginiAyarla() {
+        yapistirFXML.setDisable(false);  // Yapıştırılacak bir şey var ise
     }
 
     private void adjustForSelection() {

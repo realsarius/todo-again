@@ -65,7 +65,7 @@
                 <SeparatorMenuItem mnemonicParsing="false"/>
                 <MenuItem mnemonicParsing="false" onAction="#kapat" text="Çıkış"/>
             </Menu>
-            <Menu mnemonicParsing="false" onShowing="#showingEditMenu" text="Düzenle">
+            <Menu mnemonicParsing="false" onShowing="#duzenleMenuyuGoster" text="Düzenle">
                 <MenuItem fx:id="kesFXML" mnemonicParsing="false" onAction="#kes" text="Kes"/>
                 <MenuItem fx:id="kopyalaFXML" mnemonicParsing="false" onAction="#kopyala" text="Kopyala"/>
                 <MenuItem fx:id="yapistirFXML" mnemonicParsing="false" onAction="#yapistir" text="Yapıştır"/>

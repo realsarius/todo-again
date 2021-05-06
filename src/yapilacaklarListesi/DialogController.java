@@ -14,6 +14,7 @@ public class DialogController {
     @FXML private TextArea detayFXML;
     @FXML private DatePicker tarihFXML;
 
+    // FXML'deki aciklamaFXML, detayFXML, tarihFXML'in içeriklerini alıp yeni bir Yapilacak sınıfı oluşturarak return ediyoruz ki yeni Yapilacagi text dökümantasyonuna yazdırabilelim.
     public Yapilacak ciktiyiGoster(){
         String aciklama = this.aciklamaFXML.getText().trim();
         String detay = this.detayFXML.getText().trim();
