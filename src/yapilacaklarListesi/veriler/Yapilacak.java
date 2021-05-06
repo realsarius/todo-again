@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public class Yapilacak {
 
+    // Yapılacak, basit bir entity sınıfı.
     private final String aciklama;
     private String detay;
     private final LocalDate tarih;
