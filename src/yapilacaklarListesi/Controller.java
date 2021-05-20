@@ -26,6 +26,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
+import yapilacaklarListesi.muzik.Muzik;
+import yapilacaklarListesi.muzik.MuzikOynatici;
 import yapilacaklarListesi.pomodoro.model.Pomodoro;
 import yapilacaklarListesi.pomodoro.model.PomodoroEnum;
 import yapilacaklarListesi.veriler.Yapilacak;
@@ -230,6 +232,7 @@ public class Controller {
     // Yeni yapılacak eklemek için yapılmış yeni bir dialog
     @FXML
     public void yeniYapilacakDialog() {
+        MuzikOynatici.dialogMuzikOynat();
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Yeni Yapılacak");
         dialog.setHeaderText("Yeni yapılacak aktiviteyi buradan oluşturabilirsiniz.");
@@ -251,7 +254,9 @@ public class Controller {
             DialogController controller = fxmlLoader.getController();
             Yapilacak yeniYapilacak = controller.ciktiyiGoster();
             yapilacakListeFXML.getSelectionModel().select(yeniYapilacak);
-
+            MuzikOynatici.okMuzigiOynat();
+        } else {
+            MuzikOynatici.cancelMuzigiOynat();
         }
     }
 

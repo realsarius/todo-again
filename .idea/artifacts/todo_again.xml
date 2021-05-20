@@ -23,6 +23,7 @@
         <element id="module-output" name="todo-again" />
         <element id="library" level="project" name="jfoenix-8.0.10" />
         <element id="library" level="project" name="org.apache.commons:commons-lang3:3.3.2" />
+        <element id="library" level="project" name="lib" />
       </element>
     </root>
   </artifact>
