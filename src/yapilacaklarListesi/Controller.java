@@ -260,8 +260,7 @@ public class Controller {
         }
     }
 
-    // İnternet'ten araştırıp bulduğum bir metod. Önce Mail göndermeyi denemiştim ancak kimlik doğrulama ile ilgili sorunlar çıktı.
-    // Tarayici açıp
+
     @FXML
     public void emailGonderMetodu() {
         try {
