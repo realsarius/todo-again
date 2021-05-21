@@ -1,32 +1,46 @@
 package yapilacaklarListesi.veriler;
 
-import org.junit.Test;
+import junit.framework.TestCase;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
-class YapilacakVeriTest {
+public class YapilacakVeriTest extends TestCase {
 
-    @org.junit.jupiter.api.Test
-    void getInstance() {
+
+    public void testGetInstance() {
     }
 
-    @org.testng.annotations.Test
-    void getYapilacaklar() {
+    public void testGetYapilacaklar() {
     }
 
-    @Test
-    void yapilacakEkle() {
+    public void testYapilacakEkle() {
     }
 
-    @org.junit.jupiter.api.Test
-    void yapilacaklariCagir() {
+    public void testYapilacaklariCagir() {
     }
 
-    @org.junit.jupiter.api.Test
-    void yapilacaklariKaydet() {
+    public void testYapilacaklariKaydet() {
+        String dosyaAdi = "Yapilacaklar.txt";
+        Path dosyaYolu = Paths.get(dosyaAdi);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(dosyaYolu)) {
+            bufferedWriter.write(String.format("%s\t%s\t%s",
+                    "aciklama",
+                    "detay",
+                    LocalDate.parse("04-04-2021", dateTimeFormatter)));
+            bufferedWriter.newLine();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
     }
 
-    @org.junit.jupiter.api.Test
-    void yapilacakSil() {
+
+    public void testYapilacakSil() {
     }
 }
