@@ -26,6 +26,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
+import yapilacaklarListesi.mediator.PomodoroGosterge;
 import yapilacaklarListesi.muzik.Muzik;
 import yapilacaklarListesi.muzik.MuzikOynatici;
 import yapilacaklarListesi.pomodoro.model.Pomodoro;
@@ -176,7 +177,8 @@ public class Controller {
         timeLine.setCycleCount(pomodoroHatirlatici.getToplamSaniye());
         timeLine.getKeyFrames().add(new KeyFrame(Duration.seconds(1), e -> {
             suankiPomodoro.tik();
-            pomodoroToggleButtonFXML.setText(suankiPomodoro.toString());
+//            pomodoroToggleButtonFXML.setText(suankiPomodoro.toString());
+            pomodoroToggleButtonFXML.setText(PomodoroGosterge.pomodoroGosterge(suankiPomodoro));
         }));
         timeLine.setOnFinished(e -> {
             zamanlayiciyiKaydet();
