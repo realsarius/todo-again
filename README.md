@@ -28,6 +28,7 @@
       <a href="#about-the-project">About The Project</a>
       <ul>
         <li><a href="#built-with">Built With</a></li>
+        <li><a href="#screenshots">Screenshots</a></li>
       </ul>
     </li>
     <li>
@@ -58,6 +59,10 @@ A scuffed TODO program that suits your needs. It's for my school project.
 * [JavaFX (OpenJFX)](https://openjfx.io/)
 * [IntelliJ](https://www.jetbrains.com/idea/)
 
+### Screenshots
+
+![alt](https://realsarius.github.io/assets/img/todo2.png)
+![alt](https://realsarius.github.io/assets/img/todo1.png)
 
 ## Getting Started
 
