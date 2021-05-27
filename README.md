@@ -7,7 +7,7 @@
   <h3 align="center">todo-again</h3>
 
   <p align="center">
-    Scuffed TODO list application powered by Java and JavaFX!
+    Scuffed TODO list application powered by JavaFX!
     <br />
     <a href="https://docs.oracle.com/javafx/2/"><strong>Explore the docs »</strong></a>
     <br />
@@ -54,7 +54,6 @@ A scuffed TODO program that suits your needs. It's for my school project.
 
 ### Built With
 
-This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 * [Java](https://www.oracle.com/java/)
 * [JavaFX (OpenJFX)](https://openjfx.io/)
 * [IntelliJ](https://www.jetbrains.com/idea/)
@@ -66,27 +65,23 @@ The project developed with IntelliJ so you can just import and start project.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* JDK 8
-   * Arch
+Amazon Corretto or Liberica is recomemmended.
+ * Arch (![aur](https://aur.archlinux.org/packages/amazon-corretto-8/))
     ```sh
-    sudo pacman -S jdk8-openjdk
+    sudo pacman -S yay && yay amazon corretto 8
     ```
-    * Ubuntu/Debian
+    
+ * Ubuntu/Debian 
     ```sh
     sudo apt-get update
-    sudo apt-get install openjdk-8-jdk-headless
+    wget -O- https://apt.corretto.aws/corretto.key | sudo apt-key add - 
+    sudo add-apt-repository 'deb https://apt.corretto.aws stable main'
     ```
-* JavaFX (11 or later)
-  * Arch
-  ```sh
-  sudo pacman -S java11-openjfx
-  ```
-  * Ubuntu/Debian
-  ```sh
-  sudo apt install openjfx
-  ```
-
+    Then
+    ```sh
+     sudo apt-get update; sudo apt-get install -y java-1.8.0-amazon-corretto-jdk
+    ```
+    ![More here](https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/generic-linux-install.html)
 ### Installation
 
 1. Clone the repo
@@ -136,3 +131,4 @@ Project Link: [https://github.com/realsarius/todo-again](https://github.com/real
 * [OpenJFX](https://openjfx.io/)
 * [IntelliJ](https://www.jetbrains.com/idea/)
 * [Files Icon](https://www.flaticon.com/)
+* [Amazon Corretto](https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/what-is-corretto-8.html)
