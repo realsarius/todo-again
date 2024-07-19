@@ -7,7 +7,7 @@
   <h3 align="center">todo-again</h3>
 
   <p align="center">
-    Scuffed TODO list application powered by JavaFX!
+    TODO list application powered by JavaFX!
     <br />
     <a href="https://docs.oracle.com/javafx/2/"><strong>Explore the docs »</strong></a>
     <br />
