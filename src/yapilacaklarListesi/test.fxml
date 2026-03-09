@@ -34,7 +34,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
@@ -45,9 +45,9 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -91,18 +91,18 @@
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </ToggleButton>
-        <ChoiceBox fx:id="oncelikFiltreFXML" prefWidth="120.0" styleClass="pill-filter"/>
+        <ComboBox fx:id="oncelikFiltreFXML" prefWidth="120.0" styleClass="pill-filter"/>
         <StackPane styleClass="search-wrap" prefWidth="210.0">
             <HBox alignment="CENTER_LEFT" spacing="6.0">
-                <Label styleClass="search-icon" text="⌕"/>
-                <TextField fx:id="aramaFXML" promptText="Görev ara..." styleClass="search-field"/>
+                <Region styleClass="search-icon"/>
+                <TextField fx:id="aramaFXML" promptText="Görev ara..." styleClass="search-field" HBox.hgrow="ALWAYS"/>
             </HBox>
         </StackPane>
     </HBox>
     <SplitPane dividerPositions="0.27, 0.63" focusTraversable="true" styleClass="app-split-pane" VBox.vgrow="ALWAYS">
-        <AnchorPane styleClass="panel-left">
-            <Label alignment="CENTER_LEFT" layoutX="16.0" layoutY="16.0" styleClass="section-title" text="Detaylar" textAlignment="LEFT"/>
-        </AnchorPane>
+        <VBox styleClass="panel-left">
+            <Label alignment="CENTER_LEFT" styleClass="section-title" text="Görev Ayrıntıları" textAlignment="LEFT"/>
+        </VBox>
         <VBox prefHeight="200.0" prefWidth="100.0" styleClass="panel-center">
             <ListView fx:id="yapilacakListeFXML" onKeyPressed="#tusaBasildiginda" styleClass="task-list" VBox.vgrow="ALWAYS">
                 <placeholder>

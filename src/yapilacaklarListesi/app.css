@@ -66,20 +66,28 @@
     -fx-border-color: transparent;
     -fx-border-radius: 20px;
     -fx-background-radius: 20px;
-    -fx-padding: 3px 10px;
+    -fx-padding: 0;
 }
 
 .pill-filter:hover {
     -fx-background-color: #E8E8ED;
 }
 
-.pill-filter .label {
+.pill-filter .list-cell,
+.pill-filter .text {
     -fx-text-fill: #1C1C1E;
     -fx-font-size: 13px;
 }
 
-.pill-filter .open-button {
+.pill-filter > .arrow-button {
     -fx-background-color: transparent;
+    -fx-padding: 0 10px 0 6px;
+}
+
+.pill-filter > .text-field,
+.pill-filter > .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 0 12px;
 }
 
 .pill-filter .arrow {
@@ -97,9 +105,14 @@
 }
 
 .search-icon {
-    -fx-text-fill: #8A8A8E;
-    -fx-font-size: 12px;
-    -fx-font-weight: 600;
+    -fx-min-width: 12px;
+    -fx-min-height: 12px;
+    -fx-pref-width: 12px;
+    -fx-pref-height: 12px;
+    -fx-max-width: 12px;
+    -fx-max-height: 12px;
+    -fx-background-color: #8A8A8E;
+    -fx-shape: "M9.5 8.5l3 3-1 1-3-3v-.79l-.27-.28a4.99 4.99 0 1 1 .75-.75l.28.27h.79zm-4 0a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z";
 }
 
 .search-field {

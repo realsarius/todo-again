@@ -57,7 +57,7 @@ public class Controller {
     @FXML private ToggleButton pomodoroToggleButtonFXML;
     @FXML private VBox vbox;
     @FXML private ToggleButton bugunToggleButton;
-    @FXML private ChoiceBox<String> oncelikFiltreFXML;
+    @FXML private ComboBox<String> oncelikFiltreFXML;
     @FXML private TextField aramaFXML;
     @FXML private ListView<Yapilacak> yapilacakListeFXML;
     @FXML private Label tarihLabel;
