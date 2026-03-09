@@ -1,6 +1,7 @@
 package yapilacaklarListesi;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -19,6 +20,14 @@ public class DialogController {
         String aciklama = this.aciklamaFXML.getText().trim();
         String detay = this.detayFXML.getText().trim();
         LocalDate tarih = tarihFXML.getValue();
+        if (aciklama.isEmpty() || tarih == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Eksik Alan");
+            alert.setHeaderText("Yapilacak olusturulamadi");
+            alert.setContentText("Aciklama ve tarih alanlari zorunludur.");
+            alert.showAndWait();
+            return null;
+        }
 
         Yapilacak yeniYapilacak = new Yapilacak(aciklama, detay, tarih);
         YapilacakVeri.getInstance().yapilacakEkle(yeniYapilacak);

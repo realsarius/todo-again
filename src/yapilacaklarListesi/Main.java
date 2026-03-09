@@ -35,7 +35,7 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("test.fxml")));
         primaryStage.setTitle("Yapılacaklar Listesi");
         primaryStage.setScene(new Scene(root, 960, 550));
-        primaryStage.getIcons().add(new Image("images/files.png"));
+        primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/files.png"))));
         primaryStage.show();
 
     }

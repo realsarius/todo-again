@@ -2,14 +2,12 @@ package yapilacaklarListesi.muzik;
 
 public class MuzikOynatici {
 
-    private static OKMuzik okMuzik = new OKMuzik();
-    private static CANCELMuzik cancelMuzik = new CANCELMuzik();
-    private static DialogMuzik dialogMuzik = new DialogMuzik();
+    private static final OKMuzik okMuzik = new OKMuzik();
+    private static final CANCELMuzik cancelMuzik = new CANCELMuzik();
+    private static final DialogMuzik dialogMuzik = new DialogMuzik();
 
     private MuzikOynatici(){
-        this.okMuzik = new OKMuzik();
-        this.cancelMuzik = new CANCELMuzik();
-        this.dialogMuzik = new DialogMuzik();
+        // Utility class
     }
 
     public static void dialogMuzikOynat(){
