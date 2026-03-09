@@ -69,6 +69,8 @@ docker compose run --rm maven clean package -DskipTests
 
 Detailed guide: [`docs/docker.md`](docs/docker.md)
 
+Note: Docker service is configured with `platform: linux/amd64` to ensure JavaFX artifacts resolve consistently.
+
 ## Data file
 - Default data file: `Yapilacaklar.txt`
 - Format: `aciklama<TAB>detay<TAB>dd-MM-yyyy`
@@ -87,6 +89,15 @@ The loader now:
 GitHub Actions workflow: `.github/workflows/ci.yml`
 
 On each push/PR, CI runs `mvn -B verify` on Java 21.
+
+## DMG package
+DMG build workflow: `.github/workflows/dmg.yml`
+
+- Manual trigger: `Actions` -> `Build DMG` -> `Run workflow`
+- Tag trigger: push a tag like `v1.0.1`
+- Output artifact: `todo-again-dmg`
+
+Local + Docker test guide: [`docs/local-test.md`](docs/local-test.md)
 
 ## Screenshots (legacy UI)
 ![screenshot-1](ss1.png)

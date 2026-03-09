@@ -1,0 +1,59 @@
+name: Build DMG
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-dmg:
+    runs-on: macos-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build app jar and runtime dependencies
+        run: mvn -B -DskipTests clean package dependency:copy-dependencies -DincludeScope=runtime
+
+      - name: Build DMG with jpackage
+        shell: bash
+        run: |
+          set -euo pipefail
+          JAR_PATH="$(ls target/todo-again-*.jar | head -n 1)"
+          JAR_FILE="$(basename "$JAR_PATH")"
+
+          mkdir -p target/jpackage-input
+          cp "$JAR_PATH" target/jpackage-input/
+          cp target/dependency/*.jar target/jpackage-input/
+
+          APP_VERSION="0.0.${GITHUB_RUN_NUMBER}"
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            APP_VERSION="${GITHUB_REF_NAME#v}"
+          fi
+
+          jpackage \
+            --type dmg \
+            --name "todo-again" \
+            --dest target/dist \
+            --input target/jpackage-input \
+            --main-jar "$JAR_FILE" \
+            --main-class yapilacaklarListesi.Main \
+            --app-version "$APP_VERSION"
+
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: todo-again-dmg
+          path: target/dist/*.dmg
+          if-no-files-found: error

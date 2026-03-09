@@ -1,6 +1,7 @@
 services:
   maven:
     image: maven:3.9.11-eclipse-temurin-21
+    platform: linux/amd64
     working_dir: /workspace
     volumes:
       - .:/workspace

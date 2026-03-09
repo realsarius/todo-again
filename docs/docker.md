@@ -32,4 +32,5 @@ docker compose run --rm maven clean package -DskipTests
 ## Notes
 - Maven dependency cache is persisted in Docker volume: `maven-cache`.
 - Source code is mounted from your local working directory into the container.
+- Service runs as `linux/amd64` to avoid missing OpenJFX `linux-aarch64` artifacts on ARM hosts.
 - JavaFX desktop UI run (`javafx:run`) is not recommended inside container by default, because it requires extra host display forwarding setup.
