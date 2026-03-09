@@ -16,6 +16,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -45,6 +46,7 @@ import java.util.function.Predicate;
 // Controller kısmının içerisinde nesneye yönelik kısmı ile ilgili bir şey yok ancak açıklamaları yapacağım.
 public class Controller {
 
+    @FXML private MenuItem yeniFXML;
     @FXML private MenuItem farkliKaydetFXML;
     @FXML private MenuItem kaydetFXML;
     @FXML private MenuItem silFXML;
@@ -54,6 +56,7 @@ public class Controller {
     @FXML private ToggleButton pomodoroToggleButtonFXML;
     @FXML private VBox vbox;
     @FXML private ToggleButton bugunToggleButton;
+    @FXML private TextField aramaFXML;
     @FXML private ListView<Yapilacak> yapilacakListeFXML;
     @FXML private Label tarihLabel;
     @FXML private TextArea detayFXML;
@@ -61,6 +64,7 @@ public class Controller {
     private FilteredList<Yapilacak> yapilacakFilteredList;
     private Predicate<Yapilacak> tumYapilacaklarPredicate;
     private Predicate<Yapilacak> bugunYapilacaklarPredicate;
+    private Predicate<Yapilacak> aramaPredicate;
     Clipboard sistemPanosu = Clipboard.getSystemClipboard();
 
     private Pomodoro suankiPomodoro;
@@ -76,6 +80,9 @@ public class Controller {
 
     // Program başlarken yapılacaklar
     public void initialize() {
+        yeniFXML.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
+        kaydetFXML.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
+        silFXML.setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
 
         farkliKaydetFXML.setOnAction(actionEvent -> {
             Stage stage = new Stage();
@@ -106,13 +113,14 @@ public class Controller {
         });
 
         detayFXML.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.isControlDown() && keyEvent.getCode().equals(KeyCode.S)) {
+            if (keyEvent.isShortcutDown() && keyEvent.getCode().equals(KeyCode.S)) {
                 try {
                     Yapilacak yapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
                     if (yapilacak == null) {
                         return;
                     }
                     taskService.gorevDetayiGuncelleVeKaydet(yapilacak, detayFXML.getText());
+                    keyEvent.consume();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -138,8 +146,10 @@ public class Controller {
 
         tumYapilacaklarPredicate = taskService.tumGorevlerFiltresi();
         bugunYapilacaklarPredicate = taskService.bugunGorevleriFiltresi();
+        aramaPredicate = taskService.tumGorevlerFiltresi();
 
         yapilacakFilteredList = new FilteredList<>(taskService.tumGorevler(), tumYapilacaklarPredicate);
+        aramaFXML.textProperty().addListener((observableValue, eskiDeger, yeniDeger) -> filtreleriUygula());
 
         SortedList<Yapilacak> sortedList = new SortedList<>(yapilacakFilteredList, Comparator.comparing(Yapilacak::getTarih));
 
@@ -154,6 +164,7 @@ public class Controller {
         yapilacakListeFXML.setItems(sortedList);
         yapilacakListeFXML.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         yapilacakListeFXML.getSelectionModel().selectFirst();
+        filtreleriUygula();
 
     }
 
@@ -327,22 +338,7 @@ public class Controller {
     // Bu metod ListView'deki herhangi bir yapılacağın Acik
     @FXML
     public void bugunYapilacakGoster() {
-        Yapilacak secilmisYapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
-        if (bugunToggleButton.isSelected()) {
-            yapilacakFilteredList.setPredicate(bugunYapilacaklarPredicate);
-            if (yapilacakFilteredList.isEmpty()) {
-                detayFXML.clear();
-                tarihLabel.setText("");
-            } else if (yapilacakFilteredList.contains(secilmisYapilacak)) {
-                yapilacakListeFXML.getSelectionModel().select(secilmisYapilacak);
-            } else {
-                yapilacakListeFXML.getSelectionModel().selectFirst();
-            }
-        } else {
-            yapilacakFilteredList.setPredicate(tumYapilacaklarPredicate);
-            yapilacakListeFXML.getSelectionModel().select(secilmisYapilacak);
-        }
-
+        filtreleriUygula();
     }
 
     // Alert sahnesi ile yapılan Hakkımda metodu.
@@ -487,6 +483,41 @@ public class Controller {
     private void adjustForDeselection() {
         kesFXML.setDisable(true);
         kopyalaFXML.setDisable(true);
+    }
+
+    private void filtreleriUygula() {
+        Yapilacak seciliYapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+        aramaPredicate = aramaFiltresiOlustur();
+
+        Predicate<Yapilacak> tarihFiltresi = bugunToggleButton.isSelected()
+                ? bugunYapilacaklarPredicate
+                : tumYapilacaklarPredicate;
+        yapilacakFilteredList.setPredicate(tarihFiltresi.and(aramaPredicate));
+
+        if (yapilacakFilteredList.isEmpty()) {
+            detayFXML.clear();
+            tarihLabel.setText("");
+            return;
+        }
+
+        if (seciliYapilacak != null && yapilacakFilteredList.contains(seciliYapilacak)) {
+            yapilacakListeFXML.getSelectionModel().select(seciliYapilacak);
+            return;
+        }
+        yapilacakListeFXML.getSelectionModel().selectFirst();
+    }
+
+    private Predicate<Yapilacak> aramaFiltresiOlustur() {
+        String aramaMetni = aramaFXML.getText();
+        if (aramaMetni == null || aramaMetni.isBlank()) {
+            return taskService.tumGorevlerFiltresi();
+        }
+        String kriter = aramaMetni.toLowerCase().trim();
+        return yapilacak -> {
+            String aciklama = yapilacak.getAciklama() == null ? "" : yapilacak.getAciklama().toLowerCase();
+            String detay = yapilacak.getDetay() == null ? "" : yapilacak.getDetay().toLowerCase();
+            return aciklama.contains(kriter) || detay.contains(kriter);
+        };
     }
 
 }

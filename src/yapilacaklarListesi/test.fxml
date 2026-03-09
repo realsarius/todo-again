@@ -42,6 +42,7 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -55,7 +56,7 @@
     <HBox VBox.vgrow="SOMETIMES">
         <MenuBar>
             <Menu mnemonicParsing="false" text="Dosya">
-                <MenuItem mnemonicParsing="false" onAction="#yeniYapilacakDialog" text="Yeni"/>
+                <MenuItem fx:id="yeniFXML" mnemonicParsing="false" onAction="#yeniYapilacakDialog" text="Yeni"/>
                 <SeparatorMenuItem mnemonicParsing="false"/>
                 <MenuItem mnemonicParsing="false" fx:id="silFXML" text="Sil"/>
                 <MenuItem mnemonicParsing="false" fx:id="kaydetFXML" text="Kaydet"/>
@@ -90,6 +91,7 @@
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </ToggleButton>
+        <TextField fx:id="aramaFXML" promptText="Görev ara..." prefWidth="180.0"/>
     </HBox>
     <SplitPane dividerPositions="0.24832962138084633, 0.7505567928730512" focusTraversable="true" VBox.vgrow="ALWAYS">
         <AnchorPane>
