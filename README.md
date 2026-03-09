@@ -19,10 +19,15 @@ Detailed roadmap: [`docs/revival-plan.md`](docs/revival-plan.md)
 - JaCoCo
 
 ## Prerequisites
-1. JDK 21 installed and available in `PATH`.
-2. Maven 3.9+ installed.
+Choose one setup:
 
-Check:
+1. Local setup
+   - JDK 21 installed and available in `PATH`
+   - Maven 3.9+ installed
+2. Docker setup
+   - Docker Desktop (or Docker Engine + Compose plugin)
+
+Local check:
 
 ```bash
 java -version
@@ -44,6 +49,25 @@ mvn clean verify
 This command runs:
 - unit tests (JUnit 5)
 - JaCoCo report and coverage check
+
+## Run with Docker (no local Java/Maven)
+If you do not want to install Java/Maven on your machine, use Docker Compose.
+
+Quick start:
+
+```bash
+docker compose run --rm maven clean verify
+```
+
+Other useful commands:
+
+```bash
+docker compose run --rm maven -v
+docker compose run --rm maven clean test
+docker compose run --rm maven clean package -DskipTests
+```
+
+Detailed guide: [`docs/docker.md`](docs/docker.md)
 
 ## Data file
 - Default data file: `Yapilacaklar.txt`

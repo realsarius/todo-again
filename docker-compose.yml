@@ -1,0 +1,13 @@
+services:
+  maven:
+    image: maven:3.9.11-eclipse-temurin-21
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - maven-cache:/root/.m2
+    environment:
+      MAVEN_OPTS: -Dmaven.repo.local=/root/.m2/repository
+    entrypoint: ["mvn"]
+
+volumes:
+  maven-cache:
