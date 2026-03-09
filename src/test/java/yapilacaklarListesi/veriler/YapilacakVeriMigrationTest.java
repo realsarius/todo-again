@@ -119,4 +119,63 @@ class YapilacakVeriMigrationTest {
         assertEquals("Yedekten", veri.getYapilacaklar().get(0).getAciklama());
         assertTrue(Files.readString(jsonDosya).contains("Yedekten"));
     }
+
+    @Test
+    void legacyYoksaJsonDosyasindanYuklenir() throws IOException {
+        Path tempKlasor = Files.createTempDirectory("yapilacaklar-json-oncelik");
+        Path legacyDosya = tempKlasor.resolve("Yapilacaklar.txt");
+
+        veri.setDosyaYolu(legacyDosya);
+        Path jsonDosya = veri.getJsonDosyaYolu();
+        Files.writeString(jsonDosya,
+                "{\n" +
+                        "  \"version\": 1,\n" +
+                        "  \"tasks\": [\n" +
+                        "    {\"aciklama\": \"JSON Kayit\", \"detay\": null, \"tarih\": \"09-03-2026\"}\n" +
+                        "  ]\n" +
+                        "}\n");
+
+        veri.yapilacaklariCagir();
+
+        assertEquals(1, veri.getYapilacaklar().size());
+        assertEquals("JSON Kayit", veri.getYapilacaklar().get(0).getAciklama());
+        assertEquals("", veri.getYapilacaklar().get(0).getDetay());
+        assertEquals(LocalDate.of(2026, 3, 9), veri.getYapilacaklar().get(0).getTarih());
+    }
+
+    @Test
+    void bosJsonIcerigiHataVermedenBosListeDoner() throws IOException {
+        Path tempKlasor = Files.createTempDirectory("yapilacaklar-json-bos");
+        Path legacyDosya = tempKlasor.resolve("Yapilacaklar.txt");
+
+        veri.setDosyaYolu(legacyDosya);
+        Path jsonDosya = veri.getJsonDosyaYolu();
+        Files.writeString(jsonDosya, "");
+
+        veri.yapilacaklariCagir();
+
+        assertTrue(veri.getYapilacaklar().isEmpty());
+    }
+
+    @Test
+    void jsonEksikAlanlariAtlarGecerliKaydiYukler() throws IOException {
+        Path tempKlasor = Files.createTempDirectory("yapilacaklar-json-eksik");
+        Path legacyDosya = tempKlasor.resolve("Yapilacaklar.txt");
+
+        veri.setDosyaYolu(legacyDosya);
+        Path jsonDosya = veri.getJsonDosyaYolu();
+        Files.writeString(jsonDosya,
+                "{\n" +
+                        "  \"version\": 1,\n" +
+                        "  \"tasks\": [\n" +
+                        "    {\"aciklama\": \"Eksik Tarih\", \"detay\": \"Detay\"},\n" +
+                        "    {\"aciklama\": \"Gecerli\", \"detay\": \"Detay\", \"tarih\": \"2026-03-09\"}\n" +
+                        "  ]\n" +
+                        "}\n");
+
+        veri.yapilacaklariCagir();
+
+        assertEquals(1, veri.getYapilacaklar().size());
+        assertEquals("Gecerli", veri.getYapilacaklar().get(0).getAciklama());
+    }
 }

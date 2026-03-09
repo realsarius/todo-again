@@ -6,10 +6,14 @@ import org.junit.jupiter.api.Test;
 import yapilacaklarListesi.veriler.Yapilacak;
 import yapilacaklarListesi.veriler.YapilacakVeri;
 
+import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TaskServiceTest {
@@ -24,7 +28,8 @@ class TaskServiceTest {
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown() throws Exception {
+        varsayilanYolaDon();
         veri.getYapilacaklar().clear();
     }
 
@@ -64,5 +69,58 @@ class TaskServiceTest {
 
         assertEquals(1, bugunAdedi);
         assertFalse(taskService.tumGorevler().isEmpty());
+    }
+
+    @Test
+    void nullGorevEkleVeSilCagrisindaListeDegismez() {
+        taskService.gorevEkle(null);
+        taskService.gorevSil(null);
+        assertTrue(taskService.tumGorevler().isEmpty());
+    }
+
+    @Test
+    void nullGorevDetayiGuncellemeHataFirlatmaz() {
+        taskService.gorevDetayiGuncelle(null, "detay");
+        assertTrue(taskService.tumGorevler().isEmpty());
+    }
+
+    @Test
+    void tumGorevlerFiltresiHerKayitIcinTrueDoner() {
+        Yapilacak gorev = new Yapilacak("Filtre", "detay", LocalDate.now());
+        assertTrue(taskService.tumGorevlerFiltresi().test(gorev));
+    }
+
+    @Test
+    void yapiciyaNullVerilirseHataFirlatir() {
+        assertThrows(NullPointerException.class, () -> new TaskService(null));
+    }
+
+    @Test
+    void guncelleVeKaydetCalisir() throws Exception {
+        Path tempDosya = Files.createTempFile("task-service", ".txt");
+        testYolunuAyarla(tempDosya);
+
+        Yapilacak gorev = new Yapilacak("Kayit", "ilk", LocalDate.of(2026, 3, 9));
+        taskService.gorevEkle(gorev);
+
+        taskService.gorevDetayiGuncelleVeKaydet(gorev, "guncel");
+
+        veri.getYapilacaklar().clear();
+        veri.yapilacaklariCagir();
+
+        assertEquals(1, veri.getYapilacaklar().size());
+        assertEquals("guncel", veri.getYapilacaklar().get(0).getDetay());
+    }
+
+    private void testYolunuAyarla(Path yol) throws Exception {
+        Method m = YapilacakVeri.class.getDeclaredMethod("setDosyaYolu", Path.class);
+        m.setAccessible(true);
+        m.invoke(veri, yol);
+    }
+
+    private void varsayilanYolaDon() throws Exception {
+        Method m = YapilacakVeri.class.getDeclaredMethod("varsayilanDosyaYolunaDon");
+        m.setAccessible(true);
+        m.invoke(veri);
     }
 }
