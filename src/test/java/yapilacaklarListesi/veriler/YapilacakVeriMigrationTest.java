@@ -79,4 +79,44 @@ class YapilacakVeriMigrationTest {
         assertEquals("Plan dokumani", veri.getYapilacaklar().get(0).getDetay());
         assertEquals(LocalDate.of(2026, 3, 9), veri.getYapilacaklar().get(0).getTarih());
     }
+
+    @Test
+    void txtDosyasiYukleninceJsonDosyasiOlusturulur() throws IOException {
+        Path tempDosya = Files.createTempFile("yapilacaklar-json-gecis", ".txt");
+        Files.writeString(tempDosya, "JSON Gecis\tDetay\t09-03-2026\n");
+
+        veri.setDosyaYolu(tempDosya);
+        veri.yapilacaklariCagir();
+
+        Path jsonDosya = veri.getJsonDosyaYolu();
+        assertTrue(Files.exists(jsonDosya));
+        String jsonIcerik = Files.readString(jsonDosya);
+        assertTrue(jsonIcerik.contains("\"version\": 1"));
+        assertTrue(jsonIcerik.contains("JSON Gecis"));
+    }
+
+    @Test
+    void bozukJsonDosyasiYedektenGeriYuklenir() throws IOException {
+        Path tempKlasor = Files.createTempDirectory("yapilacaklar-json-yedek");
+        Path legacyDosya = tempKlasor.resolve("Yapilacaklar.txt");
+
+        veri.setDosyaYolu(legacyDosya);
+        Path jsonDosya = veri.getJsonDosyaYolu();
+        Path yedekJson = Paths.get(jsonDosya.toString() + ".bak");
+
+        Files.writeString(jsonDosya, "{bozuk-json");
+        Files.writeString(yedekJson,
+                "{\n" +
+                        "  \"version\": 1,\n" +
+                        "  \"tasks\": [\n" +
+                        "    {\"aciklama\": \"Yedekten\", \"detay\": \"Kurtarma\", \"tarih\": \"2026-03-09\"}\n" +
+                        "  ]\n" +
+                        "}\n");
+
+        veri.yapilacaklariCagir();
+
+        assertEquals(1, veri.getYapilacaklar().size());
+        assertEquals("Yedekten", veri.getYapilacaklar().get(0).getAciklama());
+        assertTrue(Files.readString(jsonDosya).contains("Yedekten"));
+    }
 }
