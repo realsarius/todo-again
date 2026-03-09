@@ -43,6 +43,22 @@
     -fx-background-color: #ECECF1;
 }
 
+.app-menubar .context-menu {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10px;
+    -fx-border-color: #E5E5EA;
+    -fx-border-radius: 10px;
+    -fx-padding: 6px;
+}
+
+.app-menubar .menu-item {
+    -fx-background-radius: 6px;
+}
+
+.app-menubar .menu-item:focused {
+    -fx-background-color: #F2F2F7;
+}
+
 .pill-toggle {
     -fx-background-color: #FFFFFF;
     -fx-text-fill: #1C1C1E;
@@ -161,6 +177,11 @@
     -fx-background-color: #E5E5EA;
 }
 
+.app-split-pane > .split-pane-divider > .vertical-grabber,
+.app-split-pane > .split-pane-divider > .horizontal-grabber {
+    -fx-background-color: transparent;
+}
+
 .panel-left,
 .panel-right {
     -fx-background-color: #F5F5F7;
@@ -238,6 +259,7 @@
 .detail-text .content {
     -fx-background-color: #F5F5F7;
     -fx-background-radius: 8px;
+    -fx-padding: 8px 10px;
 }
 
 .detail-text:focused {
