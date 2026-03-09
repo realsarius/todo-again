@@ -80,7 +80,7 @@
                 <MenuItem mnemonicParsing="false" onAction="#hakkindaMetodu" text="Hakkımda"/>
             </Menu>
         </MenuBar>
-        <Pane blendMode="RED" HBox.hgrow="ALWAYS"/>
+        <Pane HBox.hgrow="ALWAYS"/>
         <ToggleButton fx:id="pomodoroToggleButtonFXML" styleClass="pill-toggle" text="Pomodoro">
             <cursor>
                 <Cursor fx:constant="HAND"/>

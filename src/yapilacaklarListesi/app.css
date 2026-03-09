@@ -37,6 +37,10 @@
     -fx-background-color: #F0F0F2;
 }
 
+.app-menubar > .container > .menu-button:showing {
+    -fx-background-color: #ECECF1;
+}
+
 .pill-toggle {
     -fx-background-color: #FFFFFF;
     -fx-text-fill: #1C1C1E;
@@ -58,11 +62,11 @@
 }
 
 .pill-filter {
-    -fx-background-color: #FFFFFF;
-    -fx-border-color: #D8D8DC;
+    -fx-background-color: #F2F2F7;
+    -fx-border-color: transparent;
     -fx-border-radius: 20px;
     -fx-background-radius: 20px;
-    -fx-padding: 2px 10px;
+    -fx-padding: 3px 10px;
 }
 
 .pill-filter:hover {
@@ -165,6 +169,16 @@
     -fx-text-fill: #1C1C1E;
     -fx-border-color: transparent transparent #F0F0F0 transparent;
     -fx-border-width: 0 0 1 0;
+}
+
+.task-list .scroll-bar:vertical,
+.task-list .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.task-list .scroll-bar .thumb {
+    -fx-background-color: #D1D1D6;
+    -fx-background-radius: 10px;
 }
 
 .task-list .placeholder .label,
