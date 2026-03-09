@@ -175,12 +175,10 @@ public class Controller {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
-                    setStyle("");
                     return;
                 }
                 String oncelikEtiketi = "[" + item.getOncelik().name() + "]";
                 setText(oncelikEtiketi + " " + item.getAciklama());
-                setStyle("-fx-text-fill: " + oncelikRengi(item.getOncelik()) + ";");
             }
         });
         yapilacakListeFXML.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -553,14 +551,6 @@ public class Controller {
             case "Orta" -> taskService.oncelikFiltresi(Oncelik.MEDIUM);
             case "Düşük" -> taskService.oncelikFiltresi(Oncelik.LOW);
             default -> taskService.tumGorevlerFiltresi();
-        };
-    }
-
-    private String oncelikRengi(Oncelik oncelik) {
-        return switch (oncelik) {
-            case HIGH -> "#d64545";
-            case MEDIUM -> "#b07d00";
-            case LOW -> "#2e7d32";
         };
     }
 
