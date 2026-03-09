@@ -205,6 +205,12 @@
     -fx-padding: 0;
 }
 
+.task-list:focused {
+    -fx-border-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+}
+
 .task-list .list-cell {
     -fx-cell-size: 52px;
     -fx-background-color: #FFFFFF;
@@ -259,6 +265,8 @@
     -fx-border-radius: 8px;
     -fx-font-size: 13px;
     -fx-text-fill: #1C1C1E;
+    -fx-highlight-fill: #DCE7FF;
+    -fx-highlight-text-fill: #1C1C1E;
 }
 
 .detail-text .content {
@@ -273,6 +281,16 @@
 
 .detail-text .scroll-pane {
     -fx-background-color: transparent;
+}
+
+.detail-text .scroll-bar:vertical,
+.detail-text .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.detail-text .scroll-bar .thumb {
+    -fx-background-color: #D1D1D6;
+    -fx-background-radius: 10px;
 }
 
 .detail-text:focused {
