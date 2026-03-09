@@ -32,17 +32,17 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import com.jfoenix.controls.JFXListView?>
-<?import com.jfoenix.controls.JFXToggleButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -80,16 +80,16 @@
             </Menu>
         </MenuBar>
         <Pane blendMode="RED" HBox.hgrow="ALWAYS"/>
-        <JFXToggleButton fx:id="pomodoroToggleButtonFXML" size="4.0" text="Pomodoro">
+        <ToggleButton fx:id="pomodoroToggleButtonFXML" text="Pomodoro">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
-        </JFXToggleButton>
-        <JFXToggleButton fx:id="bugunToggleButton" onAction="#bugunYapilacakGoster" size="4.0" text="Bugün">
+        </ToggleButton>
+        <ToggleButton fx:id="bugunToggleButton" onAction="#bugunYapilacakGoster" text="Bugün">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
-        </JFXToggleButton>
+        </ToggleButton>
     </HBox>
     <SplitPane dividerPositions="0.24832962138084633, 0.7505567928730512" focusTraversable="true" VBox.vgrow="ALWAYS">
         <AnchorPane>
@@ -107,7 +107,7 @@
                       VBox.vgrow="ALWAYS" wrapText="true"/>
         </VBox>
         <VBox prefHeight="200.0" prefWidth="100.0">
-            <JFXListView fx:id="yapilacakListeFXML" onKeyPressed="#tusaBasildiginda" VBox.vgrow="ALWAYS"/>
+            <ListView fx:id="yapilacakListeFXML" onKeyPressed="#tusaBasildiginda" VBox.vgrow="ALWAYS"/>
         </VBox>
     </SplitPane>
     <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">

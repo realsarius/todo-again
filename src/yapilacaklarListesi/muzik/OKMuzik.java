@@ -3,11 +3,9 @@ package yapilacaklarListesi.muzik;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
-import java.io.File;
-
 public class OKMuzik implements Muzik{
 
-    private String okButonMuzik;
+    private final String okButonMuzik;
 
     public OKMuzik(){
         this.okButonMuzik = "dialogOkButon.mp3";
@@ -15,7 +13,11 @@ public class OKMuzik implements Muzik{
 
     @Override
     public void oynat() {
-        Media sound = new Media(new File(this.okButonMuzik).toURI().toString());
+        var resource = getClass().getResource("/" + this.okButonMuzik);
+        if (resource == null) {
+            return;
+        }
+        Media sound = new Media(resource.toExternalForm());
         MediaPlayer mediaPlayer = new MediaPlayer(sound);
         mediaPlayer.play();
     }

@@ -1,8 +1,5 @@
 package yapilacaklarListesi;
 
-import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXToggleButton;
-
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -33,7 +30,10 @@ import yapilacaklarListesi.pomodoro.model.Pomodoro;
 import yapilacaklarListesi.pomodoro.model.PomodoroEnum;
 import yapilacaklarListesi.veriler.Yapilacak;
 import yapilacaklarListesi.veriler.YapilacakVeri;
+import java.awt.Desktop;
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
@@ -52,10 +52,10 @@ public class Controller {
     @FXML private MenuItem kesFXML;
     @FXML private MenuItem kopyalaFXML;
     @FXML private MenuItem yapistirFXML;
-    @FXML private JFXToggleButton pomodoroToggleButtonFXML;
+    @FXML private ToggleButton pomodoroToggleButtonFXML;
     @FXML private VBox vbox;
-    @FXML private JFXToggleButton bugunToggleButton;
-    @FXML private JFXListView<Yapilacak> yapilacakListeFXML;
+    @FXML private ToggleButton bugunToggleButton;
+    @FXML private ListView<Yapilacak> yapilacakListeFXML;
     @FXML private Label tarihLabel;
     @FXML private TextArea detayFXML;
 
@@ -81,6 +81,9 @@ public class Controller {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Text");
             File file = fileChooser.showSaveDialog(stage);
+            if (file == null) {
+                return;
+            }
             final String content = detayFXML.getText();
             try (final BufferedWriter writer = Files.newBufferedWriter(file.getAbsoluteFile().toPath(), StandardCharsets.UTF_8, StandardOpenOption.CREATE)) {
                 writer.write(content);
@@ -105,6 +108,9 @@ public class Controller {
             if (keyEvent.isControlDown() && keyEvent.getCode().equals(KeyCode.S)) {
                 try {
                     Yapilacak yapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+                    if (yapilacak == null) {
+                        return;
+                    }
                     yapilacak.setDetay(detayFXML.getText());
                     YapilacakVeri.getInstance().yapilacaklariKaydet();
                 } catch (IOException e) {
@@ -115,11 +121,17 @@ public class Controller {
 
         silFXML.setOnAction((ActionEvent e) -> {
             Yapilacak yapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+            if (yapilacak == null) {
+                return;
+            }
             yapilacakSil(yapilacak);
         });
 
         kaydetFXML.setOnAction((ActionEvent e) -> {
             Yapilacak yapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+            if (yapilacak == null) {
+                return;
+            }
             yapilacak.setDetay(detayFXML.getText());
             yapilacakKaydet();
         });
@@ -255,6 +267,9 @@ public class Controller {
         if (cikti.isPresent() && cikti.get() == ButtonType.OK) {
             DialogController controller = fxmlLoader.getController();
             Yapilacak yeniYapilacak = controller.ciktiyiGoster();
+            if (yeniYapilacak == null) {
+                return;
+            }
             yapilacakListeFXML.getSelectionModel().select(yeniYapilacak);
             MuzikOynatici.okMuzigiOynat();
         } else {
@@ -266,20 +281,17 @@ public class Controller {
     @FXML
     public void emailGonderMetodu() {
         try {
-            Runtime rt = Runtime.getRuntime();
             String url = "mailto:tehadro@gmail.com?subject=Program%20Hakkinda";
-            String[] browsers = { "epiphany", "firefox", "mozilla", "konqueror",
-                    "netscape", "opera", "links", "lynx", "chrome", "operagx" };
-
-            StringBuilder cmd = new StringBuilder();
-            for (int i = 0; i < browsers.length; i++)
-                if(i == 0)
-                    cmd.append(String.format(    "%s \"%s\"", browsers[i], url));
-                else
-                    cmd.append(String.format(" || %s \"%s\"", browsers[i], url));
-
-            rt.exec(new String[] { "sh", "-c", cmd.toString() });
-        } catch (IOException e) {
+            if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.MAIL)) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("E-posta Destegi");
+                alert.setHeaderText("Sistem e-posta acamiyor");
+                alert.setContentText("Lutfen manuel olarak tehadro@gmail.com adresine ulasin.");
+                alert.showAndWait();
+                return;
+            }
+            Desktop.getDesktop().mail(new URI(url));
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -297,6 +309,9 @@ public class Controller {
     // ListView'den seçili olan yapılacak siliniyor. Dikkat edilmesi gerekn kısımlardan bir tanesi ise
     // Yapılacaklar kaydedilirken newLine'da eklendiği için yapılacak silinirken boşluk kalmıyor.
     public void yapilacakSil(Yapilacak yapilacak) {
+        if (yapilacak == null) {
+            return;
+        }
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Yapilacagi Sil");
         alert.setHeaderText("Yapılacak: " + yapilacak.getAciklama());
@@ -452,12 +467,11 @@ public class Controller {
     }
 
     private boolean birSeySeciliMi() {
-        TextField textField = new TextField();
-        return textField.getSelectedText().isEmpty();
+        return !detayFXML.getSelectedText().isEmpty();
     }
 
     private void bosPanoIcinAyarlar() {
-        kopyalaFXML.setDisable(true);  // Yapıştırılacak bir şey yok ise
+        yapistirFXML.setDisable(true);  // Yapıştırılacak bir şey yok ise
     }
 
     private void panoIceriginiAyarla() {
