@@ -7,10 +7,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class YapilacakVeriMigrationTest {
@@ -78,6 +81,8 @@ class YapilacakVeriMigrationTest {
         assertEquals("Yenileme", veri.getYapilacaklar().get(0).getAciklama());
         assertEquals("Plan dokumani", veri.getYapilacaklar().get(0).getDetay());
         assertEquals(LocalDate.of(2026, 3, 9), veri.getYapilacaklar().get(0).getTarih());
+        assertNotNull(veri.getYapilacaklar().get(0).getId());
+        assertEquals(Oncelik.MEDIUM, veri.getYapilacaklar().get(0).getOncelik());
     }
 
     @Test
@@ -177,5 +182,39 @@ class YapilacakVeriMigrationTest {
 
         assertEquals(1, veri.getYapilacaklar().size());
         assertEquals("Gecerli", veri.getYapilacaklar().get(0).getAciklama());
+    }
+
+    @Test
+    void jsonYeniAlanlarIleYuklenir() throws IOException {
+        Path tempKlasor = Files.createTempDirectory("yapilacaklar-json-genis");
+        Path legacyDosya = tempKlasor.resolve("Yapilacaklar.txt");
+
+        veri.setDosyaYolu(legacyDosya);
+        Path jsonDosya = veri.getJsonDosyaYolu();
+        Files.writeString(jsonDosya,
+                "{\n" +
+                        "  \"version\": 1,\n" +
+                        "  \"tasks\": [\n" +
+                        "    {\n" +
+                        "      \"id\": \"task-123\",\n" +
+                        "      \"aciklama\": \"Yeni Alanlar\",\n" +
+                        "      \"detay\": \"Detay\",\n" +
+                        "      \"tarih\": \"2026-03-09\",\n" +
+                        "      \"createdAt\": \"2026-03-09T10:00:00Z\",\n" +
+                        "      \"updatedAt\": \"2026-03-09T12:00:00Z\",\n" +
+                        "      \"oncelik\": \"HIGH\",\n" +
+                        "      \"tags\": [\"is\", \"kisisel\"]\n" +
+                        "    }\n" +
+                        "  ]\n" +
+                        "}\n");
+
+        veri.yapilacaklariCagir();
+
+        Yapilacak kayit = veri.getYapilacaklar().get(0);
+        assertEquals("task-123", kayit.getId());
+        assertEquals(Oncelik.HIGH, kayit.getOncelik());
+        assertEquals(Instant.parse("2026-03-09T10:00:00Z"), kayit.getCreatedAt());
+        assertEquals(Instant.parse("2026-03-09T12:00:00Z"), kayit.getUpdatedAt());
+        assertEquals(List.of("is", "kisisel"), kayit.getTags());
     }
 }

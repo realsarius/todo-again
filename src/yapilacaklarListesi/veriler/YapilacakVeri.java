@@ -14,11 +14,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class YapilacakVeri {
 
@@ -171,7 +173,22 @@ public class YapilacakVeri {
                     continue;
                 }
                 String detay = kayit.detay == null ? "" : kayit.detay;
-                yapilacaklar.add(new Yapilacak(kayit.aciklama, detay, tarih));
+                String id = (kayit.id == null || kayit.id.isBlank()) ? UUID.randomUUID().toString() : kayit.id;
+                Instant createdAt = parseJsonInstant(kayit.createdAt, Instant.now());
+                Instant updatedAt = parseJsonInstant(kayit.updatedAt, createdAt);
+                Oncelik oncelik = parseOncelik(kayit.oncelik);
+                List<String> tags = temizleTagler(kayit.tags);
+
+                yapilacaklar.add(new Yapilacak(
+                        id,
+                        kayit.aciklama,
+                        detay,
+                        tarih,
+                        createdAt,
+                        updatedAt,
+                        oncelik,
+                        tags
+                ));
             }
             return true;
         } catch (JsonParseException e) {
@@ -236,9 +253,14 @@ public class YapilacakVeri {
 
         for (Yapilacak yapilacak : yapilacaklar) {
             YapilacakKaydi kayit = new YapilacakKaydi();
+            kayit.id = yapilacak.getId();
             kayit.aciklama = temizleAlan(yapilacak.getAciklama());
             kayit.detay = temizleAlan(yapilacak.getDetay());
             kayit.tarih = yapilacak.getTarih().toString();
+            kayit.createdAt = yapilacak.getCreatedAt().toString();
+            kayit.updatedAt = yapilacak.getUpdatedAt().toString();
+            kayit.oncelik = yapilacak.getOncelik().name();
+            kayit.tags = temizleTagler(yapilacak.getTags());
             jsonVeri.tasks.add(kayit);
         }
 
@@ -255,6 +277,45 @@ public class YapilacakVeri {
 
     private Path yedekDosyaYolu(Path kaynak) {
         return Paths.get(kaynak.toString() + ".bak");
+    }
+
+    private Instant parseJsonInstant(String deger, Instant varsayilan) {
+        if (deger == null || deger.isBlank()) {
+            return varsayilan;
+        }
+        try {
+            return Instant.parse(deger);
+        } catch (DateTimeParseException e) {
+            return varsayilan;
+        }
+    }
+
+    private Oncelik parseOncelik(String deger) {
+        if (deger == null || deger.isBlank()) {
+            return Oncelik.MEDIUM;
+        }
+        try {
+            return Oncelik.valueOf(deger.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return Oncelik.MEDIUM;
+        }
+    }
+
+    private List<String> temizleTagler(List<String> tags) {
+        List<String> temizListe = new ArrayList<>();
+        if (tags == null) {
+            return temizListe;
+        }
+        for (String tag : tags) {
+            if (tag == null) {
+                continue;
+            }
+            String temiz = tag.trim();
+            if (!temiz.isEmpty()) {
+                temizListe.add(temiz);
+            }
+        }
+        return temizListe;
     }
 
     private Path jsonYolunuUret(Path txtYolu) {
@@ -282,8 +343,13 @@ public class YapilacakVeri {
     }
 
     private static class YapilacakKaydi {
+        String id;
         String aciklama;
         String detay;
         String tarih;
+        String createdAt;
+        String updatedAt;
+        String oncelik;
+        List<String> tags;
     }
 }
