@@ -27,6 +27,8 @@ Adımlar:
 Bu adım için lokalde JDK 21 (jpackage dahil) gerekli.
 
 ```bash
+export JAVA_HOME="/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home"
+export PATH="$JAVA_HOME/bin:$PATH"
 mvn -DskipTests clean package dependency:copy-dependencies -DincludeScope=runtime
 ```
 
@@ -46,5 +48,5 @@ jpackage \
   --input target/jpackage-input \
   --main-jar "$JAR_FILE" \
   --main-class yapilacaklarListesi.Main \
-  --app-version "0.0.1"
+  --app-version "1.0.1"
 ```
