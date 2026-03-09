@@ -227,17 +227,17 @@
 }
 
 .detail-text {
-    -fx-background-color: #FFFFFF;
-    -fx-background-radius: 10px;
-    -fx-border-color: #E5E5EA;
-    -fx-border-radius: 10px;
+    -fx-background-color: #F5F5F7;
+    -fx-background-radius: 8px;
+    -fx-border-color: transparent;
+    -fx-border-radius: 8px;
     -fx-font-size: 13px;
     -fx-text-fill: #1C1C1E;
 }
 
 .detail-text .content {
-    -fx-background-color: #FFFFFF;
-    -fx-background-radius: 10px;
+    -fx-background-color: #F5F5F7;
+    -fx-background-radius: 8px;
 }
 
 .detail-text:focused {

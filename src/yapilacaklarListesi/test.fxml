@@ -32,7 +32,6 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -116,9 +115,6 @@
         </VBox>
     </SplitPane>
     <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" styleClass="status-bar" VBox.vgrow="NEVER">
-        <padding>
-            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
-        </padding>
         <Pane HBox.hgrow="ALWAYS"/>
         <Label fx:id="tarihLabel" styleClass="secondary-text" HBox.hgrow="NEVER"/>
     </HBox>
