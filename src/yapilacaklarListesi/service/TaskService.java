@@ -1,6 +1,7 @@
 package yapilacaklarListesi.service;
 
 import javafx.collections.ObservableList;
+import yapilacaklarListesi.veriler.Oncelik;
 import yapilacaklarListesi.veriler.Yapilacak;
 import yapilacaklarListesi.veriler.YapilacakVeri;
 
@@ -27,6 +28,13 @@ public class TaskService {
 
     public Predicate<Yapilacak> bugunGorevleriFiltresi() {
         return yapilacak -> yapilacak.getTarih().equals(LocalDate.now());
+    }
+
+    public Predicate<Yapilacak> oncelikFiltresi(Oncelik oncelik) {
+        if (oncelik == null) {
+            return tumGorevlerFiltresi();
+        }
+        return yapilacak -> yapilacak.getOncelik() == oncelik;
     }
 
     public void gorevEkle(Yapilacak yapilacak) {

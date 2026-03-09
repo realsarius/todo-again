@@ -57,6 +57,7 @@ public class Controller {
     @FXML private ToggleButton pomodoroToggleButtonFXML;
     @FXML private VBox vbox;
     @FXML private ToggleButton bugunToggleButton;
+    @FXML private ChoiceBox<String> oncelikFiltreFXML;
     @FXML private TextField aramaFXML;
     @FXML private ListView<Yapilacak> yapilacakListeFXML;
     @FXML private Label tarihLabel;
@@ -66,6 +67,7 @@ public class Controller {
     private Predicate<Yapilacak> tumYapilacaklarPredicate;
     private Predicate<Yapilacak> bugunYapilacaklarPredicate;
     private Predicate<Yapilacak> aramaPredicate;
+    private Predicate<Yapilacak> oncelikPredicate;
     Clipboard sistemPanosu = Clipboard.getSystemClipboard();
 
     private Pomodoro suankiPomodoro;
@@ -84,6 +86,8 @@ public class Controller {
         yeniFXML.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
         kaydetFXML.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         silFXML.setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
+        oncelikFiltreFXML.getItems().setAll("Tümü", "Yüksek", "Orta", "Düşük");
+        oncelikFiltreFXML.setValue("Tümü");
 
         farkliKaydetFXML.setOnAction(actionEvent -> {
             Stage stage = new Stage();
@@ -148,9 +152,11 @@ public class Controller {
         tumYapilacaklarPredicate = taskService.tumGorevlerFiltresi();
         bugunYapilacaklarPredicate = taskService.bugunGorevleriFiltresi();
         aramaPredicate = taskService.tumGorevlerFiltresi();
+        oncelikPredicate = taskService.tumGorevlerFiltresi();
 
         yapilacakFilteredList = new FilteredList<>(taskService.tumGorevler(), tumYapilacaklarPredicate);
         aramaFXML.textProperty().addListener((observableValue, eskiDeger, yeniDeger) -> filtreleriUygula());
+        oncelikFiltreFXML.getSelectionModel().selectedItemProperty().addListener((obs, eski, yeni) -> filtreleriUygula());
 
         SortedList<Yapilacak> sortedList = new SortedList<>(yapilacakFilteredList, Comparator.comparing(Yapilacak::getTarih));
 
@@ -503,11 +509,12 @@ public class Controller {
     private void filtreleriUygula() {
         Yapilacak seciliYapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
         aramaPredicate = aramaFiltresiOlustur();
+        oncelikPredicate = oncelikFiltresiOlustur();
 
         Predicate<Yapilacak> tarihFiltresi = bugunToggleButton.isSelected()
                 ? bugunYapilacaklarPredicate
                 : tumYapilacaklarPredicate;
-        yapilacakFilteredList.setPredicate(tarihFiltresi.and(aramaPredicate));
+        yapilacakFilteredList.setPredicate(tarihFiltresi.and(aramaPredicate).and(oncelikPredicate));
 
         if (yapilacakFilteredList.isEmpty()) {
             detayFXML.clear();
@@ -531,7 +538,21 @@ public class Controller {
         return yapilacak -> {
             String aciklama = yapilacak.getAciklama() == null ? "" : yapilacak.getAciklama().toLowerCase();
             String detay = yapilacak.getDetay() == null ? "" : yapilacak.getDetay().toLowerCase();
-            return aciklama.contains(kriter) || detay.contains(kriter);
+            String tagler = String.join(" ", yapilacak.getTags()).toLowerCase();
+            return aciklama.contains(kriter) || detay.contains(kriter) || tagler.contains(kriter);
+        };
+    }
+
+    private Predicate<Yapilacak> oncelikFiltresiOlustur() {
+        String secim = oncelikFiltreFXML.getValue();
+        if (secim == null || secim.isBlank() || secim.equals("Tümü")) {
+            return taskService.tumGorevlerFiltresi();
+        }
+        return switch (secim) {
+            case "Yüksek" -> taskService.oncelikFiltresi(Oncelik.HIGH);
+            case "Orta" -> taskService.oncelikFiltresi(Oncelik.MEDIUM);
+            case "Düşük" -> taskService.oncelikFiltresi(Oncelik.LOW);
+            default -> taskService.tumGorevlerFiltresi();
         };
     }
 

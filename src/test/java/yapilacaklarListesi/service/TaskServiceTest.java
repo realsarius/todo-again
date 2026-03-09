@@ -3,6 +3,7 @@ package yapilacaklarListesi.service;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import yapilacaklarListesi.veriler.Oncelik;
 import yapilacaklarListesi.veriler.Yapilacak;
 import yapilacaklarListesi.veriler.YapilacakVeri;
 
@@ -110,6 +111,33 @@ class TaskServiceTest {
 
         assertEquals(1, veri.getYapilacaklar().size());
         assertEquals("guncel", veri.getYapilacaklar().get(0).getDetay());
+    }
+
+    @Test
+    void oncelikFiltresiSecilenOnceligiDoner() {
+        Yapilacak high = new Yapilacak("A", "detay", LocalDate.now());
+        high.setOncelik(Oncelik.HIGH);
+        Yapilacak low = new Yapilacak("B", "detay", LocalDate.now());
+        low.setOncelik(Oncelik.LOW);
+
+        taskService.gorevEkle(high);
+        taskService.gorevEkle(low);
+
+        long highSayisi = taskService.tumGorevler().stream()
+                .filter(taskService.oncelikFiltresi(Oncelik.HIGH))
+                .count();
+        assertEquals(1, highSayisi);
+    }
+
+    @Test
+    void oncelikFiltresiNullVerilirseTumunuDoner() {
+        Yapilacak gorev = new Yapilacak("Tum", "detay", LocalDate.now());
+        taskService.gorevEkle(gorev);
+
+        long sayi = taskService.tumGorevler().stream()
+                .filter(taskService.oncelikFiltresi(null))
+                .count();
+        assertEquals(1, sayi);
     }
 
     private void testYolunuAyarla(Path yol) throws Exception {
