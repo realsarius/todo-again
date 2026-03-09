@@ -2,18 +2,30 @@
     -fx-font-family: "SF Pro Text", "Segoe UI", "Helvetica Neue", sans-serif;
     -fx-font-size: 13px;
     -fx-background-color: #FFFFFF;
+    -app-bg: #FFFFFF;
+    -panel-bg: #F5F5F7;
+    -line-color: #E5E5EA;
+    -text-primary: #1C1C1E;
+    -text-secondary: #8A8A8E;
+    -toolbar-hover: #E8E8ED;
+    -menu-hover: #F0F0F2;
+    -menu-active: #ECECF1;
+    -list-hover: #F0F4FF;
+    -list-selected: #E8EFFF;
+    -list-accent: #4A7CFF;
+    -search-bg: #F2F2F7;
 }
 
 .app-root {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: -app-bg;
 }
 
 .top-toolbar {
     -fx-alignment: center-left;
     -fx-spacing: 10px;
     -fx-padding: 10px 16px;
-    -fx-background-color: #FFFFFF;
-    -fx-border-color: transparent transparent #E5E5EA transparent;
+    -fx-background-color: -app-bg;
+    -fx-border-color: transparent transparent -line-color transparent;
     -fx-border-width: 0 0 1 0;
 }
 
@@ -36,17 +48,17 @@
 }
 
 .app-menubar > .container > .menu-button:hover {
-    -fx-background-color: #F0F0F2;
+    -fx-background-color: -menu-hover;
 }
 
 .app-menubar > .container > .menu-button:showing {
-    -fx-background-color: #ECECF1;
+    -fx-background-color: -menu-active;
 }
 
 .app-menubar .context-menu {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: -app-bg;
     -fx-background-radius: 10px;
-    -fx-border-color: #E5E5EA;
+    -fx-border-color: -line-color;
     -fx-border-radius: 10px;
     -fx-padding: 6px;
 }
@@ -56,12 +68,12 @@
 }
 
 .app-menubar .menu-item:focused {
-    -fx-background-color: #F2F2F7;
+    -fx-background-color: -search-bg;
 }
 
 .pill-toggle {
-    -fx-background-color: #FFFFFF;
-    -fx-text-fill: #1C1C1E;
+    -fx-background-color: -app-bg;
+    -fx-text-fill: -text-primary;
     -fx-border-color: #D8D8DC;
     -fx-border-radius: 20px;
     -fx-background-radius: 20px;
@@ -70,7 +82,7 @@
 }
 
 .pill-toggle:hover {
-    -fx-background-color: #E8E8ED;
+    -fx-background-color: -toolbar-hover;
 }
 
 .pill-toggle:selected {
@@ -80,7 +92,7 @@
 }
 
 .pill-filter {
-    -fx-background-color: #F2F2F7;
+    -fx-background-color: -search-bg;
     -fx-border-color: transparent;
     -fx-border-radius: 20px;
     -fx-background-radius: 20px;
@@ -88,12 +100,12 @@
 }
 
 .pill-filter:hover {
-    -fx-background-color: #E8E8ED;
+    -fx-background-color: -toolbar-hover;
 }
 
 .pill-filter .list-cell,
 .pill-filter .text {
-    -fx-text-fill: #1C1C1E;
+    -fx-text-fill: -text-primary;
     -fx-font-size: 13px;
 }
 
@@ -115,29 +127,29 @@
 }
 
 .pill-filter .combo-box-popup .list-view {
-    -fx-background-color: #FFFFFF;
-    -fx-border-color: #E5E5EA;
+    -fx-background-color: -app-bg;
+    -fx-border-color: -line-color;
     -fx-background-radius: 8px;
     -fx-border-radius: 8px;
 }
 
 .pill-filter .combo-box-popup .list-cell {
-    -fx-background-color: #FFFFFF;
-    -fx-text-fill: #1C1C1E;
+    -fx-background-color: -app-bg;
+    -fx-text-fill: -text-primary;
     -fx-padding: 8px 12px;
 }
 
 .pill-filter .combo-box-popup .list-cell:hover {
-    -fx-background-color: #F2F2F7;
+    -fx-background-color: -search-bg;
 }
 
 .pill-filter .combo-box-popup .list-cell:selected {
-    -fx-background-color: #E8EFFF;
-    -fx-text-fill: #1C1C1E;
+    -fx-background-color: -list-selected;
+    -fx-text-fill: -text-primary;
 }
 
 .search-wrap {
-    -fx-background-color: #F2F2F7;
+    -fx-background-color: -search-bg;
     -fx-background-radius: 10px;
     -fx-border-color: transparent;
     -fx-border-radius: 10px;
@@ -160,7 +172,7 @@
     -fx-border-color: transparent;
     -fx-padding: 7px 6px 7px 0;
     -fx-prompt-text-fill: #8A8A8E;
-    -fx-text-fill: #1C1C1E;
+    -fx-text-fill: -text-primary;
 }
 
 .search-field:focused {
@@ -169,12 +181,12 @@
 }
 
 .app-split-pane {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: -app-bg;
 }
 
 .app-split-pane > .split-pane-divider {
     -fx-padding: 0 0 0 1px;
-    -fx-background-color: #E5E5EA;
+    -fx-background-color: -line-color;
 }
 
 .app-split-pane > .split-pane-divider > .vertical-grabber,
@@ -184,12 +196,12 @@
 
 .panel-left,
 .panel-right {
-    -fx-background-color: #F5F5F7;
+    -fx-background-color: -panel-bg;
     -fx-padding: 16px;
 }
 
 .panel-center {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: -app-bg;
 }
 
 .section-title {
@@ -199,8 +211,8 @@
 }
 
 .task-list {
-    -fx-background-color: #FFFFFF;
-    -fx-control-inner-background: #FFFFFF;
+    -fx-background-color: -app-bg;
+    -fx-control-inner-background: -app-bg;
     -fx-border-color: transparent;
     -fx-padding: 0;
 }
@@ -213,8 +225,8 @@
 
 .task-list .list-cell {
     -fx-cell-size: 52px;
-    -fx-background-color: #FFFFFF;
-    -fx-text-fill: #1C1C1E;
+    -fx-background-color: -app-bg;
+    -fx-text-fill: -text-primary;
     -fx-font-size: 14px;
     -fx-font-weight: 500;
     -fx-alignment: center-left;
@@ -224,19 +236,19 @@
 }
 
 .task-list .list-cell:empty {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: -app-bg;
     -fx-border-color: transparent;
 }
 
 .task-list .list-cell:filled:hover {
-    -fx-background-color: #F0F4FF;
+    -fx-background-color: -list-hover;
 }
 
 .task-list .list-cell:filled:selected,
 .task-list .list-cell:filled:selected:hover {
-    -fx-background-color: #4A7CFF, #E8EFFF;
+    -fx-background-color: -list-accent, -list-selected;
     -fx-background-insets: 0, 0 0 0 3;
-    -fx-text-fill: #1C1C1E;
+    -fx-text-fill: -text-primary;
     -fx-border-color: transparent transparent #F0F0F0 transparent;
     -fx-border-width: 0 0 1 0;
 }
@@ -259,24 +271,24 @@
 }
 
 .detail-text {
-    -fx-background-color: #F5F5F7;
+    -fx-background-color: -panel-bg;
     -fx-background-radius: 8px;
     -fx-border-color: transparent;
     -fx-border-radius: 8px;
     -fx-font-size: 13px;
-    -fx-text-fill: #1C1C1E;
+    -fx-text-fill: -text-primary;
     -fx-highlight-fill: #DCE7FF;
     -fx-highlight-text-fill: #1C1C1E;
 }
 
 .detail-text .content {
-    -fx-background-color: #F5F5F7;
+    -fx-background-color: -panel-bg;
     -fx-background-radius: 8px;
     -fx-padding: 8px 10px;
 }
 
 .detail-text .viewport {
-    -fx-background-color: #F5F5F7;
+    -fx-background-color: -panel-bg;
 }
 
 .detail-text .scroll-pane {
@@ -298,13 +310,13 @@
 }
 
 .status-bar {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: -app-bg;
     -fx-padding: 8px 16px;
-    -fx-border-color: #E5E5EA transparent transparent transparent;
+    -fx-border-color: -line-color transparent transparent transparent;
     -fx-border-width: 1 0 0 0;
 }
 
 .secondary-text {
     -fx-font-size: 12px;
-    -fx-text-fill: #8A8A8E;
+    -fx-text-fill: -text-secondary;
 }
