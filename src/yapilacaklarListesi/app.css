@@ -21,10 +21,12 @@
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-padding: 0;
+    -fx-background-insets: 0;
 }
 
 .app-menubar > .container {
     -fx-background-color: transparent;
+    -fx-background-insets: 0;
 }
 
 .app-menubar > .container > .menu-button {
@@ -94,6 +96,28 @@
     -fx-background-color: #6E6E73;
     -fx-shape: "M 0 0 L 4 4 L 8 0 Z";
     -fx-padding: 0.28em;
+}
+
+.pill-filter .combo-box-popup .list-view {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E5E5EA;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.pill-filter .combo-box-popup .list-cell {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #1C1C1E;
+    -fx-padding: 8px 12px;
+}
+
+.pill-filter .combo-box-popup .list-cell:hover {
+    -fx-background-color: #F2F2F7;
+}
+
+.pill-filter .combo-box-popup .list-cell:selected {
+    -fx-background-color: #E8EFFF;
+    -fx-text-fill: #1C1C1E;
 }
 
 .search-wrap {
@@ -166,6 +190,7 @@
     -fx-text-fill: #1C1C1E;
     -fx-font-size: 14px;
     -fx-font-weight: 500;
+    -fx-alignment: center-left;
     -fx-padding: 0 12px 0 14px;
     -fx-border-color: transparent transparent #F0F0F0 transparent;
     -fx-border-width: 0 0 1 0;
