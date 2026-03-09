@@ -50,7 +50,11 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("test.fxml")));
         primaryStage.setTitle("Yapılacaklar Listesi");
-        primaryStage.setScene(new Scene(root, 960, 550));
+        Scene scene = new Scene(root, 960, 550);
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("app.css")).toExternalForm());
+        primaryStage.setScene(scene);
+        primaryStage.setMinWidth(900);
+        primaryStage.setMinHeight(580);
         primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/files.png"))));
 
         trayReady = trayKur(primaryStage);

@@ -1,0 +1,205 @@
+.root {
+    -fx-font-family: "SF Pro Text", "Segoe UI", "Helvetica Neue", sans-serif;
+    -fx-font-size: 13px;
+    -fx-background-color: #FFFFFF;
+}
+
+.app-root {
+    -fx-background-color: #FFFFFF;
+}
+
+.top-toolbar {
+    -fx-alignment: center-left;
+    -fx-spacing: 10px;
+    -fx-padding: 10px 16px;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent transparent #E5E5EA transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.app-menubar {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.app-menubar > .container {
+    -fx-background-color: transparent;
+}
+
+.app-menubar > .container > .menu-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-padding: 6px 10px;
+}
+
+.app-menubar > .container > .menu-button:hover {
+    -fx-background-color: #F0F0F2;
+}
+
+.pill-toggle {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #1C1C1E;
+    -fx-border-color: #D8D8DC;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-padding: 6px 14px;
+    -fx-font-weight: 500;
+}
+
+.pill-toggle:hover {
+    -fx-background-color: #E8E8ED;
+}
+
+.pill-toggle:selected {
+    -fx-background-color: #FF6B6B;
+    -fx-border-color: #FF6B6B;
+    -fx-text-fill: #FFFFFF;
+}
+
+.pill-filter {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D8D8DC;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-padding: 2px 10px;
+}
+
+.pill-filter:hover {
+    -fx-background-color: #E8E8ED;
+}
+
+.pill-filter .label {
+    -fx-text-fill: #1C1C1E;
+    -fx-font-size: 13px;
+}
+
+.pill-filter .open-button {
+    -fx-background-color: transparent;
+}
+
+.pill-filter .arrow {
+    -fx-background-color: #6E6E73;
+    -fx-shape: "M 0 0 L 4 4 L 8 0 Z";
+    -fx-padding: 0.28em;
+}
+
+.search-wrap {
+    -fx-background-color: #F2F2F7;
+    -fx-background-radius: 10px;
+    -fx-border-color: transparent;
+    -fx-border-radius: 10px;
+    -fx-padding: 0 10px;
+}
+
+.search-icon {
+    -fx-text-fill: #8A8A8E;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+}
+
+.search-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 7px 6px 7px 0;
+    -fx-prompt-text-fill: #8A8A8E;
+    -fx-text-fill: #1C1C1E;
+}
+
+.search-field:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.app-split-pane {
+    -fx-background-color: #FFFFFF;
+}
+
+.app-split-pane > .split-pane-divider {
+    -fx-padding: 0 0 0 1px;
+    -fx-background-color: #E5E5EA;
+}
+
+.panel-left,
+.panel-right {
+    -fx-background-color: #F5F5F7;
+    -fx-padding: 16px;
+}
+
+.panel-center {
+    -fx-background-color: #FFFFFF;
+}
+
+.section-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #6E6E73;
+}
+
+.task-list {
+    -fx-background-color: #FFFFFF;
+    -fx-control-inner-background: #FFFFFF;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.task-list .list-cell {
+    -fx-cell-size: 52px;
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #1C1C1E;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-padding: 0 12px 0 14px;
+    -fx-border-color: transparent transparent #F0F0F0 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.task-list .list-cell:filled:hover {
+    -fx-background-color: #F0F4FF;
+}
+
+.task-list .list-cell:filled:selected,
+.task-list .list-cell:filled:selected:hover {
+    -fx-background-color: #4A7CFF, #E8EFFF;
+    -fx-background-insets: 0, 0 0 0 3;
+    -fx-text-fill: #1C1C1E;
+    -fx-border-color: transparent transparent #F0F0F0 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.task-list .placeholder .label,
+.empty-state {
+    -fx-text-fill: #AEAEB2;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+}
+
+.detail-text {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10px;
+    -fx-border-color: #E5E5EA;
+    -fx-border-radius: 10px;
+    -fx-font-size: 13px;
+    -fx-text-fill: #1C1C1E;
+}
+
+.detail-text .content {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10px;
+}
+
+.detail-text:focused {
+    -fx-border-color: #D1D9F9;
+}
+
+.status-bar {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 8px 16px;
+    -fx-border-color: #E5E5EA transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.secondary-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: #8A8A8E;
+}
