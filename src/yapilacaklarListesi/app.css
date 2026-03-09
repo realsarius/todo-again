@@ -217,6 +217,11 @@
     -fx-border-width: 0 0 1 0;
 }
 
+.task-list .list-cell:empty {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent;
+}
+
 .task-list .list-cell:filled:hover {
     -fx-background-color: #F0F4FF;
 }
@@ -260,6 +265,14 @@
     -fx-background-color: #F5F5F7;
     -fx-background-radius: 8px;
     -fx-padding: 8px 10px;
+}
+
+.detail-text .viewport {
+    -fx-background-color: #F5F5F7;
+}
+
+.detail-text .scroll-pane {
+    -fx-background-color: transparent;
 }
 
 .detail-text:focused {
