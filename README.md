@@ -1,139 +1,73 @@
+# todo-again
 
-<p align="center">
-  <a href="https://github.com/realsarius/todo-again">
-    <img src="resources/images/files.png" alt="Logo" widthmailto:tehadro@gmail.com="80" height="80">
-  </a>
+Legacy JavaFX TODO desktop app, revived for modern Java tooling.
 
-  <h3 align="center">todo-again</h3>
+## Current status (2026-03-09)
+- Build system migrated to Maven.
+- Target runtime upgraded to Java 21 + JavaFX 21.
+- JFoenix dependency removed, standard JavaFX controls are used.
+- Data loading is more defensive for missing or malformed records.
+- CI pipeline and baseline tests are in place.
 
-  <p align="center">
-    TODO list application powered by JavaFX!
-    <br />
-    <a href="https://docs.oracle.com/javafx/2/"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
-    ·
-    <a href="https://github.com/realsarius/todo-again/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/realsarius/todo-again/issues">Request Feature</a>
-  </p>
-</p>
+Detailed roadmap: [`docs/revival-plan.md`](docs/revival-plan.md)
 
+## Tech stack
+- Java 21 (LTS)
+- JavaFX 21 (`controls`, `fxml`, `media`)
+- Maven
+- JUnit 5
+- JaCoCo
 
-<details open="open">
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-        <li><a href="#screenshots">Screenshots</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgements">Acknowledgements</a></li>
-  </ol>
-</details>
+## Prerequisites
+1. JDK 21 installed and available in `PATH`.
+2. Maven 3.9+ installed.
 
+Check:
 
+```bash
+java -version
+mvn -version
+```
 
-## About The Project
+## Run locally
 
-A scuffed TODO program that suits your needs. It's for my school project.
+```bash
+mvn clean javafx:run
+```
 
-### Built With
+## Run tests and coverage check
 
-* [Java](https://www.oracle.com/java/)
-* [JavaFX (OpenJFX)](https://openjfx.io/)
-* [IntelliJ](https://www.jetbrains.com/idea/)
+```bash
+mvn clean verify
+```
 
-### Screenshots
+This command runs:
+- unit tests (JUnit 5)
+- JaCoCo report and coverage check
 
-![alt](https://realsarius.github.io/assets/img/todo2.png)
-![alt](https://realsarius.github.io/assets/img/todo1.png)
+## Data file
+- Default data file: `Yapilacaklar.txt`
+- Format: `aciklama<TAB>detay<TAB>dd-MM-yyyy`
 
-## Getting Started
+The loader now:
+- creates the file if missing
+- skips malformed lines instead of crashing
 
-The project developed with IntelliJ so you can just import and start project.
+## Project structure
+- `src/` -> main Java sources + FXML
+- `resources/` -> app resources (icons)
+- `src/test/java/` -> JUnit tests
+- `docs/` -> project documentation
 
-### Prerequisites
+## CI
+GitHub Actions workflow: `.github/workflows/ci.yml`
 
-Amazon Corretto or Liberica is recomemmended.
- * Arch (![aur](https://aur.archlinux.org/packages/amazon-corretto-8/))
-    ```sh
-    sudo pacman -S yay && yay amazon corretto 8
-    ```
-    
- * Ubuntu/Debian 
-    ```sh
-    sudo apt-get update
-    wget -O- https://apt.corretto.aws/corretto.key | sudo apt-key add - 
-    sudo add-apt-repository 'deb https://apt.corretto.aws stable main'
-    ```
-    Then
-    ```sh
-     sudo apt-get update; sudo apt-get install -y java-1.8.0-amazon-corretto-jdk
-    ```
-    ![More here](https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/generic-linux-install.html)
-### Installation
+On each push/PR, CI runs `mvn -B verify` on Java 21.
 
-1. Clone the repo
-   ```sh
-   git clone https://github.com/realsarius/todo-again.git
-   ```
-2. Import in IntelliJ
-
-You can use your favorite IDE of your desire if you like, but make sure to add external libraries
-
-
-## Usage
-
-After you import the project, you can go ahead and start the project. Hopefully I can create executable jar file in the future.
-
-
-## Roadmap
-
-See the [open issues](https://github.com/realsarius/todo-again/issues) for a list of proposed features (and known issues).
-
-
-## Contributing
-
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
+## Screenshots (legacy UI)
+![screenshot-1](ss1.png)
+![screenshot-2](ss2.png)
+![screenshot-3](ss3.png)
 
 ## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
-
-## Contact
-
-Berkan Sözer - [My Website](https://realsarius.github.io/) - [tehadro@protonmail.com](mailto:tehadro@gmail.com)
-
-Project Link: [https://github.com/realsarius/todo-again](https://github.com/realsarius/todo-again)
-
-
-## Acknowledgements
-* [Website](https://realsarius.github.io/)
-* [OpenJFX](https://openjfx.io/)
-* [IntelliJ](https://www.jetbrains.com/idea/)
-* [Files Icon](https://www.flaticon.com/)
-* [Amazon Corretto](https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/what-is-corretto-8.html)
+MIT (`LICENSE`)
