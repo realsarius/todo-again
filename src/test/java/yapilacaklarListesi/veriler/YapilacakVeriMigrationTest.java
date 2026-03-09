@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -19,6 +20,7 @@ class YapilacakVeriMigrationTest {
     @AfterEach
     void temizle() {
         veri.varsayilanDosyaYolunaDon();
+        veri.getYapilacaklar().clear();
     }
 
     @Test
@@ -59,5 +61,22 @@ class YapilacakVeriMigrationTest {
 
         assertTrue(Files.exists(olmayanDosya));
         assertTrue(veri.getYapilacaklar().isEmpty());
+    }
+
+    @Test
+    void kaydetVeYenidenYukleAyniVeriyiVerir() throws IOException {
+        Path tempDosya = Files.createTempFile("yapilacaklar-kaydet", ".txt");
+        veri.setDosyaYolu(tempDosya);
+        veri.yapilacaklariCagir();
+
+        veri.yapilacakEkle(new Yapilacak("Yenileme", "Plan dokumani", LocalDate.of(2026, 3, 9)));
+        veri.yapilacaklariKaydet();
+
+        veri.yapilacaklariCagir();
+
+        assertEquals(1, veri.getYapilacaklar().size());
+        assertEquals("Yenileme", veri.getYapilacaklar().get(0).getAciklama());
+        assertEquals("Plan dokumani", veri.getYapilacaklar().get(0).getDetay());
+        assertEquals(LocalDate.of(2026, 3, 9), veri.getYapilacaklar().get(0).getTarih());
     }
 }
