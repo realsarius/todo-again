@@ -29,6 +29,7 @@ import yapilacaklarListesi.muzik.MuzikOynatici;
 import yapilacaklarListesi.pomodoro.model.Pomodoro;
 import yapilacaklarListesi.pomodoro.model.PomodoroEnum;
 import yapilacaklarListesi.service.TaskService;
+import yapilacaklarListesi.veriler.Oncelik;
 import yapilacaklarListesi.veriler.Yapilacak;
 import yapilacaklarListesi.veriler.YapilacakVeri;
 import java.awt.Desktop;
@@ -162,6 +163,20 @@ public class Controller {
         });
 
         yapilacakListeFXML.setItems(sortedList);
+        yapilacakListeFXML.setCellFactory(list -> new ListCell<>() {
+            @Override
+            protected void updateItem(Yapilacak item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("");
+                    return;
+                }
+                String oncelikEtiketi = "[" + item.getOncelik().name() + "]";
+                setText(oncelikEtiketi + " " + item.getAciklama());
+                setStyle("-fx-text-fill: " + oncelikRengi(item.getOncelik()) + ";");
+            }
+        });
         yapilacakListeFXML.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         yapilacakListeFXML.getSelectionModel().selectFirst();
         filtreleriUygula();
@@ -517,6 +532,14 @@ public class Controller {
             String aciklama = yapilacak.getAciklama() == null ? "" : yapilacak.getAciklama().toLowerCase();
             String detay = yapilacak.getDetay() == null ? "" : yapilacak.getDetay().toLowerCase();
             return aciklama.contains(kriter) || detay.contains(kriter);
+        };
+    }
+
+    private String oncelikRengi(Oncelik oncelik) {
+        return switch (oncelik) {
+            case HIGH -> "#d64545";
+            case MEDIUM -> "#b07d00";
+            case LOW -> "#2e7d32";
         };
     }
 
