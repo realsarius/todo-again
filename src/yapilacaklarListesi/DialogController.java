@@ -6,7 +6,6 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import yapilacaklarListesi.veriler.Yapilacak;
-import yapilacaklarListesi.veriler.YapilacakVeri;
 import java.time.LocalDate;
 
 public class DialogController {
@@ -29,9 +28,6 @@ public class DialogController {
             return null;
         }
 
-        Yapilacak yeniYapilacak = new Yapilacak(aciklama, detay, tarih);
-        YapilacakVeri.getInstance().yapilacakEkle(yeniYapilacak);
-
-        return yeniYapilacak;
+        return new Yapilacak(aciklama, detay, tarih);
     }
 }

@@ -16,7 +16,6 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -28,6 +27,7 @@ import yapilacaklarListesi.muzik.Muzik;
 import yapilacaklarListesi.muzik.MuzikOynatici;
 import yapilacaklarListesi.pomodoro.model.Pomodoro;
 import yapilacaklarListesi.pomodoro.model.PomodoroEnum;
+import yapilacaklarListesi.service.TaskService;
 import yapilacaklarListesi.veriler.Yapilacak;
 import yapilacaklarListesi.veriler.YapilacakVeri;
 import java.awt.Desktop;
@@ -37,7 +37,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Optional;
@@ -66,10 +65,12 @@ public class Controller {
 
     private Pomodoro suankiPomodoro;
     private final StringProperty zamanlayiciText;
+    private final TaskService taskService;
     private Timeline timeLine;
 
     public Controller(){
         zamanlayiciText = new SimpleStringProperty();
+        taskService = new TaskService(YapilacakVeri.getInstance());
         setTimerText(0);
     }
 
@@ -111,8 +112,7 @@ public class Controller {
                     if (yapilacak == null) {
                         return;
                     }
-                    yapilacak.setDetay(detayFXML.getText());
-                    YapilacakVeri.getInstance().yapilacaklariKaydet();
+                    taskService.gorevDetayiGuncelleVeKaydet(yapilacak, detayFXML.getText());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -132,14 +132,14 @@ public class Controller {
             if (yapilacak == null) {
                 return;
             }
-            yapilacak.setDetay(detayFXML.getText());
+            taskService.gorevDetayiGuncelle(yapilacak, detayFXML.getText());
             yapilacakKaydet();
         });
 
-        tumYapilacaklarPredicate = yapilacak -> true;
-        bugunYapilacaklarPredicate = yapilacak -> (yapilacak.getTarih().equals(LocalDate.now()));
+        tumYapilacaklarPredicate = taskService.tumGorevlerFiltresi();
+        bugunYapilacaklarPredicate = taskService.bugunGorevleriFiltresi();
 
-        yapilacakFilteredList = new FilteredList<>(YapilacakVeri.getInstance().getYapilacaklar(), tumYapilacaklarPredicate);
+        yapilacakFilteredList = new FilteredList<>(taskService.tumGorevler(), tumYapilacaklarPredicate);
 
         SortedList<Yapilacak> sortedList = new SortedList<>(yapilacakFilteredList, Comparator.comparing(Yapilacak::getTarih));
 
@@ -160,7 +160,7 @@ public class Controller {
     @FXML
     public void yapilacakAlertsizKaydet() {
         try {
-            YapilacakVeri.getInstance().yapilacaklariKaydet();
+            taskService.kaydet();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -173,7 +173,7 @@ public class Controller {
         Optional<ButtonType> sonuc = alert.showAndWait();
         if (sonuc.isPresent() && (sonuc.get() == ButtonType.OK)) {
             try {
-                YapilacakVeri.getInstance().yapilacaklariKaydet();
+                taskService.kaydet();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -270,6 +270,7 @@ public class Controller {
             if (yeniYapilacak == null) {
                 return;
             }
+            taskService.gorevEkle(yeniYapilacak);
             yapilacakListeFXML.getSelectionModel().select(yeniYapilacak);
             MuzikOynatici.okMuzigiOynat();
         } else {
@@ -319,7 +320,7 @@ public class Controller {
         Optional<ButtonType> sonuc = alert.showAndWait();
 
         if (sonuc.isPresent() && (sonuc.get() == ButtonType.OK)) {
-            YapilacakVeri.getInstance().yapilacakSil(yapilacak);
+            taskService.gorevSil(yapilacak);
         }
     }
 
