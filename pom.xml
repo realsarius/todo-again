@@ -74,6 +74,7 @@
                 <configuration>
                     <release>${maven.compiler.release}</release>
                     <excludes>
+                        <exclude>test/**</exclude>
                         <exclude>**/*Test.java</exclude>
                     </excludes>
                 </configuration>
