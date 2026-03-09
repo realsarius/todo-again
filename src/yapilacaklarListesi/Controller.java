@@ -28,6 +28,8 @@ import yapilacaklarListesi.muzik.Muzik;
 import yapilacaklarListesi.muzik.MuzikOynatici;
 import yapilacaklarListesi.pomodoro.model.Pomodoro;
 import yapilacaklarListesi.pomodoro.model.PomodoroEnum;
+import yapilacaklarListesi.service.TaskService;
+import yapilacaklarListesi.veriler.Oncelik;
 import yapilacaklarListesi.veriler.Yapilacak;
 import yapilacaklarListesi.veriler.YapilacakVeri;
 import java.awt.Desktop;
@@ -37,7 +39,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Optional;
@@ -46,6 +47,7 @@ import java.util.function.Predicate;
 // Controller kısmının içerisinde nesneye yönelik kısmı ile ilgili bir şey yok ancak açıklamaları yapacağım.
 public class Controller {
 
+    @FXML private MenuItem yeniFXML;
     @FXML private MenuItem farkliKaydetFXML;
     @FXML private MenuItem kaydetFXML;
     @FXML private MenuItem silFXML;
@@ -55,6 +57,8 @@ public class Controller {
     @FXML private ToggleButton pomodoroToggleButtonFXML;
     @FXML private VBox vbox;
     @FXML private ToggleButton bugunToggleButton;
+    @FXML private ChoiceBox<String> oncelikFiltreFXML;
+    @FXML private TextField aramaFXML;
     @FXML private ListView<Yapilacak> yapilacakListeFXML;
     @FXML private Label tarihLabel;
     @FXML private TextArea detayFXML;
@@ -62,19 +66,28 @@ public class Controller {
     private FilteredList<Yapilacak> yapilacakFilteredList;
     private Predicate<Yapilacak> tumYapilacaklarPredicate;
     private Predicate<Yapilacak> bugunYapilacaklarPredicate;
+    private Predicate<Yapilacak> aramaPredicate;
+    private Predicate<Yapilacak> oncelikPredicate;
     Clipboard sistemPanosu = Clipboard.getSystemClipboard();
 
     private Pomodoro suankiPomodoro;
     private final StringProperty zamanlayiciText;
+    private final TaskService taskService;
     private Timeline timeLine;
 
     public Controller(){
         zamanlayiciText = new SimpleStringProperty();
+        taskService = new TaskService(YapilacakVeri.getInstance());
         setTimerText(0);
     }
 
     // Program başlarken yapılacaklar
     public void initialize() {
+        yeniFXML.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
+        kaydetFXML.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
+        silFXML.setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
+        oncelikFiltreFXML.getItems().setAll("Tümü", "Yüksek", "Orta", "Düşük");
+        oncelikFiltreFXML.setValue("Tümü");
 
         farkliKaydetFXML.setOnAction(actionEvent -> {
             Stage stage = new Stage();
@@ -105,14 +118,14 @@ public class Controller {
         });
 
         detayFXML.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.isControlDown() && keyEvent.getCode().equals(KeyCode.S)) {
+            if (keyEvent.isShortcutDown() && keyEvent.getCode().equals(KeyCode.S)) {
                 try {
                     Yapilacak yapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
                     if (yapilacak == null) {
                         return;
                     }
-                    yapilacak.setDetay(detayFXML.getText());
-                    YapilacakVeri.getInstance().yapilacaklariKaydet();
+                    taskService.gorevDetayiGuncelleVeKaydet(yapilacak, detayFXML.getText());
+                    keyEvent.consume();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -132,14 +145,18 @@ public class Controller {
             if (yapilacak == null) {
                 return;
             }
-            yapilacak.setDetay(detayFXML.getText());
+            taskService.gorevDetayiGuncelle(yapilacak, detayFXML.getText());
             yapilacakKaydet();
         });
 
-        tumYapilacaklarPredicate = yapilacak -> true;
-        bugunYapilacaklarPredicate = yapilacak -> (yapilacak.getTarih().equals(LocalDate.now()));
+        tumYapilacaklarPredicate = taskService.tumGorevlerFiltresi();
+        bugunYapilacaklarPredicate = taskService.bugunGorevleriFiltresi();
+        aramaPredicate = taskService.tumGorevlerFiltresi();
+        oncelikPredicate = taskService.tumGorevlerFiltresi();
 
-        yapilacakFilteredList = new FilteredList<>(YapilacakVeri.getInstance().getYapilacaklar(), tumYapilacaklarPredicate);
+        yapilacakFilteredList = new FilteredList<>(taskService.tumGorevler(), tumYapilacaklarPredicate);
+        aramaFXML.textProperty().addListener((observableValue, eskiDeger, yeniDeger) -> filtreleriUygula());
+        oncelikFiltreFXML.getSelectionModel().selectedItemProperty().addListener((obs, eski, yeni) -> filtreleriUygula());
 
         SortedList<Yapilacak> sortedList = new SortedList<>(yapilacakFilteredList, Comparator.comparing(Yapilacak::getTarih));
 
@@ -152,15 +169,30 @@ public class Controller {
         });
 
         yapilacakListeFXML.setItems(sortedList);
+        yapilacakListeFXML.setCellFactory(list -> new ListCell<>() {
+            @Override
+            protected void updateItem(Yapilacak item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("");
+                    return;
+                }
+                String oncelikEtiketi = "[" + item.getOncelik().name() + "]";
+                setText(oncelikEtiketi + " " + item.getAciklama());
+                setStyle("-fx-text-fill: " + oncelikRengi(item.getOncelik()) + ";");
+            }
+        });
         yapilacakListeFXML.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         yapilacakListeFXML.getSelectionModel().selectFirst();
+        filtreleriUygula();
 
     }
 
     @FXML
     public void yapilacakAlertsizKaydet() {
         try {
-            YapilacakVeri.getInstance().yapilacaklariKaydet();
+            taskService.kaydet();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -173,7 +205,7 @@ public class Controller {
         Optional<ButtonType> sonuc = alert.showAndWait();
         if (sonuc.isPresent() && (sonuc.get() == ButtonType.OK)) {
             try {
-                YapilacakVeri.getInstance().yapilacaklariKaydet();
+                taskService.kaydet();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -270,6 +302,7 @@ public class Controller {
             if (yeniYapilacak == null) {
                 return;
             }
+            taskService.gorevEkle(yeniYapilacak);
             yapilacakListeFXML.getSelectionModel().select(yeniYapilacak);
             MuzikOynatici.okMuzigiOynat();
         } else {
@@ -319,29 +352,14 @@ public class Controller {
         Optional<ButtonType> sonuc = alert.showAndWait();
 
         if (sonuc.isPresent() && (sonuc.get() == ButtonType.OK)) {
-            YapilacakVeri.getInstance().yapilacakSil(yapilacak);
+            taskService.gorevSil(yapilacak);
         }
     }
 
     // Bu metod ListView'deki herhangi bir yapılacağın Acik
     @FXML
     public void bugunYapilacakGoster() {
-        Yapilacak secilmisYapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
-        if (bugunToggleButton.isSelected()) {
-            yapilacakFilteredList.setPredicate(bugunYapilacaklarPredicate);
-            if (yapilacakFilteredList.isEmpty()) {
-                detayFXML.clear();
-                tarihLabel.setText("");
-            } else if (yapilacakFilteredList.contains(secilmisYapilacak)) {
-                yapilacakListeFXML.getSelectionModel().select(secilmisYapilacak);
-            } else {
-                yapilacakListeFXML.getSelectionModel().selectFirst();
-            }
-        } else {
-            yapilacakFilteredList.setPredicate(tumYapilacaklarPredicate);
-            yapilacakListeFXML.getSelectionModel().select(secilmisYapilacak);
-        }
-
+        filtreleriUygula();
     }
 
     // Alert sahnesi ile yapılan Hakkımda metodu.
@@ -486,6 +504,64 @@ public class Controller {
     private void adjustForDeselection() {
         kesFXML.setDisable(true);
         kopyalaFXML.setDisable(true);
+    }
+
+    private void filtreleriUygula() {
+        Yapilacak seciliYapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+        aramaPredicate = aramaFiltresiOlustur();
+        oncelikPredicate = oncelikFiltresiOlustur();
+
+        Predicate<Yapilacak> tarihFiltresi = bugunToggleButton.isSelected()
+                ? bugunYapilacaklarPredicate
+                : tumYapilacaklarPredicate;
+        yapilacakFilteredList.setPredicate(tarihFiltresi.and(aramaPredicate).and(oncelikPredicate));
+
+        if (yapilacakFilteredList.isEmpty()) {
+            detayFXML.clear();
+            tarihLabel.setText("");
+            return;
+        }
+
+        if (seciliYapilacak != null && yapilacakFilteredList.contains(seciliYapilacak)) {
+            yapilacakListeFXML.getSelectionModel().select(seciliYapilacak);
+            return;
+        }
+        yapilacakListeFXML.getSelectionModel().selectFirst();
+    }
+
+    private Predicate<Yapilacak> aramaFiltresiOlustur() {
+        String aramaMetni = aramaFXML.getText();
+        if (aramaMetni == null || aramaMetni.isBlank()) {
+            return taskService.tumGorevlerFiltresi();
+        }
+        String kriter = aramaMetni.toLowerCase().trim();
+        return yapilacak -> {
+            String aciklama = yapilacak.getAciklama() == null ? "" : yapilacak.getAciklama().toLowerCase();
+            String detay = yapilacak.getDetay() == null ? "" : yapilacak.getDetay().toLowerCase();
+            String tagler = String.join(" ", yapilacak.getTags()).toLowerCase();
+            return aciklama.contains(kriter) || detay.contains(kriter) || tagler.contains(kriter);
+        };
+    }
+
+    private Predicate<Yapilacak> oncelikFiltresiOlustur() {
+        String secim = oncelikFiltreFXML.getValue();
+        if (secim == null || secim.isBlank() || secim.equals("Tümü")) {
+            return taskService.tumGorevlerFiltresi();
+        }
+        return switch (secim) {
+            case "Yüksek" -> taskService.oncelikFiltresi(Oncelik.HIGH);
+            case "Orta" -> taskService.oncelikFiltresi(Oncelik.MEDIUM);
+            case "Düşük" -> taskService.oncelikFiltresi(Oncelik.LOW);
+            default -> taskService.tumGorevlerFiltresi();
+        };
+    }
+
+    private String oncelikRengi(Oncelik oncelik) {
+        return switch (oncelik) {
+            case HIGH -> "#d64545";
+            case MEDIUM -> "#b07d00";
+            case LOW -> "#2e7d32";
+        };
     }
 
 }

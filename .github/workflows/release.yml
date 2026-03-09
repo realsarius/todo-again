@@ -1,0 +1,137 @@
+name: Build And Release Installers
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-dmg:
+    runs-on: macos-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Build app jar and runtime dependencies
+        run: mvn -B -DskipTests clean package dependency:copy-dependencies -DincludeScope=runtime
+
+      - name: Build DMG with jpackage
+        shell: bash
+        run: |
+          set -euo pipefail
+          JAR_PATH="$(ls target/todo-again-*.jar | head -n 1)"
+          JAR_FILE="$(basename "$JAR_PATH")"
+
+          mkdir -p target/jpackage-input
+          cp "$JAR_PATH" target/jpackage-input/
+          cp target/dependency/*.jar target/jpackage-input/
+
+          APP_VERSION="1.0.${GITHUB_RUN_NUMBER}"
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            APP_VERSION="${GITHUB_REF_NAME#v}"
+          fi
+
+          jpackage \
+            --type dmg \
+            --name "todo-again" \
+            --dest target/dist \
+            --input target/jpackage-input \
+            --main-jar "$JAR_FILE" \
+            --main-class yapilacaklarListesi.Main \
+            --app-version "$APP_VERSION"
+
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: todo-again-dmg
+          path: target/dist/*.dmg
+          if-no-files-found: error
+
+  build-msi:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Install WiX Toolset
+        shell: powershell
+        run: choco install wixtoolset --no-progress -y
+
+      - name: Build app jar and runtime dependencies
+        shell: powershell
+        run: mvn -B -DskipTests clean package dependency:copy-dependencies -DincludeScope=runtime
+
+      - name: Build MSI with jpackage
+        shell: powershell
+        run: |
+          $jarPath = (Get-ChildItem target/todo-again-*.jar | Select-Object -First 1).FullName
+          $jarFile = Split-Path $jarPath -Leaf
+
+          New-Item -ItemType Directory -Path target/jpackage-input -Force | Out-Null
+          Copy-Item $jarPath target/jpackage-input/
+          Copy-Item target/dependency/*.jar target/jpackage-input/
+
+          $appVersion = "1.0.$env:GITHUB_RUN_NUMBER"
+          if ($env:GITHUB_REF_TYPE -eq "tag") {
+            $appVersion = $env:GITHUB_REF_NAME.Substring(1)
+          }
+
+          jpackage `
+            --type msi `
+            --name "todo-again" `
+            --dest target/dist `
+            --input target/jpackage-input `
+            --main-jar $jarFile `
+            --main-class yapilacaklarListesi.Main `
+            --app-version $appVersion
+
+      - name: Upload MSI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: todo-again-msi
+          path: target/dist/*.msi
+          if-no-files-found: error
+
+  create-release:
+    needs: [build-dmg, build-msi]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist-artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: |
+            dist-artifacts/todo-again-dmg/*.dmg
+            dist-artifacts/todo-again-msi/*.msi

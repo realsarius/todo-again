@@ -1,48 +1,59 @@
 package yapilacaklarListesi.veriler;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
-// YapilacakVeri bir Singleton sınıfı.
 public class YapilacakVeri {
 
-    // Singleton'un kurallarından bir tanesi kendi nesnesini oluşturup initalize etmek ki aşağıdaki getInstance() sınıfında return edebilelim.
     private static final YapilacakVeri ornek = new YapilacakVeri();
-    private static final String dosyaAdi = "Yapilacaklar.txt";
+    private static final String legacyDosyaAdi = "Yapilacaklar.txt";
+    private static final String jsonDosyaAdi = "Yapilacaklar.json";
+    private static final int JSON_VERSIYON = 1;
     private static final int BEKLENEN_SUTUN_SAYISI = 3;
-    private ObservableList<Yapilacak> yapilacaklar;
-    private final DateTimeFormatter dateTimeFormatter;
-    private Path dosyaYolu;
 
-    // Singleton
+    private ObservableList<Yapilacak> yapilacaklar;
+    private final DateTimeFormatter legacyDateTimeFormatter;
+    private final Gson gson;
+    private Path legacyDosyaYolu;
+    private Path jsonDosyaYolu;
+    private boolean manuelDosyaYolu;
+
     public static YapilacakVeri getInstance() {
         return ornek;
     }
 
-    // Singleton'un kurallarından bir tanesi Constructor'un "private" olması
-    // Gelen zamanın formatını burada istediğimiz gibi değiştirebiliriz. Bildiğimiz takvim olan gün-ay-yıl'a dönüştürdüm.
     private YapilacakVeri() {
-        this.dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        this.dosyaYolu = Paths.get(dosyaAdi);
+        this.legacyDateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        this.gson = new GsonBuilder().setPrettyPrinting().create();
+        this.legacyDosyaYolu = Paths.get(legacyDosyaAdi);
+        this.jsonDosyaYolu = Paths.get(jsonDosyaAdi);
         this.yapilacaklar = FXCollections.observableArrayList();
+        this.manuelDosyaYolu = false;
     }
 
-    // ObservableList'in ArrayList'ten farkı listede meydana gelen değişiklikleri izleyebiliyor olması. ObservableList bir JavaFX sınıfı -> javafx.collections.ObservableList;
     public ObservableList<Yapilacak> getYapilacaklar() {
         return yapilacaklar;
     }
 
-    // Parametre olarak aldığı yapılacak sınıfını yapilacaklar ObservableList'ine ekliyor.
     public void yapilacakEkle(Yapilacak yapilacak) {
         if (yapilacaklar == null) {
             yapilacaklar = FXCollections.observableArrayList();
@@ -50,16 +61,68 @@ public class YapilacakVeri {
         yapilacaklar.add(yapilacak);
     }
 
-
     public void yapilacaklariCagir() throws IOException {
         yapilacaklar = FXCollections.observableArrayList();
-        if (Files.notExists(dosyaYolu)) {
-            dosyaYolunuHazirla();
-            Files.createFile(dosyaYolu);
+
+        if (manuelDosyaYolu) {
+            if (Files.exists(legacyDosyaYolu)) {
+                txtDosyasindanYukle();
+                if (Files.notExists(jsonDosyaYolu)) {
+                    jsonaKaydet();
+                }
+                return;
+            }
+            if (Files.exists(jsonDosyaYolu) && jsondanYukle(jsonDosyaYolu, true)) {
+                return;
+            }
+            dosyaYolunuHazirla(legacyDosyaYolu);
+            Files.createFile(legacyDosyaYolu);
             return;
         }
 
-        try (BufferedReader bufferedReader = Files.newBufferedReader(dosyaYolu)) {
+        if (Files.exists(jsonDosyaYolu) && jsondanYukle(jsonDosyaYolu, true)) {
+            return;
+        }
+        if (Files.exists(legacyDosyaYolu)) {
+            txtDosyasindanYukle();
+            jsonaKaydet();
+            return;
+        }
+
+        dosyaYolunuHazirla(legacyDosyaYolu);
+        Files.createFile(legacyDosyaYolu);
+    }
+
+    public void yapilacaklariKaydet() throws IOException {
+        if (yapilacaklar == null) {
+            yapilacaklar = FXCollections.observableArrayList();
+        }
+        jsonaKaydet();
+        txtDosyasinaKaydet();
+    }
+
+    public void yapilacakSil(Yapilacak yapilacak) {
+        this.yapilacaklar.remove(yapilacak);
+    }
+
+    void setDosyaYolu(Path dosyaYolu) {
+        this.legacyDosyaYolu = dosyaYolu;
+        this.jsonDosyaYolu = jsonYolunuUret(dosyaYolu);
+        this.manuelDosyaYolu = true;
+    }
+
+    void varsayilanDosyaYolunaDon() {
+        this.legacyDosyaYolu = Paths.get(legacyDosyaAdi);
+        this.jsonDosyaYolu = Paths.get(jsonDosyaAdi);
+        this.manuelDosyaYolu = false;
+    }
+
+    Path getJsonDosyaYolu() {
+        return jsonDosyaYolu;
+    }
+
+    private void txtDosyasindanYukle() throws IOException {
+        try (BufferedReader bufferedReader = Files.newBufferedReader(legacyDosyaYolu)) {
             String input;
             int satirNo = 0;
             while ((input = bufferedReader.readLine()) != null) {
@@ -67,7 +130,7 @@ public class YapilacakVeri {
                 if (input.isBlank()) {
                     continue;
                 }
-                String[] yapilacakParcalar = input.split("\t", BEKLENEN_SUTUN_SAYISI);
+                String[] yapilacakParcalar = input.split("\\t", BEKLENEN_SUTUN_SAYISI);
                 if (yapilacakParcalar.length < BEKLENEN_SUTUN_SAYISI) {
                     System.err.printf("Uyari: satir %d atlandi (eksik alan).%n", satirNo);
                     continue;
@@ -76,7 +139,7 @@ public class YapilacakVeri {
                     String aciklama = yapilacakParcalar[0];
                     String detay = yapilacakParcalar[1];
                     String zamanString = yapilacakParcalar[2];
-                    LocalDate zaman = LocalDate.parse(zamanString, dateTimeFormatter);
+                    LocalDate zaman = LocalDate.parse(zamanString, legacyDateTimeFormatter);
                     Yapilacak yapilacak = new Yapilacak(aciklama, detay, zaman);
                     yapilacaklar.add(yapilacak);
                 } catch (DateTimeParseException e) {
@@ -86,42 +149,91 @@ public class YapilacakVeri {
         }
     }
 
-    // BufferedWriter ile yapılacaklar dosyaAdi(Yapilacaklar.txt) dosyasına kaydediliyor. Metodun herhangi bir parametrisi yok. Peki nasıl kaydediliyor?
-    // FXML kısmında girilen her yapılacak ObservableList olan yapilacaklar'a atılıyor. Program kapanırken yapilacaklariKaydet() metodu çağrılıyor.
-    // Örnek olarak 3 yapılacak girildi ve çıkış yaptık. Listemizin içinde 3 tane yapılacak var. forEach döngüsü ile teker teker Yapilacaklar.txt dosyasına
-    // bu metod ile yazdırıyoruz. Yapılacak entity sınıfının 3 özelliği var. Sırasıyla aciklama, detay, tarih. Aralarında bir tab(\t) boşluğu olacak şekilde ayırarak
-    // verileri yazdırıp getirmesi kolaylaşıyor
-    public void yapilacaklariKaydet() throws IOException {
-        if (Files.notExists(dosyaYolu)) {
-            dosyaYolunuHazirla();
-            Files.createFile(dosyaYolu);
-        }
-        if (yapilacaklar == null) {
-            yapilacaklar = FXCollections.observableArrayList();
-        }
+    private boolean jsondanYukle(Path kaynakDosya, boolean yedekKullan) throws IOException {
+        try {
+            if (Files.notExists(kaynakDosya)) {
+                return false;
+            }
+            String icerik = Files.readString(kaynakDosya, StandardCharsets.UTF_8);
+            if (icerik.isBlank()) {
+                return true;
+            }
+            YapilacaklarJson jsonVeri = gson.fromJson(icerik, YapilacaklarJson.class);
+            if (jsonVeri == null || jsonVeri.tasks == null) {
+                return true;
+            }
+            for (int i = 0; i < jsonVeri.tasks.size(); i++) {
+                YapilacakKaydi kayit = jsonVeri.tasks.get(i);
+                if (kayit == null || kayit.aciklama == null || kayit.tarih == null) {
+                    System.err.printf("Uyari: JSON kaydi %d atlandi (eksik alan).%n", i + 1);
+                    continue;
+                }
+                LocalDate tarih = parseJsonTarihi(kayit.tarih, i + 1);
+                if (tarih == null) {
+                    continue;
+                }
+                String detay = kayit.detay == null ? "" : kayit.detay;
+                String id = (kayit.id == null || kayit.id.isBlank()) ? UUID.randomUUID().toString() : kayit.id;
+                Instant createdAt = parseJsonInstant(kayit.createdAt, Instant.now());
+                Instant updatedAt = parseJsonInstant(kayit.updatedAt, createdAt);
+                Oncelik oncelik = parseOncelik(kayit.oncelik);
+                List<String> tags = temizleTagler(kayit.tags);
 
-        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(dosyaYolu)) {
-            for (Yapilacak yapilacak : yapilacaklar) {
-                bufferedWriter.write(String.format("%s\t%s\t%s",
-                        temizleAlan(yapilacak.getAciklama()),
-                        temizleAlan(yapilacak.getDetay()),
-                        yapilacak.getTarih().format(dateTimeFormatter)));
-                bufferedWriter.newLine();
+                yapilacaklar.add(new Yapilacak(
+                        id,
+                        kayit.aciklama,
+                        detay,
+                        tarih,
+                        createdAt,
+                        updatedAt,
+                        oncelik,
+                        tags
+                ));
+            }
+            return true;
+        } catch (JsonParseException e) {
+            if (!yedekKullan) {
+                System.err.println("Uyari: JSON yedegi de okunamadi.");
+                return false;
+            }
+            Path yedek = yedekDosyaYolu(kaynakDosya);
+            if (Files.exists(yedek) && jsondanYukle(yedek, false)) {
+                jsonaKaydet();
+                return true;
+            }
+            System.err.println("Uyari: JSON okunamadi, uygun yedek bulunamadi.");
+            yapilacaklar.clear();
+            return false;
+        }
+    }
+
+    private LocalDate parseJsonTarihi(String tarihDegeri, int kayitNo) {
+        try {
+            return LocalDate.parse(tarihDegeri);
+        } catch (DateTimeParseException ignored) {
+            try {
+                return LocalDate.parse(tarihDegeri, legacyDateTimeFormatter);
+            } catch (DateTimeParseException e) {
+                System.err.printf("Uyari: JSON kaydi %d atlandi (tarih parse edilemedi).%n", kayitNo);
+                return null;
             }
         }
     }
 
-    public void yapilacakSil(Yapilacak yapilacak) {
-        this.yapilacaklar.remove(yapilacak);
-    }
-
-    // Testler ve migration kontrolleri icin dosya yolunu degistirilebilir tutuyoruz.
-    void setDosyaYolu(Path dosyaYolu) {
-        this.dosyaYolu = dosyaYolu;
-    }
-
-    void varsayilanDosyaYolunaDon() {
-        this.dosyaYolu = Paths.get(dosyaAdi);
+    private void txtDosyasinaKaydet() throws IOException {
+        if (Files.notExists(legacyDosyaYolu)) {
+            dosyaYolunuHazirla(legacyDosyaYolu);
+            Files.createFile(legacyDosyaYolu);
+        }
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(legacyDosyaYolu)) {
+            for (Yapilacak yapilacak : yapilacaklar) {
+                bufferedWriter.write(String.format("%s\t%s\t%s",
+                        temizleAlan(yapilacak.getAciklama()),
+                        temizleAlan(yapilacak.getDetay()),
+                        yapilacak.getTarih().format(legacyDateTimeFormatter)));
+                bufferedWriter.newLine();
+            }
+        }
     }
 
     private String temizleAlan(String alan) {
@@ -131,10 +243,113 @@ public class YapilacakVeri {
         return alan.replace("\t", " ").replace("\n", " ").replace("\r", " ");
     }
 
-    private void dosyaYolunuHazirla() throws IOException {
+    private void jsonaKaydet() throws IOException {
+        dosyaYolunuHazirla(jsonDosyaYolu);
+        yedekOlustur(jsonDosyaYolu);
+
+        YapilacaklarJson jsonVeri = new YapilacaklarJson();
+        jsonVeri.version = JSON_VERSIYON;
+        jsonVeri.tasks = new ArrayList<>();
+
+        for (Yapilacak yapilacak : yapilacaklar) {
+            YapilacakKaydi kayit = new YapilacakKaydi();
+            kayit.id = yapilacak.getId();
+            kayit.aciklama = temizleAlan(yapilacak.getAciklama());
+            kayit.detay = temizleAlan(yapilacak.getDetay());
+            kayit.tarih = yapilacak.getTarih().toString();
+            kayit.createdAt = yapilacak.getCreatedAt().toString();
+            kayit.updatedAt = yapilacak.getUpdatedAt().toString();
+            kayit.oncelik = yapilacak.getOncelik().name();
+            kayit.tags = temizleTagler(yapilacak.getTags());
+            jsonVeri.tasks.add(kayit);
+        }
+
+        try (BufferedWriter writer = Files.newBufferedWriter(jsonDosyaYolu, StandardCharsets.UTF_8)) {
+            gson.toJson(jsonVeri, writer);
+        }
+    }
+
+    private void yedekOlustur(Path kaynak) throws IOException {
+        if (Files.exists(kaynak)) {
+            Files.copy(kaynak, yedekDosyaYolu(kaynak), StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    private Path yedekDosyaYolu(Path kaynak) {
+        return Paths.get(kaynak.toString() + ".bak");
+    }
+
+    private Instant parseJsonInstant(String deger, Instant varsayilan) {
+        if (deger == null || deger.isBlank()) {
+            return varsayilan;
+        }
+        try {
+            return Instant.parse(deger);
+        } catch (DateTimeParseException e) {
+            return varsayilan;
+        }
+    }
+
+    private Oncelik parseOncelik(String deger) {
+        if (deger == null || deger.isBlank()) {
+            return Oncelik.MEDIUM;
+        }
+        try {
+            return Oncelik.valueOf(deger.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return Oncelik.MEDIUM;
+        }
+    }
+
+    private List<String> temizleTagler(List<String> tags) {
+        List<String> temizListe = new ArrayList<>();
+        if (tags == null) {
+            return temizListe;
+        }
+        for (String tag : tags) {
+            if (tag == null) {
+                continue;
+            }
+            String temiz = tag.trim();
+            if (!temiz.isEmpty()) {
+                temizListe.add(temiz);
+            }
+        }
+        return temizListe;
+    }
+
+    private Path jsonYolunuUret(Path txtYolu) {
+        String dosyaAdi = txtYolu.getFileName().toString();
+        String jsonAdi;
+        if (dosyaAdi.endsWith(".txt")) {
+            jsonAdi = dosyaAdi.substring(0, dosyaAdi.length() - 4) + ".json";
+        } else {
+            jsonAdi = dosyaAdi + ".json";
+        }
+        Path parent = txtYolu.getParent();
+        return parent == null ? Paths.get(jsonAdi) : parent.resolve(jsonAdi);
+    }
+
+    private void dosyaYolunuHazirla(Path dosyaYolu) throws IOException {
         Path parent = dosyaYolu.getParent();
         if (parent != null && Files.notExists(parent)) {
             Files.createDirectories(parent);
         }
+    }
+
+    private static class YapilacaklarJson {
+        int version;
+        List<YapilacakKaydi> tasks;
+    }
+
+    private static class YapilacakKaydi {
+        String id;
+        String aciklama;
+        String detay;
+        String tarih;
+        String createdAt;
+        String updatedAt;
+        String oncelik;
+        List<String> tags;
     }
 }
