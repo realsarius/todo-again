@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "id": "d6f4ad2e-6e0d-4c22-b9e7-67d4e6f981a1",
+      "aciklama": "Elektrik faturasını öde",
+      "detay": "Mobil bankadan son ödeme tarihinden önce yatır.",
+      "tarih": "2026-03-09",
+      "createdAt": "2026-03-08T18:30:00Z",
+      "updatedAt": "2026-03-08T18:30:00Z",
+      "oncelik": "HIGH",
+      "tags": ["ev", "finans", "acil"]
+    },
+    {
+      "id": "9f7f2eb2-91ab-4570-90bf-9f4f7268ea04",
+      "aciklama": "Film izle",
+      "detay": "Akşam 21:00 seansı için bilet bak.",
+      "tarih": "2026-03-09",
+      "createdAt": "2026-03-07T20:10:00Z",
+      "updatedAt": "2026-03-08T09:20:00Z",
+      "oncelik": "LOW",
+      "tags": ["kişisel", "keyif"]
+    },
+    {
+      "id": "31f43f7b-e8be-4ecb-86e9-0f6b0db7e61e",
+      "aciklama": "30 dakika yürüyüş yap",
+      "detay": "Akşam üstü sahilde tempolu yürüyüş.",
+      "tarih": "2026-03-10",
+      "createdAt": "2026-03-08T07:45:00Z",
+      "updatedAt": "2026-03-08T07:45:00Z",
+      "oncelik": "MEDIUM",
+      "tags": ["sağlık", "rutin"]
+    },
+    {
+      "id": "68fb69a6-0b38-49b6-a6f5-686eb6096cc7",
+      "aciklama": "CV güncelle",
+      "detay": "Son projeleri ve teknoloji listesini ekle.",
+      "tarih": "2026-03-11",
+      "createdAt": "2026-03-06T12:00:00Z",
+      "updatedAt": "2026-03-08T16:40:00Z",
+      "oncelik": "MEDIUM",
+      "tags": ["kariyer", "iş"]
+    },
+    {
+      "id": "4ff7292e-d7a3-48dd-b7f9-0f2dc2ce3d12",
+      "aciklama": "Doktor randevusu al",
+      "detay": "Dermatoloji için MHRS üzerinden uygun saat seç.",
+      "tarih": "2026-03-12",
+      "createdAt": "2026-03-08T10:55:00Z",
+      "updatedAt": "2026-03-08T10:55:00Z",
+      "oncelik": "HIGH",
+      "tags": ["sağlık", "randevu", "acil"]
+    },
+    {
+      "id": "f7d7b68c-aaf3-4b9d-b58f-df3f2f1c5af8",
+      "aciklama": "Kitap oku (20 sayfa)",
+      "detay": "Akşam yatmadan önce 20 sayfa tamamla.",
+      "tarih": "2026-03-13",
+      "createdAt": "2026-03-05T19:35:00Z",
+      "updatedAt": "2026-03-05T19:35:00Z",
+      "oncelik": "LOW",
+      "tags": ["kişisel gelişim", "alışkanlık"]
+    },
+    {
+      "id": "2f4a4a6b-3f23-4e1d-a71a-471f38573f8a",
+      "aciklama": "Sunum taslağını bitir",
+      "detay": "Giriş, mimari ve sonuç slaytlarını tamamla.",
+      "tarih": "2026-03-14",
+      "createdAt": "2026-03-07T14:15:00Z",
+      "updatedAt": "2026-03-08T11:05:00Z",
+      "oncelik": "HIGH",
+      "tags": ["iş", "sunum", "deadline"]
+    },
+    {
+      "id": "7f0cfd58-9d3e-4b17-95da-8f91f7f3d49e",
+      "aciklama": "Haftalık plan yap",
+      "detay": "Önümüzdeki hafta için 3 ana hedef belirle.",
+      "tarih": "2026-03-15",
+      "createdAt": "2026-03-08T08:05:00Z",
+      "updatedAt": "2026-03-08T08:05:00Z",
+      "oncelik": "MEDIUM",
+      "tags": ["planlama", "rutin"]
+    },
+    {
+      "id": "cbfbd798-6f76-4d6d-9382-c94ce7a4ea49",
+      "aciklama": "Proje yedeği al",
+      "detay": "Git remote + harici diske kopya oluştur.",
+      "tarih": "2026-03-16",
+      "createdAt": "2026-03-08T13:50:00Z",
+      "updatedAt": "2026-03-08T13:50:00Z",
+      "oncelik": "HIGH",
+      "tags": ["teknik", "bakım", "güvenlik"]
+    },
+    {
+      "id": "e4487165-2f8d-4b5f-bef1-b7bdf75299dc",
+      "aciklama": "Arkadaşa dönüş yap",
+      "detay": "Taşınma için saat netleştir ve mesaj at.",
+      "tarih": "2026-03-09",
+      "createdAt": "2026-03-08T09:00:00Z",
+      "updatedAt": "2026-03-08T09:00:00Z",
+      "oncelik": "LOW",
+      "tags": ["sosyal", "iletişim"]
+    },
+    {
+      "id": "0f9df8b5-1df8-4688-8063-0d7d31595f71",
+      "aciklama": "Market alışverişi yap",
+      "detay": "Süt, yumurta, kahve ve temizlik ürünleri al.",
+      "tarih": "2026-03-08",
+      "createdAt": "2026-03-07T17:10:00Z",
+      "updatedAt": "2026-03-07T17:10:00Z",
+      "oncelik": "MEDIUM",
+      "tags": ["ev", "alışveriş"]
+    },
+    {
+      "id": "8c89b8b8-d299-4a8d-96ad-d52c289f29f3",
+      "aciklama": "Vergi evraklarını kontrol et",
+      "detay": "Eksik belge varsa muhasebeciye ilet.",
+      "tarih": "2026-03-18",
+      "createdAt": "2026-03-08T15:25:00Z",
+      "updatedAt": "2026-03-08T15:25:00Z",
+      "oncelik": "HIGH",
+      "tags": ["finans", "resmi", "iş"]
+    }
+  ]
+}
