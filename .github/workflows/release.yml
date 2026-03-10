@@ -128,6 +128,23 @@ jobs:
         with:
           path: dist-artifacts
 
+      - name: Generate SHA256 checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          FILES="$(find dist-artifacts -type f \( -name "*.dmg" -o -name "*.msi" -o -name "*.tar.gz" \) | sort)"
+          if [[ -z "${FILES}" ]]; then
+            echo "No release artifacts found for checksum generation."
+            exit 1
+          fi
+
+          : > dist-artifacts/SHA256SUMS.txt
+          while IFS= read -r file; do
+            sha256sum "$file" >> dist-artifacts/SHA256SUMS.txt
+          done <<< "${FILES}"
+
+          sed -i 's#  dist-artifacts/#  #' dist-artifacts/SHA256SUMS.txt
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -138,3 +155,4 @@ jobs:
             dist-artifacts/todo-again-macos/*.dmg
             dist-artifacts/todo-again-windows/*.msi
             dist-artifacts/todo-again-linux/*.tar.gz
+            dist-artifacts/SHA256SUMS.txt
