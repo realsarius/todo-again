@@ -290,6 +290,9 @@ public class Controller {
         }
         secili.setAciklama(temizBaslik);
         gorevSatiriniYenile(secili);
+        if (aramaAktifMi()) {
+            filtreleriUygula();
+        }
     }
 
     private void seciliGorevTarihiniGuncelle(LocalDate yeniTarih) {
@@ -325,6 +328,9 @@ public class Controller {
         }
         secili.setOncelik(yeniOncelik);
         gorevSatiriniYenile(secili);
+        if (oncelikFiltreAktifMi()) {
+            filtreleriUygula();
+        }
     }
 
     private void seciliGorevNotunuGuncelle(String yeniNot) {
@@ -340,6 +346,9 @@ public class Controller {
             return;
         }
         taskService.gorevDetayiGuncelle(secili, guncelNot);
+        if (aramaAktifMi()) {
+            filtreleriUygula();
+        }
     }
 
     private void gorevSatiriniYenile(Yapilacak gorev) {
@@ -367,10 +376,16 @@ public class Controller {
 
     private boolean filtreAktifMi() {
         boolean bugunAktif = bugunToggleButton.isSelected();
-        boolean aramaAktif = aramaFXML.getText() != null && !aramaFXML.getText().isBlank();
+        return bugunAktif || aramaAktifMi() || oncelikFiltreAktifMi();
+    }
+
+    private boolean aramaAktifMi() {
+        return aramaFXML.getText() != null && !aramaFXML.getText().isBlank();
+    }
+
+    private boolean oncelikFiltreAktifMi() {
         String secim = oncelikFiltreFXML.getValue();
-        boolean oncelikAktif = secim != null && !secim.equals("Tümü");
-        return bugunAktif || aramaAktif || oncelikAktif;
+        return secim != null && !secim.equals("Tümü");
     }
 
     @FXML
