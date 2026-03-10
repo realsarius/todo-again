@@ -4,8 +4,16 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import yapilacaklarListesi.settings.SettingsManager;
+import yapilacaklarListesi.settings.SettingsSection;
+import yapilacaklarListesi.settings.sections.AppearanceSection;
+import yapilacaklarListesi.settings.sections.DataSection;
+import yapilacaklarListesi.settings.sections.NotificationsSection;
+import yapilacaklarListesi.settings.sections.PomodoroSection;
+import yapilacaklarListesi.settings.sections.UpdatesSection;
 
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class SettingsController {
 
@@ -25,79 +33,99 @@ public class SettingsController {
 
     private static final String ACTIVE_CATEGORY_STYLE = "settings-category-active";
 
+    private final SettingsManager settingsManager = new SettingsManager();
+    private final Map<String, Button> kategoriButonlari = new LinkedHashMap<>();
+    private final Map<String, VBox> sectionPanelleri = new LinkedHashMap<>();
+    private final Map<String, SettingsSection> sectionlar = new LinkedHashMap<>();
+
     @FXML
     public void initialize() {
-        kategoriGoster(gorunumKategoriButton, gorunumSection);
+        sectionKayitlariniHazirla();
+        sectionYukleriniAl();
+        kategoriGoster(AppearanceSection.SECTION_ID);
     }
 
     @FXML
     public void gorunumuGoster() {
-        kategoriGoster(gorunumKategoriButton, gorunumSection);
+        kategoriGoster(AppearanceSection.SECTION_ID);
     }
 
     @FXML
     public void pomodoroyuGoster() {
-        kategoriGoster(pomodoroKategoriButton, pomodoroSection);
+        kategoriGoster(PomodoroSection.SECTION_ID);
     }
 
     @FXML
     public void bildirimleriGoster() {
-        kategoriGoster(bildirimlerKategoriButton, bildirimlerSection);
+        kategoriGoster(NotificationsSection.SECTION_ID);
     }
 
     @FXML
     public void veriyiGoster() {
-        kategoriGoster(veriKategoriButton, veriSection);
+        kategoriGoster(DataSection.SECTION_ID);
     }
 
     @FXML
     public void guncellemeleriGoster() {
-        kategoriGoster(guncellemelerKategoriButton, guncellemelerSection);
+        kategoriGoster(UpdatesSection.SECTION_ID);
     }
 
     @FXML
     public void kaydetVeKapat() {
+        for (SettingsSection section : sectionlar.values()) {
+            section.save(settingsManager);
+        }
         pencereyiKapat();
     }
 
     @FXML
     public void iptalEt() {
+        for (SettingsSection section : sectionlar.values()) {
+            section.rollback();
+        }
         pencereyiKapat();
     }
 
-    private void kategoriGoster(Button seciliButton, VBox seciliSection) {
-        for (Button button : tumKategoriButonlari()) {
+    private void sectionKayitlariniHazirla() {
+        sectionKaydet(new AppearanceSection(), gorunumKategoriButton, gorunumSection);
+        sectionKaydet(new PomodoroSection(), pomodoroKategoriButton, pomodoroSection);
+        sectionKaydet(new NotificationsSection(), bildirimlerKategoriButton, bildirimlerSection);
+        sectionKaydet(new DataSection(), veriKategoriButton, veriSection);
+        sectionKaydet(new UpdatesSection(), guncellemelerKategoriButton, guncellemelerSection);
+    }
+
+    private void sectionKaydet(SettingsSection section, Button kategoriButton, VBox panel) {
+        String sectionId = section.getSectionId();
+        sectionlar.put(sectionId, section);
+        kategoriButonlari.put(sectionId, kategoriButton);
+        sectionPanelleri.put(sectionId, panel);
+    }
+
+    private void sectionYukleriniAl() {
+        for (SettingsSection section : sectionlar.values()) {
+            section.load(settingsManager);
+        }
+    }
+
+    private void kategoriGoster(String sectionId) {
+        if (!sectionlar.containsKey(sectionId)) {
+            return;
+        }
+
+        for (Map.Entry<String, Button> entry : kategoriButonlari.entrySet()) {
+            Button button = entry.getValue();
             button.getStyleClass().remove(ACTIVE_CATEGORY_STYLE);
-        }
-        if (!seciliButton.getStyleClass().contains(ACTIVE_CATEGORY_STYLE)) {
-            seciliButton.getStyleClass().add(ACTIVE_CATEGORY_STYLE);
+            if (entry.getKey().equals(sectionId)) {
+                button.getStyleClass().add(ACTIVE_CATEGORY_STYLE);
+            }
         }
 
-        for (VBox section : tumSectionlar()) {
-            boolean aktif = section == seciliSection;
-            section.setVisible(aktif);
-            section.setManaged(aktif);
+        for (Map.Entry<String, VBox> entry : sectionPanelleri.entrySet()) {
+            boolean aktif = entry.getKey().equals(sectionId);
+            VBox panel = entry.getValue();
+            panel.setVisible(aktif);
+            panel.setManaged(aktif);
         }
-    }
-
-    private List<Button> tumKategoriButonlari() {
-        return List.of(
-                gorunumKategoriButton,
-                pomodoroKategoriButton,
-                bildirimlerKategoriButton,
-                veriKategoriButton,
-                guncellemelerKategoriButton
-        );
-    }
-
-    private List<VBox> tumSectionlar() {
-        return List.of(
-                gorunumSection,
-                pomodoroSection,
-                bildirimlerSection,
-                veriSection,
-                guncellemelerSection
-        );
     }
 
     private void pencereyiKapat() {
