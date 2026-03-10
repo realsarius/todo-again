@@ -75,13 +75,59 @@
                     <CheckBox fx:id="pomodoroSesBildirimCheckBox" mnemonicParsing="false" styleClass="settings-checkbox" text="Açık"/>
                 </HBox>
             </VBox>
-            <VBox fx:id="bildirimlerSection" spacing="8.0" styleClass="settings-section" visible="false" managed="false">
+            <VBox fx:id="bildirimlerSection" spacing="12.0" styleClass="settings-section" visible="false" managed="false">
                 <Label styleClass="settings-section-title" text="Bildirimler"/>
-                <Label styleClass="settings-section-desc" text="Bu bölüm Faz D'de tamamlanacak."/>
+                <HBox alignment="CENTER_LEFT" styleClass="settings-row">
+                    <Label minWidth="140.0" prefWidth="140.0" styleClass="settings-row-label" text="Masaüstü bildirimi"/>
+                    <CheckBox fx:id="bildirimMasaustuCheckBox" mnemonicParsing="false" styleClass="settings-checkbox" text="Açık"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" styleClass="settings-row">
+                    <Label minWidth="140.0" prefWidth="140.0" styleClass="settings-row-label" text="Görev hatırlatıcısı"/>
+                    <CheckBox fx:id="gorevHatirlaticisiCheckBox" mnemonicParsing="false" styleClass="settings-checkbox" text="Açık"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" styleClass="settings-row">
+                    <Label minWidth="140.0" prefWidth="140.0" styleClass="settings-row-label" text="Bildirim sesi"/>
+                    <CheckBox fx:id="bildirimSesiCheckBox" mnemonicParsing="false" styleClass="settings-checkbox" text="Açık"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" styleClass="settings-row">
+                    <Label minWidth="140.0" prefWidth="140.0" styleClass="settings-row-label" text="Sessiz saatler"/>
+                    <CheckBox fx:id="sessizSaatlerCheckBox" mnemonicParsing="false" styleClass="settings-checkbox" text="Etkin"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" styleClass="settings-row">
+                    <Label minWidth="140.0" prefWidth="140.0" styleClass="settings-row-label" text="Başlangıç / Bitiş"/>
+                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                        <Spinner fx:id="sessizSaatBaslangicSaatSpinner" prefWidth="72.0" styleClass="settings-spinner"/>
+                        <Label styleClass="settings-row-desc" text=":"/>
+                        <Spinner fx:id="sessizSaatBaslangicDakikaSpinner" prefWidth="72.0" styleClass="settings-spinner"/>
+                        <Label styleClass="settings-row-desc" text="—"/>
+                        <Spinner fx:id="sessizSaatBitisSaatSpinner" prefWidth="72.0" styleClass="settings-spinner"/>
+                        <Label styleClass="settings-row-desc" text=":"/>
+                        <Spinner fx:id="sessizSaatBitisDakikaSpinner" prefWidth="72.0" styleClass="settings-spinner"/>
+                    </HBox>
+                </HBox>
             </VBox>
-            <VBox fx:id="veriSection" spacing="8.0" styleClass="settings-section" visible="false" managed="false">
+            <VBox fx:id="veriSection" spacing="12.0" styleClass="settings-section" visible="false" managed="false">
                 <Label styleClass="settings-section-title" text="Veri"/>
-                <Label styleClass="settings-section-desc" text="Bu bölüm Faz D'de tamamlanacak."/>
+                <HBox alignment="CENTER_LEFT" styleClass="settings-row" spacing="8.0">
+                    <Label minWidth="140.0" prefWidth="140.0" styleClass="settings-row-label" text="JSON dışa aktar"/>
+                    <Button fx:id="veriDisaAktarButton" mnemonicParsing="false" styleClass="settings-secondary-button" text="Dışa Aktar"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" styleClass="settings-row" spacing="8.0">
+                    <Label minWidth="140.0" prefWidth="140.0" styleClass="settings-row-label" text="Yedekten geri yükle"/>
+                    <Button fx:id="veriIceAktarButton" mnemonicParsing="false" styleClass="settings-secondary-button" text="İçe Aktar"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" styleClass="settings-row">
+                    <Label minWidth="140.0" prefWidth="140.0" styleClass="settings-row-label" text="Otomatik yedekleme"/>
+                    <CheckBox fx:id="otomatikYedeklemeCheckBox" mnemonicParsing="false" styleClass="settings-checkbox" text="Açık"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" styleClass="settings-row">
+                    <Label minWidth="140.0" prefWidth="140.0" styleClass="settings-row-label" text="Yedek aralığı"/>
+                    <ComboBox fx:id="otomatikYedeklemeAralikComboBox" prefWidth="180.0" styleClass="settings-combo"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" styleClass="settings-row" spacing="8.0">
+                    <Label minWidth="140.0" prefWidth="140.0" styleClass="settings-row-label" text="Tüm verileri sıfırla"/>
+                    <Button fx:id="veriSifirlaButton" mnemonicParsing="false" styleClass="settings-danger-button" text="Sıfırla"/>
+                </HBox>
             </VBox>
             <VBox fx:id="guncellemelerSection" spacing="8.0" styleClass="settings-section" visible="false" managed="false">
                 <Label styleClass="settings-section-title" text="Güncellemeler"/>

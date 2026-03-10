@@ -48,6 +48,21 @@ public class SettingsController {
     @FXML private Spinner<Integer> pomodoroUzunMolaAraligiSpinner;
     @FXML private CheckBox pomodoroSesBildirimCheckBox;
 
+    @FXML private CheckBox bildirimMasaustuCheckBox;
+    @FXML private CheckBox gorevHatirlaticisiCheckBox;
+    @FXML private CheckBox bildirimSesiCheckBox;
+    @FXML private CheckBox sessizSaatlerCheckBox;
+    @FXML private Spinner<Integer> sessizSaatBaslangicSaatSpinner;
+    @FXML private Spinner<Integer> sessizSaatBaslangicDakikaSpinner;
+    @FXML private Spinner<Integer> sessizSaatBitisSaatSpinner;
+    @FXML private Spinner<Integer> sessizSaatBitisDakikaSpinner;
+
+    @FXML private Button veriDisaAktarButton;
+    @FXML private Button veriIceAktarButton;
+    @FXML private Button veriSifirlaButton;
+    @FXML private CheckBox otomatikYedeklemeCheckBox;
+    @FXML private ComboBox<String> otomatikYedeklemeAralikComboBox;
+
     private static final String ACTIVE_CATEGORY_STYLE = "settings-category-active";
 
     private final SettingsManager settingsManager = new SettingsManager();
@@ -120,8 +135,24 @@ public class SettingsController {
                 pomodoroUzunMolaAraligiSpinner,
                 pomodoroSesBildirimCheckBox
         ), pomodoroKategoriButton, pomodoroSection);
-        sectionKaydet(new NotificationsSection(), bildirimlerKategoriButton, bildirimlerSection);
-        sectionKaydet(new DataSection(), veriKategoriButton, veriSection);
+        sectionKaydet(new NotificationsSection(
+                bildirimMasaustuCheckBox,
+                gorevHatirlaticisiCheckBox,
+                bildirimSesiCheckBox,
+                sessizSaatlerCheckBox,
+                sessizSaatBaslangicSaatSpinner,
+                sessizSaatBaslangicDakikaSpinner,
+                sessizSaatBitisSaatSpinner,
+                sessizSaatBitisDakikaSpinner
+        ), bildirimlerKategoriButton, bildirimlerSection);
+        sectionKaydet(new DataSection(
+                veriDisaAktarButton,
+                veriIceAktarButton,
+                veriSifirlaButton,
+                otomatikYedeklemeCheckBox,
+                otomatikYedeklemeAralikComboBox,
+                settingsRoot
+        ), veriKategoriButton, veriSection);
         sectionKaydet(new UpdatesSection(), guncellemelerKategoriButton, guncellemelerSection);
     }
 
