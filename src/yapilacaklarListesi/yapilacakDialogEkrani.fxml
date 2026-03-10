@@ -4,10 +4,13 @@
 <?import javafx.scene.control.DialogPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
 <DialogPane expanded="true" xmlns="http://javafx.com/javafx/8.0.202-ea" xmlns:fx="http://javafx.com/fxml/1"
@@ -20,15 +23,23 @@
             <TextArea fx:id="detayFXML" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
             <Label text="Tarih:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
             <DatePicker fx:id="tarihFXML" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-            <Label text="Öncelik:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-            <ChoiceBox fx:id="oncelikFXML" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-            <Label text="Etiketler:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-            <TextField fx:id="taglerFXML" promptText="virgülle ayır (iş, okul)" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+            <Label text="Zaman:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+            <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                <CheckBox fx:id="tumGunFXML" mnemonicParsing="false" text="Tüm gün"/>
+                <ComboBox fx:id="baslangicSaatFXML" prefWidth="110.0" promptText="Başlangıç"/>
+                <Label text="—"/>
+                <ComboBox fx:id="bitisSaatFXML" prefWidth="110.0" promptText="Bitiş"/>
+            </HBox>
+            <Label text="Öncelik:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+            <ChoiceBox fx:id="oncelikFXML" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+            <Label text="Etiketler:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+            <TextField fx:id="taglerFXML" promptText="virgülle ayır (iş, okul)" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
             <columnConstraints>
                 <ColumnConstraints/>
                 <ColumnConstraints/>
             </columnConstraints>
             <rowConstraints>
+                <RowConstraints/>
                 <RowConstraints/>
                 <RowConstraints/>
                 <RowConstraints/>

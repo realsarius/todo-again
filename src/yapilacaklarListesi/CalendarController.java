@@ -313,7 +313,7 @@ public class CalendarController {
 
         hucre.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY && !event.isConsumed()) {
-                yeniGorevDialoguAc(gun);
+                yeniGorevDialoguAc(gun, null);
             }
         });
 
@@ -389,7 +389,7 @@ public class CalendarController {
             gorevPilleriEkle(tumGunKutusu, tumGunGorevleri, true);
             tumGunKutusu.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY && !event.isConsumed()) {
-                    yeniGorevDialoguAc(gun);
+                    yeniGorevDialoguAc(gun, null);
                 }
             });
             dropHedefiBagla(tumGunKutusu, gun);
@@ -416,7 +416,7 @@ public class CalendarController {
                 int satir = saatDegeri - 7;
                 saatKutusu.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.PRIMARY && !event.isConsumed()) {
-                        yeniGorevDialoguAc(gun);
+                        yeniGorevDialoguAc(gun, LocalTime.of(saatDegeri, 0));
                     }
                 });
                 dropHedefiBagla(saatKutusu, gun);
@@ -575,7 +575,7 @@ public class CalendarController {
                 .toList();
     }
 
-    private void yeniGorevDialoguAc(LocalDate tarih) {
+    private void yeniGorevDialoguAc(LocalDate tarih, LocalTime varsayilanSaat) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Yeni Yapılacak");
         dialog.setHeaderText("Yeni görevi seçilen tarihe ekleyin.");
@@ -596,7 +596,7 @@ public class CalendarController {
         }
 
         DialogController dialogController = loader.getController();
-        dialogController.varsayilanTarihAyarla(tarih);
+        dialogController.varsayilanTarihVeSaatAyarla(tarih, varsayilanSaat);
 
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
