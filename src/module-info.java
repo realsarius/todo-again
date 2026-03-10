@@ -1,5 +1,6 @@
 module todo.again {
     requires java.desktop;
+    requires java.net.http;
     requires java.prefs;
     requires javafx.controls;
     requires javafx.fxml;

@@ -567,6 +567,12 @@
     -fx-font-size: 12px;
 }
 
+.settings-row-value {
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
 .settings-segment-option {
     -fx-text-fill: -text-primary;
     -fx-background-color: transparent;
@@ -626,6 +632,22 @@
 
 .settings-danger-button:hover {
     -fx-background-color: #E6352C;
+}
+
+.settings-status-info {
+    -fx-text-fill: -text-secondary;
+}
+
+.settings-status-ok {
+    -fx-text-fill: #34C759;
+}
+
+.settings-status-warning {
+    -fx-text-fill: #FF9500;
+}
+
+.settings-status-error {
+    -fx-text-fill: #FF3B30;
 }
 
 .settings-footer {

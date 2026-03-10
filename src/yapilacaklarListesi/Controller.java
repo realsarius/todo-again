@@ -40,6 +40,7 @@ import yapilacaklarListesi.pomodoro.model.Pomodoro;
 import yapilacaklarListesi.pomodoro.model.PomodoroEnum;
 import yapilacaklarListesi.service.TaskService;
 import yapilacaklarListesi.settings.SettingsManager;
+import yapilacaklarListesi.settings.UpdateChecker;
 import yapilacaklarListesi.veriler.Oncelik;
 import yapilacaklarListesi.veriler.Yapilacak;
 import yapilacaklarListesi.veriler.YapilacakVeri;
@@ -119,6 +120,7 @@ public class Controller {
         oncelikFiltreFXML.setValue("Tümü");
         detayPaneliniHazirla();
         darkModeUygula(preferences.getBoolean(PREF_DARK_MODE, false));
+        otomatikGuncellemeKontrolunuBaslat();
 
         farkliKaydetFXML.setOnAction(actionEvent -> {
             Stage stage = new Stage();
@@ -824,6 +826,19 @@ public class Controller {
             case MEDIUM -> Color.web("#4A7CFF");
             case LOW -> Color.web("#34C759");
         };
+    }
+
+    private void otomatikGuncellemeKontrolunuBaslat() {
+        SettingsManager settingsManager = new SettingsManager();
+        if (!settingsManager.isAutoUpdateCheckEnabled()) {
+            return;
+        }
+        UpdateChecker.latestRelease(UpdateChecker.DEFAULT_GITHUB_OWNER, UpdateChecker.DEFAULT_GITHUB_REPO)
+                .whenComplete((result, throwable) -> {
+                    if (throwable == null && result != null && result.success()) {
+                        settingsManager.setLastUpdateCheckEpoch(System.currentTimeMillis());
+                    }
+                });
     }
 
 }
