@@ -77,10 +77,19 @@ public class TodoController {
     @FXML private VBox vbox;
     @FXML private ToggleButton bugunToggleButton;
     @FXML private Button temaToggleButton;
+    @FXML private SplitPane anaSplitPane;
     @FXML private ComboBox<String> oncelikFiltreFXML;
     @FXML private TextField aramaFXML;
     @FXML private ListView<Yapilacak> yapilacakListeFXML;
+    @FXML private ListView<Yapilacak> q1ListView;
+    @FXML private ListView<Yapilacak> q2ListView;
+    @FXML private ListView<Yapilacak> q3ListView;
+    @FXML private ListView<Yapilacak> q4ListView;
     @FXML private Label gorevSayaciLabel;
+    @FXML private Label q1CountBadge;
+    @FXML private Label q2CountBadge;
+    @FXML private Label q3CountBadge;
+    @FXML private Label q4CountBadge;
     @FXML private VBox detayBosDurumBox;
     @FXML private VBox detayEditorBox;
     @FXML private TextField detayBaslikField;
@@ -91,6 +100,7 @@ public class TodoController {
     @FXML private ToggleButton oncelikDusukButton;
     @FXML private ToggleButton oncelikOrtaButton;
     @FXML private ToggleButton oncelikYuksekButton;
+    @FXML private CheckBox acilCheckBox;
     @FXML private TextArea detayFXML;
     @FXML private Button hizliEkleButton;
 
@@ -109,9 +119,12 @@ public class TodoController {
     private boolean detayAlanlariGuncelleniyor;
     private Timeline timeLine;
     private Runnable ayarlarNavigasyonHandler;
+    private EisenhowerController eisenhowerController;
 
     private static final String DARK_MODE_CLASS = "dark-mode";
     private static final String PREF_DARK_MODE = "theme.darkModeEnabled";
+    private static final String PREF_TODO_SPLIT_DIVIDER_1 = "todo.split.divider.1";
+    private static final String PREF_TODO_SPLIT_DIVIDER_2 = "todo.split.divider.2";
     private static final DateTimeFormatter SAAT_FORMATI = DateTimeFormatter.ofPattern("HH:mm");
 
     public TodoController(){
@@ -132,6 +145,7 @@ public class TodoController {
         boolean koyuTemaAktif = preferences.getBoolean(PREF_DARK_MODE, false);
         darkModeUygula(koyuTemaAktif);
         Platform.runLater(() -> darkModeUygula(koyuTemaAktif));
+        splitPaneKonumlariniYukleVeDinle();
         otomatikGuncellemeKontrolunuBaslat();
 
         farkliKaydetFXML.setOnAction(actionEvent -> {
@@ -154,6 +168,9 @@ public class TodoController {
         // Yapılacak seçildiğinde detayın da gelmesi için kullanılan metod
         yapilacakListeFXML.getSelectionModel().selectedItemProperty().addListener((observable, eskiDeger, yeniDeger) -> {
             detayPaneliniDoldur(yeniDeger);
+            if (eisenhowerController != null) {
+                eisenhowerController.goreviSec(yeniDeger);
+            }
         });
 
         detayFXML.setOnKeyPressed(keyEvent -> {
@@ -235,6 +252,17 @@ public class TodoController {
             }
         });
         yapilacakListeFXML.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        eisenhowerController = new EisenhowerController(
+                q1ListView,
+                q2ListView,
+                q3ListView,
+                q4ListView,
+                q1CountBadge,
+                q2CountBadge,
+                q3CountBadge,
+                q4CountBadge
+        );
+        eisenhowerController.initialize(taskService.tumGorevler(), this::matristenGorevSec, this::matristenGorevGuncelle);
         yapilacakListeFXML.getSelectionModel().selectFirst();
         filtreleriUygula();
 
@@ -258,6 +286,7 @@ public class TodoController {
         bitisSaatComboBox.valueProperty().addListener((obs, eski, yeni) -> seciliGorevBitisSaatiniGuncelle(yeni));
         detayFXML.textProperty().addListener((obs, eski, yeni) -> seciliGorevNotunuGuncelle(yeni));
         oncelikToggleGroup.selectedToggleProperty().addListener((obs, eski, yeni) -> seciliGorevOnceliginiGuncelle());
+        acilCheckBox.selectedProperty().addListener((obs, eski, yeni) -> seciliGorevAcilDurumunuGuncelle(yeni));
         detayPaneliniDoldur(null);
     }
 
@@ -282,6 +311,9 @@ public class TodoController {
             detayBosDurumBox.setManaged(!secimVar);
             detayEditorBox.setVisible(secimVar);
             detayEditorBox.setManaged(secimVar);
+            if (eisenhowerController != null) {
+                eisenhowerController.goreviSec(gorev);
+            }
 
             if (!secimVar) {
                 detayBaslikField.clear();
@@ -292,6 +324,7 @@ public class TodoController {
                 saatAlanlariniGuncelle(true);
                 detayFXML.clear();
                 oncelikToggleGroup.selectToggle(null);
+                acilCheckBox.setSelected(false);
                 return;
             }
 
@@ -303,6 +336,7 @@ public class TodoController {
             saatAlanlariniGuncelle(gorev.isAllDay());
             detayFXML.setText(gorev.getDetay());
             oncelikButonunuSec(gorev.getOncelik());
+            acilCheckBox.setSelected(gorev.isUrgent());
         } finally {
             detayAlanlariGuncelleniyor = false;
         }
@@ -494,6 +528,19 @@ public class TodoController {
         }
     }
 
+    private void seciliGorevAcilDurumunuGuncelle(boolean acilMi) {
+        if (detayAlanlariGuncelleniyor) {
+            return;
+        }
+        Yapilacak secili = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+        if (secili == null || secili.isUrgent() == acilMi) {
+            return;
+        }
+        secili.setUrgent(acilMi);
+        gorevSatiriniYenile(secili);
+        filtreleriUygula();
+    }
+
     private void gorevSatiriniYenile(Yapilacak gorev) {
         int index = taskService.tumGorevler().indexOf(gorev);
         if (index >= 0) {
@@ -501,6 +548,53 @@ public class TodoController {
             yapilacakListeFXML.getSelectionModel().select(gorev);
         }
         yapilacakListeFXML.refresh();
+    }
+
+    private void splitPaneKonumlariniYukleVeDinle() {
+        if (anaSplitPane == null) {
+            return;
+        }
+        Platform.runLater(() -> {
+            double divider1 = clamp(preferences.getDouble(PREF_TODO_SPLIT_DIVIDER_1, 0.27), 0.1, 0.8);
+            double divider2 = clamp(preferences.getDouble(PREF_TODO_SPLIT_DIVIDER_2, 0.63), divider1 + 0.1, 0.95);
+            anaSplitPane.setDividerPositions(divider1, divider2);
+
+            if (anaSplitPane.getDividers().size() < 2) {
+                return;
+            }
+            anaSplitPane.getDividers().get(0).positionProperty().addListener((obs, eski, yeni) ->
+                    preferences.putDouble(PREF_TODO_SPLIT_DIVIDER_1, clamp(yeni.doubleValue(), 0.1, 0.8))
+            );
+            anaSplitPane.getDividers().get(1).positionProperty().addListener((obs, eski, yeni) ->
+                    preferences.putDouble(PREF_TODO_SPLIT_DIVIDER_2, clamp(yeni.doubleValue(), 0.2, 0.95))
+            );
+        });
+    }
+
+    private double clamp(double value, double min, double max) {
+        if (value < min) {
+            return min;
+        }
+        if (value > max) {
+            return max;
+        }
+        return value;
+    }
+
+    private void matristenGorevSec(Yapilacak gorev) {
+        if (gorev == null) {
+            return;
+        }
+        yapilacakListeFXML.getSelectionModel().select(gorev);
+        detayPaneliniDoldur(gorev);
+    }
+
+    private void matristenGorevGuncelle(Yapilacak gorev) {
+        if (gorev == null) {
+            return;
+        }
+        gorevSatiriniYenile(gorev);
+        filtreleriUygula();
     }
 
     private void gorevSayaciniGuncelle() {
@@ -645,9 +739,33 @@ public class TodoController {
         zamanlayiciyiDuraklat();
     }
 
+    @FXML
+    public void q1HizliEkle() {
+        yeniYapilacakDialoguAc(Oncelik.MEDIUM, true);
+    }
+
+    @FXML
+    public void q2HizliEkle() {
+        yeniYapilacakDialoguAc(Oncelik.MEDIUM, false);
+    }
+
+    @FXML
+    public void q3HizliEkle() {
+        yeniYapilacakDialoguAc(Oncelik.LOW, true);
+    }
+
+    @FXML
+    public void q4HizliEkle() {
+        yeniYapilacakDialoguAc(Oncelik.LOW, false);
+    }
+
     // Yeni yapılacak eklemek için yapılmış yeni bir dialog
     @FXML
     public void yeniYapilacakDialog() {
+        yeniYapilacakDialoguAc(Oncelik.MEDIUM, false);
+    }
+
+    private void yeniYapilacakDialoguAc(Oncelik varsayilanOncelik, boolean varsayilanAcil) {
         MuzikOynatici.dialogMuzikOynat();
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Yeni Yapılacak");
@@ -665,9 +783,11 @@ public class TodoController {
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
 
+        DialogController controller = fxmlLoader.getController();
+        controller.varsayilanOncelikVeAcilAyarla(varsayilanOncelik, varsayilanAcil);
+
         Optional<ButtonType> cikti = dialog.showAndWait();
         if (cikti.isPresent() && cikti.get() == ButtonType.OK) {
-            DialogController controller = fxmlLoader.getController();
             Yapilacak yeniYapilacak = controller.ciktiyiGoster();
             if (yeniYapilacak == null) {
                 return;

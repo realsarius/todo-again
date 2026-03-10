@@ -47,9 +47,12 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -102,9 +105,86 @@
         </StackPane>
         <Button fx:id="temaToggleButton" mnemonicParsing="false" onAction="#temaDegistir" styleClass="theme-toggle-button" text="☾"/>
     </HBox>
-    <SplitPane dividerPositions="0.27, 0.63" focusTraversable="true" styleClass="app-split-pane" VBox.vgrow="ALWAYS">
+    <SplitPane fx:id="anaSplitPane" dividerPositions="0.27, 0.63" focusTraversable="true" styleClass="app-split-pane" VBox.vgrow="ALWAYS">
         <VBox styleClass="panel-left">
-            <Label alignment="CENTER_LEFT" styleClass="section-title" text="Görev Ayrıntıları" textAlignment="LEFT"/>
+            <GridPane hgap="8.0" vgap="8.0" VBox.vgrow="ALWAYS" styleClass="eisenhower-grid">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints vgrow="ALWAYS" percentHeight="50.0"/>
+                    <RowConstraints vgrow="ALWAYS" percentHeight="50.0"/>
+                </rowConstraints>
+
+                <VBox styleClass="eisenhower-quadrant quadrant-q1" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                        <Label styleClass="eisenhower-title-dot q1-dot" text="●"/>
+                        <Label styleClass="eisenhower-title" text="Önemli + Acil"/>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <Button mnemonicParsing="false" onAction="#q1HizliEkle" styleClass="eisenhower-add-button" text="+"/>
+                        <Label fx:id="q1CountBadge" styleClass="eisenhower-count-badge" text="0"/>
+                    </HBox>
+                    <Label styleClass="eisenhower-subtitle" text="Hemen Yap"/>
+                    <Region styleClass="eisenhower-divider"/>
+                    <ListView fx:id="q1ListView" styleClass="eisenhower-list" VBox.vgrow="ALWAYS">
+                        <placeholder>
+                            <Label styleClass="eisenhower-empty" text="Görev yok"/>
+                        </placeholder>
+                    </ListView>
+                </VBox>
+
+                <VBox styleClass="eisenhower-quadrant quadrant-q2" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                        <Label styleClass="eisenhower-title-dot q2-dot" text="●"/>
+                        <Label styleClass="eisenhower-title" text="Önemli + Acil Değil"/>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <Button mnemonicParsing="false" onAction="#q2HizliEkle" styleClass="eisenhower-add-button" text="+"/>
+                        <Label fx:id="q2CountBadge" styleClass="eisenhower-count-badge" text="0"/>
+                    </HBox>
+                    <Label styleClass="eisenhower-subtitle" text="Planla"/>
+                    <Region styleClass="eisenhower-divider"/>
+                    <ListView fx:id="q2ListView" styleClass="eisenhower-list" VBox.vgrow="ALWAYS">
+                        <placeholder>
+                            <Label styleClass="eisenhower-empty" text="Görev yok"/>
+                        </placeholder>
+                    </ListView>
+                </VBox>
+
+                <VBox styleClass="eisenhower-quadrant quadrant-q3" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                        <Label styleClass="eisenhower-title-dot q3-dot" text="●"/>
+                        <Label styleClass="eisenhower-title" text="Önemsiz + Acil"/>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <Button mnemonicParsing="false" onAction="#q3HizliEkle" styleClass="eisenhower-add-button" text="+"/>
+                        <Label fx:id="q3CountBadge" styleClass="eisenhower-count-badge" text="0"/>
+                    </HBox>
+                    <Label styleClass="eisenhower-subtitle" text="Devret"/>
+                    <Region styleClass="eisenhower-divider"/>
+                    <ListView fx:id="q3ListView" styleClass="eisenhower-list" VBox.vgrow="ALWAYS">
+                        <placeholder>
+                            <Label styleClass="eisenhower-empty" text="Görev yok"/>
+                        </placeholder>
+                    </ListView>
+                </VBox>
+
+                <VBox styleClass="eisenhower-quadrant quadrant-q4" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                        <Label styleClass="eisenhower-title-dot q4-dot" text="●"/>
+                        <Label styleClass="eisenhower-title" text="Önemsiz + Acil Değil"/>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <Button mnemonicParsing="false" onAction="#q4HizliEkle" styleClass="eisenhower-add-button" text="+"/>
+                        <Label fx:id="q4CountBadge" styleClass="eisenhower-count-badge" text="0"/>
+                    </HBox>
+                    <Label styleClass="eisenhower-subtitle" text="Ele"/>
+                    <Region styleClass="eisenhower-divider"/>
+                    <ListView fx:id="q4ListView" styleClass="eisenhower-list" VBox.vgrow="ALWAYS">
+                        <placeholder>
+                            <Label styleClass="eisenhower-empty" text="Görev yok"/>
+                        </placeholder>
+                    </ListView>
+                </VBox>
+            </GridPane>
         </VBox>
         <VBox prefHeight="200.0" prefWidth="100.0" styleClass="panel-center">
             <ListView fx:id="yapilacakListeFXML" onKeyPressed="#tusaBasildiginda" styleClass="task-list" VBox.vgrow="ALWAYS">
@@ -139,6 +219,7 @@
                             <ToggleButton fx:id="oncelikOrtaButton" mnemonicParsing="false" styleClass="priority-toggle medium" text="Orta"/>
                             <ToggleButton fx:id="oncelikYuksekButton" mnemonicParsing="false" styleClass="priority-toggle high" text="Yüksek"/>
                         </HBox>
+                        <CheckBox fx:id="acilCheckBox" mnemonicParsing="false" styleClass="detail-urgent-check" text="Acil"/>
                     </HBox>
                     <TextArea fx:id="detayFXML" onKeyPressed="#yapilacakAlertsizKaydet" promptText="Not ekle..."
                               styleClass="detail-note-area" VBox.vgrow="ALWAYS" wrapText="true"/>

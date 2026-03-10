@@ -89,6 +89,7 @@ class YapilacakVeriMigrationTest {
         assertNull(veri.getYapilacaklar().get(0).getDueTime());
         assertNull(veri.getYapilacaklar().get(0).getCompletedAt());
         assertFalse(veri.getYapilacaklar().get(0).isCompleted());
+        assertFalse(veri.getYapilacaklar().get(0).isUrgent());
     }
 
     @Test
@@ -102,7 +103,7 @@ class YapilacakVeriMigrationTest {
         Path jsonDosya = veri.getJsonDosyaYolu();
         assertTrue(Files.exists(jsonDosya));
         String jsonIcerik = Files.readString(jsonDosya);
-        assertTrue(jsonIcerik.contains("\"version\": 3"));
+        assertTrue(jsonIcerik.contains("\"version\": 4"));
         assertTrue(jsonIcerik.contains("JSON Gecis"));
     }
 
@@ -231,5 +232,48 @@ class YapilacakVeriMigrationTest {
         assertEquals(LocalTime.of(14, 30), kayit.getDueTime());
         assertEquals(LocalDateTime.of(2026, 3, 9, 12, 30), kayit.getCompletedAt());
         assertTrue(kayit.isCompleted());
+        assertFalse(kayit.isUrgent());
+    }
+
+    @Test
+    void jsonUrgentAlaniYuklenir() throws IOException {
+        Path tempKlasor = Files.createTempDirectory("yapilacaklar-json-urgent");
+        Path legacyDosya = tempKlasor.resolve("Yapilacaklar.txt");
+
+        veri.setDosyaYolu(legacyDosya);
+        Path jsonDosya = veri.getJsonDosyaYolu();
+        Files.writeString(jsonDosya,
+                "{\n" +
+                        "  \"version\": 4,\n" +
+                        "  \"tasks\": [\n" +
+                        "    {\n" +
+                        "      \"aciklama\": \"Acil Gorev\",\n" +
+                        "      \"detay\": \"Detay\",\n" +
+                        "      \"tarih\": \"2026-03-10\",\n" +
+                        "      \"oncelik\": \"LOW\",\n" +
+                        "      \"is_urgent\": true\n" +
+                        "    }\n" +
+                        "  ]\n" +
+                        "}\n");
+
+        veri.yapilacaklariCagir();
+
+        assertEquals(1, veri.getYapilacaklar().size());
+        assertTrue(veri.getYapilacaklar().get(0).isUrgent());
+    }
+
+    @Test
+    void acilAlanJsonDosyasinaYazilir() throws IOException {
+        Path tempDosya = Files.createTempFile("yapilacaklar-urgent-kayit", ".txt");
+        veri.setDosyaYolu(tempDosya);
+        veri.yapilacaklariCagir();
+
+        Yapilacak gorev = new Yapilacak("Acil Kayit", "Detay", LocalDate.of(2026, 3, 10));
+        gorev.setUrgent(true);
+        veri.yapilacakEkle(gorev);
+        veri.yapilacaklariKaydet();
+
+        String jsonIcerik = Files.readString(veri.getJsonDosyaYolu());
+        assertTrue(jsonIcerik.contains("\"is_urgent\": true"));
     }
 }

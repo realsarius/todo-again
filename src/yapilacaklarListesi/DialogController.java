@@ -26,6 +26,7 @@ public class DialogController {
     @FXML private DatePicker tarihFXML;
     @FXML private ChoiceBox<Oncelik> oncelikFXML;
     @FXML private TextField taglerFXML;
+    @FXML private CheckBox acilMiFXML;
     @FXML private CheckBox tumGunFXML;
     @FXML private ComboBox<String> baslangicSaatFXML;
     @FXML private ComboBox<String> bitisSaatFXML;
@@ -63,6 +64,15 @@ public class DialogController {
         bitisSaatFXML.setValue(saatMetniniFormatla(varsayilanBitisSaati(varsayilanSaat)));
     }
 
+    public void varsayilanOncelikVeAcilAyarla(Oncelik oncelik, boolean acilMi) {
+        if (oncelik != null) {
+            oncelikFXML.setValue(oncelik);
+        }
+        if (acilMiFXML != null) {
+            acilMiFXML.setSelected(acilMi);
+        }
+    }
+
     // FXML'deki aciklamaFXML, detayFXML, tarihFXML'in içeriklerini alıp yeni bir Yapilacak sınıfı oluşturarak return ediyoruz ki yeni Yapilacagi text dökümantasyonuna yazdırabilelim.
     public Yapilacak ciktiyiGoster(){
         String aciklama = this.aciklamaFXML.getText().trim();
@@ -80,6 +90,7 @@ public class DialogController {
         Yapilacak yeni = new Yapilacak(aciklama, detay, tarih);
         yeni.setOncelik(oncelikFXML.getValue() == null ? Oncelik.MEDIUM : oncelikFXML.getValue());
         yeni.setTags(tagleriAyrisitir(taglerFXML.getText()));
+        yeni.setUrgent(acilMiFXML != null && acilMiFXML.isSelected());
         boolean tumGun = tumGunFXML.isSelected();
         LocalTime baslangic = saatMetniniParseEt(baslangicSaatFXML.getValue());
         LocalTime bitis = saatMetniniParseEt(bitisSaatFXML.getValue());
