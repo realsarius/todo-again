@@ -122,6 +122,7 @@
                         <Label styleClass="eisenhower-title-dot q1-dot" text="●"/>
                         <Label styleClass="eisenhower-title" text="Önemli + Acil"/>
                         <Pane HBox.hgrow="ALWAYS"/>
+                        <Button mnemonicParsing="false" onAction="#q1HizliEkle" styleClass="eisenhower-add-button" text="+"/>
                         <Label fx:id="q1CountBadge" styleClass="eisenhower-count-badge" text="0"/>
                     </HBox>
                     <Label styleClass="eisenhower-subtitle" text="Hemen Yap"/>
@@ -138,6 +139,7 @@
                         <Label styleClass="eisenhower-title-dot q2-dot" text="●"/>
                         <Label styleClass="eisenhower-title" text="Önemli + Acil Değil"/>
                         <Pane HBox.hgrow="ALWAYS"/>
+                        <Button mnemonicParsing="false" onAction="#q2HizliEkle" styleClass="eisenhower-add-button" text="+"/>
                         <Label fx:id="q2CountBadge" styleClass="eisenhower-count-badge" text="0"/>
                     </HBox>
                     <Label styleClass="eisenhower-subtitle" text="Planla"/>
@@ -154,6 +156,7 @@
                         <Label styleClass="eisenhower-title-dot q3-dot" text="●"/>
                         <Label styleClass="eisenhower-title" text="Önemsiz + Acil"/>
                         <Pane HBox.hgrow="ALWAYS"/>
+                        <Button mnemonicParsing="false" onAction="#q3HizliEkle" styleClass="eisenhower-add-button" text="+"/>
                         <Label fx:id="q3CountBadge" styleClass="eisenhower-count-badge" text="0"/>
                     </HBox>
                     <Label styleClass="eisenhower-subtitle" text="Devret"/>
@@ -170,6 +173,7 @@
                         <Label styleClass="eisenhower-title-dot q4-dot" text="●"/>
                         <Label styleClass="eisenhower-title" text="Önemsiz + Acil Değil"/>
                         <Pane HBox.hgrow="ALWAYS"/>
+                        <Button mnemonicParsing="false" onAction="#q4HizliEkle" styleClass="eisenhower-add-button" text="+"/>
                         <Label fx:id="q4CountBadge" styleClass="eisenhower-count-badge" text="0"/>
                     </HBox>
                     <Label styleClass="eisenhower-subtitle" text="Ele"/>

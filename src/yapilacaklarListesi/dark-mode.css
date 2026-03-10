@@ -96,6 +96,16 @@
     -fx-text-fill: #C7C7CC;
 }
 
+.root.dark-mode .eisenhower-add-button {
+    -fx-border-color: #4A4A4C;
+    -fx-text-fill: #C7C7CC;
+}
+
+.root.dark-mode .eisenhower-add-button:hover {
+    -fx-background-color: #3A3A3C;
+    -fx-text-fill: #F2F2F7;
+}
+
 .root.dark-mode .eisenhower-list.eisenhower-drag-target {
     -fx-background-color: #1C3A6E;
     -fx-border-color: #4A7CFF;

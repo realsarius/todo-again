@@ -64,6 +64,15 @@ public class DialogController {
         bitisSaatFXML.setValue(saatMetniniFormatla(varsayilanBitisSaati(varsayilanSaat)));
     }
 
+    public void varsayilanOncelikVeAcilAyarla(Oncelik oncelik, boolean acilMi) {
+        if (oncelik != null) {
+            oncelikFXML.setValue(oncelik);
+        }
+        if (acilMiFXML != null) {
+            acilMiFXML.setSelected(acilMi);
+        }
+    }
+
     // FXML'deki aciklamaFXML, detayFXML, tarihFXML'in içeriklerini alıp yeni bir Yapilacak sınıfı oluşturarak return ediyoruz ki yeni Yapilacagi text dökümantasyonuna yazdırabilelim.
     public Yapilacak ciktiyiGoster(){
         String aciklama = this.aciklamaFXML.getText().trim();

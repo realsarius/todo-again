@@ -369,6 +369,27 @@
     -fx-font-weight: 600;
 }
 
+.eisenhower-add-button {
+    -fx-background-color: transparent;
+    -fx-border-color: -line-color;
+    -fx-border-radius: 999px;
+    -fx-background-radius: 999px;
+    -fx-min-width: 20px;
+    -fx-min-height: 20px;
+    -fx-pref-width: 20px;
+    -fx-pref-height: 20px;
+    -fx-padding: 0;
+    -fx-text-fill: -text-secondary;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-cursor: hand;
+}
+
+.eisenhower-add-button:hover {
+    -fx-background-color: -list-hover;
+    -fx-text-fill: -text-primary;
+}
+
 .eisenhower-list {
     -fx-background-color: transparent;
     -fx-border-color: transparent;

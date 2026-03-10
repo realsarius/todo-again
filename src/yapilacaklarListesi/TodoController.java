@@ -704,9 +704,33 @@ public class TodoController {
         zamanlayiciyiDuraklat();
     }
 
+    @FXML
+    public void q1HizliEkle() {
+        yeniYapilacakDialoguAc(Oncelik.MEDIUM, true);
+    }
+
+    @FXML
+    public void q2HizliEkle() {
+        yeniYapilacakDialoguAc(Oncelik.MEDIUM, false);
+    }
+
+    @FXML
+    public void q3HizliEkle() {
+        yeniYapilacakDialoguAc(Oncelik.LOW, true);
+    }
+
+    @FXML
+    public void q4HizliEkle() {
+        yeniYapilacakDialoguAc(Oncelik.LOW, false);
+    }
+
     // Yeni yapılacak eklemek için yapılmış yeni bir dialog
     @FXML
     public void yeniYapilacakDialog() {
+        yeniYapilacakDialoguAc(Oncelik.MEDIUM, false);
+    }
+
+    private void yeniYapilacakDialoguAc(Oncelik varsayilanOncelik, boolean varsayilanAcil) {
         MuzikOynatici.dialogMuzikOynat();
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Yeni Yapılacak");
@@ -724,9 +748,11 @@ public class TodoController {
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
 
+        DialogController controller = fxmlLoader.getController();
+        controller.varsayilanOncelikVeAcilAyarla(varsayilanOncelik, varsayilanAcil);
+
         Optional<ButtonType> cikti = dialog.showAndWait();
         if (cikti.isPresent() && cikti.get() == ButtonType.OK) {
-            DialogController controller = fxmlLoader.getController();
             Yapilacak yeniYapilacak = controller.ciktiyiGoster();
             if (yeniYapilacak == null) {
                 return;
