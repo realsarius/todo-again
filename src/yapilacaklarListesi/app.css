@@ -226,13 +226,16 @@
 .task-list .list-cell {
     -fx-cell-size: 52px;
     -fx-background-color: -app-bg;
-    -fx-text-fill: -text-primary;
-    -fx-font-size: 14px;
-    -fx-font-weight: 500;
     -fx-alignment: center-left;
     -fx-padding: 0 12px 0 14px;
     -fx-border-color: transparent transparent #F0F0F0 transparent;
     -fx-border-width: 0 0 1 0;
+}
+
+.task-title {
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
 }
 
 .task-list .list-cell:empty {

@@ -11,6 +11,7 @@ import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -18,7 +19,10 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -170,15 +174,27 @@ public class Controller {
 
         yapilacakListeFXML.setItems(sortedList);
         yapilacakListeFXML.setCellFactory(list -> new ListCell<>() {
+            private final Circle oncelikNoktasi = new Circle(4.5);
+            private final Label gorevBasligi = new Label();
+            private final HBox satir = new HBox(10, oncelikNoktasi, gorevBasligi);
+
+            {
+                satir.setAlignment(Pos.CENTER_LEFT);
+                gorevBasligi.getStyleClass().add("task-title");
+            }
+
             @Override
             protected void updateItem(Yapilacak item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
+                    setGraphic(null);
                     return;
                 }
-                String oncelikEtiketi = "[" + item.getOncelik().name() + "]";
-                setText(oncelikEtiketi + " " + item.getAciklama());
+                oncelikNoktasi.setFill(oncelikRenkNoktasi(item.getOncelik()));
+                gorevBasligi.setText(item.getAciklama());
+                setText(null);
+                setGraphic(satir);
             }
         });
         yapilacakListeFXML.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -551,6 +567,14 @@ public class Controller {
             case "Orta" -> taskService.oncelikFiltresi(Oncelik.MEDIUM);
             case "Düşük" -> taskService.oncelikFiltresi(Oncelik.LOW);
             default -> taskService.tumGorevlerFiltresi();
+        };
+    }
+
+    private Color oncelikRenkNoktasi(Oncelik oncelik) {
+        return switch (oncelik) {
+            case HIGH -> Color.web("#FF5C5C");
+            case MEDIUM -> Color.web("#4A7CFF");
+            case LOW -> Color.web("#8E8E93");
         };
     }
 
