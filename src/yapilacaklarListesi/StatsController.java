@@ -3,12 +3,17 @@ package yapilacaklarListesi;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
+import javafx.application.Platform;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import yapilacaklarListesi.service.TaskService;
 import yapilacaklarListesi.veriler.Oncelik;
 import yapilacaklarListesi.veriler.StreakCalculator;
@@ -60,11 +65,30 @@ public class StatsController {
     @FXML private Label enUretkenGunDetayLabel;
     @FXML private Label baskinOncelikLabel;
     @FXML private Label baskinOncelikDetayLabel;
+    @FXML private ScrollPane statsScroll;
+    @FXML private VBox statsRoot;
 
     private final TaskService taskService = new TaskService(YapilacakVeri.getInstance());
 
     @FXML
     public void initialize() {
+        if (statsRoot != null) {
+            statsRoot.setFillWidth(true);
+            statsRoot.setMaxWidth(Double.MAX_VALUE);
+            statsRoot.getChildren().stream()
+                    .filter(HBox.class::isInstance)
+                    .map(HBox.class::cast)
+                    .forEach(row -> row.setMaxWidth(Double.MAX_VALUE));
+        }
+
+        if (statsScroll != null && statsRoot != null) {
+            statsScroll.viewportBoundsProperty().addListener((obs, eski, yeni) -> statsIcerikGenisliginiAyarla(yeni));
+            statsScroll.widthProperty().addListener((obs, eski, yeni) ->
+                    statsIcerikGenisliginiAyarla(statsScroll.getViewportBounds()));
+            statsIcerikGenisliginiAyarla(statsScroll.getViewportBounds());
+            Platform.runLater(() -> statsIcerikGenisliginiAyarla(statsScroll.getViewportBounds()));
+        }
+
         yediGunChart.setCategoryGap(10);
         yediGunChart.setLegendVisible(true);
         yediGunXAxis.setTickLabelRotation(0);
@@ -73,6 +97,14 @@ public class StatsController {
         taskService.tumGorevler().addListener((ListChangeListener<Yapilacak>) change -> istatistikleriYenile());
 
         istatistikleriYenile();
+    }
+
+    private void statsIcerikGenisliginiAyarla(Bounds viewportBounds) {
+        if (viewportBounds == null || statsRoot == null) {
+            return;
+        }
+        double hedefGenislik = Math.max(0, viewportBounds.getWidth() - 1);
+        statsRoot.setPrefWidth(hedefGenislik);
     }
 
     private void istatistikleriYenile() {

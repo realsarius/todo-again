@@ -1,5 +1,6 @@
 package yapilacaklarListesi;
 
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -12,6 +13,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import yapilacaklarListesi.settings.SettingsManager;
 import yapilacaklarListesi.settings.SettingsSection;
 import yapilacaklarListesi.settings.sections.AppearanceSection;
@@ -73,6 +75,7 @@ public class SettingsController {
     @FXML private Hyperlink guncellemeIndirLinki;
     @FXML private Button guncellemeleriKontrolEtButton;
     @FXML private CheckBox guncellemeOtomatikKontrolCheckBox;
+    @FXML private Label kaydedildiGostergeLabel;
 
     private static final String ACTIVE_CATEGORY_STYLE = "settings-category-active";
 
@@ -81,12 +84,18 @@ public class SettingsController {
     private final Map<String, Button> kategoriButonlari = new LinkedHashMap<>();
     private final Map<String, VBox> sectionPanelleri = new LinkedHashMap<>();
     private final Map<String, SettingsSection> sectionlar = new LinkedHashMap<>();
+    private final PauseTransition kaydedildiGostergeZamanlayici = new PauseTransition(Duration.seconds(2.2));
 
     @FXML
     public void initialize() {
         sectionKayitlariniHazirla();
         sectionYukleriniAl();
         kategoriGoster(AppearanceSection.SECTION_ID);
+        if (kaydedildiGostergeLabel != null) {
+            kaydedildiGostergeLabel.setVisible(false);
+            kaydedildiGostergeLabel.setManaged(false);
+            kaydedildiGostergeZamanlayici.setOnFinished(event -> kaydedildiGostergeGizle());
+        }
     }
 
     @FXML
@@ -119,6 +128,7 @@ public class SettingsController {
         for (SettingsSection section : sectionlar.values()) {
             section.save(settingsManager);
         }
+        kaydedildiGostergeGoster();
         if (onSaveListener != null) {
             onSaveListener.run();
         }
@@ -132,6 +142,7 @@ public class SettingsController {
         for (SettingsSection section : sectionlar.values()) {
             section.rollback();
         }
+        kaydedildiGostergeGizle();
         if (!embeddedMode) {
             pencereyiKapat();
         }
@@ -220,6 +231,24 @@ public class SettingsController {
             panel.setVisible(aktif);
             panel.setManaged(aktif);
         }
+    }
+
+    private void kaydedildiGostergeGoster() {
+        if (kaydedildiGostergeLabel == null) {
+            return;
+        }
+        kaydedildiGostergeLabel.setVisible(true);
+        kaydedildiGostergeLabel.setManaged(true);
+        kaydedildiGostergeZamanlayici.playFromStart();
+    }
+
+    private void kaydedildiGostergeGizle() {
+        if (kaydedildiGostergeLabel == null) {
+            return;
+        }
+        kaydedildiGostergeLabel.setVisible(false);
+        kaydedildiGostergeLabel.setManaged(false);
+        kaydedildiGostergeZamanlayici.stop();
     }
 
     private void pencereyiKapat() {

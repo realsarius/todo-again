@@ -158,3 +158,66 @@
 .root.dark-mode .chart-legend-item {
     -fx-text-fill: #8A8A8E;
 }
+
+.dark-popup.context-menu,
+.dark-popup .context-menu {
+    -fx-background-color: #2C2C2E;
+    -fx-background-radius: 10px;
+    -fx-border-color: #3A3A3C;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 12, 0, 0, 4);
+}
+
+.dark-popup .menu-item {
+    -fx-background-color: transparent;
+    -fx-padding: 6px 16px;
+    -fx-background-radius: 6px;
+}
+
+.dark-popup .menu-item > .label {
+    -fx-text-fill: #F2F2F7;
+}
+
+.dark-popup .menu-item:focused {
+    -fx-background-color: #4A7CFF;
+    -fx-background-radius: 6px;
+}
+
+.dark-popup .menu-item:hover {
+    -fx-background-color: #3A3A3C;
+    -fx-background-radius: 6px;
+}
+
+.dark-popup .separator .line {
+    -fx-border-color: #3A3A3C;
+    -fx-border-width: 1px 0 0 0;
+}
+
+.dark-popup .menu:showing {
+    -fx-background-color: #3A3A3C;
+}
+
+.dark-popup.list-view,
+.dark-popup .combo-box-popup .list-view,
+.dark-popup .list-view {
+    -fx-background-color: #2C2C2E;
+    -fx-border-color: #3A3A3C;
+}
+
+.dark-popup .combo-box-popup .list-cell,
+.dark-popup .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #F2F2F7;
+}
+
+.dark-popup .combo-box-popup .list-cell:hover,
+.dark-popup .list-cell:hover {
+    -fx-background-color: #3A3A3C;
+}
+
+.dark-popup .combo-box-popup .list-cell:selected,
+.dark-popup .list-cell:selected {
+    -fx-background-color: #4A7CFF;
+    -fx-text-fill: #FFFFFF;
+}

@@ -10,65 +10,66 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" styleClass="stats-scroll"
+<ScrollPane fx:id="statsScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" styleClass="stats-scroll"
+            maxWidth="Infinity" maxHeight="Infinity"
             xmlns="http://javafx.com/javafx/8.0.282-ea" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="yapilacaklarListesi.StatsController">
     <content>
-        <VBox spacing="12.0" styleClass="stats-root">
-            <HBox spacing="12.0" styleClass="stats-row">
-                <VBox spacing="8.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
+        <VBox fx:id="statsRoot" spacing="12.0" styleClass="stats-root" fillWidth="true" maxWidth="Infinity">
+            <HBox spacing="12.0" styleClass="stats-row" maxWidth="Infinity">
+                <VBox spacing="8.0" styleClass="stat-card" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                     <Label styleClass="stat-card-title" text="Bugün"/>
                     <Label fx:id="bugunDegerLabel" styleClass="stat-card-value" text="0/0"/>
-                    <Label fx:id="bugunOranLabel" styleClass="stat-card-sub" text="%0"/>
-                    <ProgressBar fx:id="bugunProgress" prefWidth="Infinity" progress="0.0" styleClass="stat-progress"/>
+                    <Label fx:id="bugunOranLabel" styleClass="stat-card-sub" text="0%"/>
+                    <ProgressBar fx:id="bugunProgress" progress="0.0" styleClass="stat-progress" maxWidth="Infinity"/>
                 </VBox>
-                <VBox spacing="8.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                <VBox spacing="8.0" styleClass="stat-card" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                     <Label styleClass="stat-card-title" text="Bu Hafta"/>
                     <Label fx:id="haftaDegerLabel" styleClass="stat-card-value" text="0/0"/>
-                    <Label fx:id="haftaOranLabel" styleClass="stat-card-sub" text="%0"/>
-                    <ProgressBar fx:id="haftaProgress" prefWidth="Infinity" progress="0.0" styleClass="stat-progress"/>
+                    <Label fx:id="haftaOranLabel" styleClass="stat-card-sub" text="0%"/>
+                    <ProgressBar fx:id="haftaProgress" progress="0.0" styleClass="stat-progress" maxWidth="Infinity"/>
                 </VBox>
-                <VBox spacing="8.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                <VBox spacing="8.0" styleClass="stat-card" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                     <Label styleClass="stat-card-title" text="Bu Ay"/>
                     <Label fx:id="ayDegerLabel" styleClass="stat-card-value" text="0/0"/>
-                    <Label fx:id="ayOranLabel" styleClass="stat-card-sub" text="%0"/>
-                    <ProgressBar fx:id="ayProgress" prefWidth="Infinity" progress="0.0" styleClass="stat-progress"/>
+                    <Label fx:id="ayOranLabel" styleClass="stat-card-sub" text="0%"/>
+                    <ProgressBar fx:id="ayProgress" progress="0.0" styleClass="stat-progress" maxWidth="Infinity"/>
                 </VBox>
-                <VBox spacing="8.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                <VBox spacing="8.0" styleClass="stat-card" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                     <Label styleClass="stat-card-title" text="Toplam"/>
                     <Label fx:id="toplamDegerLabel" styleClass="stat-card-value" text="0 görev"/>
                     <Label fx:id="toplamOranLabel" styleClass="stat-card-sub" text="0 tamamlandı"/>
-                    <ProgressBar fx:id="toplamProgress" prefWidth="Infinity" progress="0.0" styleClass="stat-progress"/>
+                    <ProgressBar fx:id="toplamProgress" progress="0.0" styleClass="stat-progress" maxWidth="Infinity"/>
                 </VBox>
             </HBox>
 
-            <HBox spacing="12.0" styleClass="stats-row" VBox.vgrow="ALWAYS">
-                <VBox spacing="10.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
+            <HBox spacing="12.0" styleClass="stats-row" VBox.vgrow="ALWAYS" maxWidth="Infinity">
+                <VBox spacing="10.0" styleClass="stat-card" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                     <Label styleClass="stat-card-title" text="Öncelik Dağılımı"/>
 
                     <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="stats-priority-row">
                         <Label styleClass="stats-priority-dot high" text="●"/>
                         <Label styleClass="stats-priority-label" text="Yüksek"/>
-                        <ProgressBar fx:id="highPriorityProgress" prefWidth="Infinity" progress="0.0" styleClass="stats-priority-progress high" HBox.hgrow="ALWAYS"/>
+                        <ProgressBar fx:id="highPriorityProgress" progress="0.0" styleClass="stats-priority-progress high" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
                         <Label fx:id="highPriorityCountLabel" styleClass="stats-priority-count" text="0 görev"/>
                     </HBox>
 
                     <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="stats-priority-row">
                         <Label styleClass="stats-priority-dot medium" text="●"/>
                         <Label styleClass="stats-priority-label" text="Orta"/>
-                        <ProgressBar fx:id="mediumPriorityProgress" prefWidth="Infinity" progress="0.0" styleClass="stats-priority-progress medium" HBox.hgrow="ALWAYS"/>
+                        <ProgressBar fx:id="mediumPriorityProgress" progress="0.0" styleClass="stats-priority-progress medium" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
                         <Label fx:id="mediumPriorityCountLabel" styleClass="stats-priority-count" text="0 görev"/>
                     </HBox>
 
                     <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="stats-priority-row">
                         <Label styleClass="stats-priority-dot low" text="●"/>
                         <Label styleClass="stats-priority-label" text="Düşük"/>
-                        <ProgressBar fx:id="lowPriorityProgress" prefWidth="Infinity" progress="0.0" styleClass="stats-priority-progress low" HBox.hgrow="ALWAYS"/>
+                        <ProgressBar fx:id="lowPriorityProgress" progress="0.0" styleClass="stats-priority-progress low" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
                         <Label fx:id="lowPriorityCountLabel" styleClass="stats-priority-count" text="0 görev"/>
                     </HBox>
                 </VBox>
 
-                <VBox spacing="10.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                <VBox spacing="10.0" styleClass="stat-card" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                     <Label styleClass="stat-card-title" text="Son 7 Gün Tamamlama"/>
                     <StackedBarChart fx:id="yediGunChart" animated="false" categoryGap="8.0" horizontalGridLinesVisible="false"
                                      legendVisible="true" verticalGridLinesVisible="false" VBox.vgrow="ALWAYS">
@@ -82,20 +83,20 @@
                 </VBox>
             </HBox>
 
-            <HBox spacing="12.0" styleClass="stats-row">
-                <VBox spacing="8.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
+            <HBox spacing="12.0" styleClass="stats-row" maxWidth="Infinity">
+                <VBox spacing="8.0" styleClass="stat-card" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                     <Label styleClass="stat-card-title" text="Streak"/>
                     <Label fx:id="streakDegerLabel" styleClass="stat-card-value" text="🔥 0 günlük seri"/>
                     <Label styleClass="stat-card-sub" text="Her gün en az bir tamamlanan görev"/>
                 </VBox>
 
-                <VBox spacing="8.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                <VBox spacing="8.0" styleClass="stat-card" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                     <Label styleClass="stat-card-title" text="En Üretken Gün"/>
                     <Label fx:id="enUretkenGunLabel" styleClass="stat-card-value" text="-"/>
                     <Label fx:id="enUretkenGunDetayLabel" styleClass="stat-card-sub" text="Henüz veri yok"/>
                 </VBox>
 
-                <VBox spacing="8.0" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                <VBox spacing="8.0" styleClass="stat-card" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                     <Label styleClass="stat-card-title" text="Haftanın Önceliği"/>
                     <Label fx:id="baskinOncelikLabel" styleClass="stat-card-value" text="-"/>
                     <Label fx:id="baskinOncelikDetayLabel" styleClass="stat-card-sub" text="Bu hafta görev tamamlanmadı"/>

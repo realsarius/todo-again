@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import yapilacaklarListesi.settings.SettingsManager;
@@ -140,6 +141,9 @@ public class MainController {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
         Parent loaded = loader.load();
+        if (loaded instanceof Region region) {
+            region.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        }
 
         if (view == AppView.TODO) {
             todoController = loader.getController();

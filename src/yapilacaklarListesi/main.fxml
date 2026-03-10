@@ -4,9 +4,9 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
 
 <HBox fx:id="mainRoot" styleClass="main-shell" xmlns="http://javafx.com/javafx/8.0.282-ea"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="yapilacaklarListesi.MainController">
@@ -16,23 +16,23 @@
         </padding>
         <Button fx:id="navTodoButton" mnemonicParsing="false" onAction="#showTodo" styleClass="nav-item">
             <graphic>
-                <Region styleClass="nav-icon icon-todo"/>
+                <SVGPath content="M2 2h12v12H2z M4 5h8v1H4z M4 8h8v1H4z M4 11h5v1H4z" styleClass="nav-svg"/>
             </graphic>
         </Button>
         <Button fx:id="navCalendarButton" mnemonicParsing="false" onAction="#showCalendar" styleClass="nav-item">
             <graphic>
-                <Region styleClass="nav-icon icon-calendar"/>
+                <SVGPath content="M2 3h12v11H2z M2 6h12 M5 2v3 M11 2v3 M2 9h12 M6.5 6v8 M9.5 6v8" styleClass="nav-svg"/>
             </graphic>
         </Button>
         <Button fx:id="navStatsButton" mnemonicParsing="false" onAction="#showStats" styleClass="nav-item">
             <graphic>
-                <Region styleClass="nav-icon icon-stats"/>
+                <SVGPath content="M2 13h12v1H2z M4 8h2v5H4z M7 6h2v7H7z M10 4h2v9H10z" styleClass="nav-svg"/>
             </graphic>
         </Button>
         <Pane VBox.vgrow="ALWAYS"/>
         <Button fx:id="navSettingsButton" mnemonicParsing="false" onAction="#showSettings" styleClass="nav-item">
             <graphic>
-                <Region styleClass="nav-icon icon-settings"/>
+                <SVGPath content="M8 2.5l1 .3.4 1.2c.4.1.8.3 1.1.5l1.2-.5.8.8-.5 1.2c.2.3.4.7.5 1.1l1.2.4v1.1l-1.2.4c-.1.4-.3.8-.5 1.1l.5 1.2-.8.8-1.2-.5c-.3.2-.7.4-1.1.5L9 13.5h-1l-.4-1.2c-.4-.1-.8-.3-1.1-.5l-1.2.5-.8-.8.5-1.2c-.2-.3-.4-.7-.5-1.1L2.5 8V7l1.2-.4c.1-.4.3-.8.5-1.1l-.5-1.2.8-.8 1.2.5c.3-.2.7-.4 1.1-.5L8 2.5zm0 3a2 2 0 100 4a2 2 0 000-4z" styleClass="nav-svg"/>
             </graphic>
         </Button>
     </VBox>

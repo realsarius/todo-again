@@ -155,7 +155,7 @@
 
     <HBox alignment="CENTER_RIGHT" spacing="8.0" styleClass="settings-footer">
         <Pane HBox.hgrow="ALWAYS"/>
-        <Button fx:id="iptalButton" mnemonicParsing="false" onAction="#iptalEt" styleClass="settings-secondary-button" text="İptal"/>
+        <Label fx:id="kaydedildiGostergeLabel" managed="false" styleClass="settings-saved-indicator" text="✓ Kaydedildi" visible="false"/>
         <Button fx:id="kaydetButton" mnemonicParsing="false" onAction="#kaydetVeKapat" styleClass="settings-primary-button" text="Kaydet"/>
     </HBox>
 </VBox>

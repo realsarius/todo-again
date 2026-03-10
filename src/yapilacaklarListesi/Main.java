@@ -2,11 +2,14 @@ package yapilacaklarListesi;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import yapilacaklarListesi.veriler.YapilacakVeri;
 
 import java.awt.AWTException;
@@ -21,6 +24,8 @@ import java.util.Objects;
 
 public class Main extends Application {
 
+    private static final String DARK_MODE_CLASS = "dark-mode";
+    private static final String DARK_POPUP_CLASS = "dark-popup";
     private TrayIcon trayIcon;
     private boolean trayReady;
     private boolean trayInfoShown;
@@ -48,12 +53,14 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("main.fxml")));
         primaryStage.setTitle("Yapılacaklar Listesi");
         Scene scene = new Scene(root, 960, 550);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("app.css")).toExternalForm());
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("dark-mode.css")).toExternalForm());
         primaryStage.setScene(scene);
+        popupStilKoprusuKur(scene, root);
         primaryStage.setMinWidth(900);
         primaryStage.setMinHeight(580);
         primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/files.png"))));
@@ -69,6 +76,53 @@ public class Main extends Application {
 
         primaryStage.show();
 
+    }
+
+    private void popupStilKoprusuKur(Scene anaScene, Parent anaRoot) {
+        ListChangeListener<Window> popupListener = degisim -> {
+            while (degisim.next()) {
+                for (Window pencere : degisim.getAddedSubList()) {
+                    popupStiliniUygula(pencere, anaScene, anaRoot);
+                }
+            }
+        };
+        Window.getWindows().addListener(popupListener);
+
+        anaRoot.getStyleClass().addListener((ListChangeListener<String>) degisim ->
+                Window.getWindows().forEach(pencere -> popupStiliniUygula(pencere, anaScene, anaRoot))
+        );
+
+        Window.getWindows().forEach(pencere -> popupStiliniUygula(pencere, anaScene, anaRoot));
+    }
+
+    private void popupStiliniUygula(Window pencere, Scene anaScene, Parent anaRoot) {
+        if (!(pencere instanceof PopupWindow)) {
+            return;
+        }
+        Scene popupScene = pencere.getScene();
+        if (popupScene == null || popupScene == anaScene) {
+            return;
+        }
+
+        for (String stilDosyasi : anaScene.getStylesheets()) {
+            if (!popupScene.getStylesheets().contains(stilDosyasi)) {
+                popupScene.getStylesheets().add(stilDosyasi);
+            }
+        }
+
+        Parent popupRoot = popupScene.getRoot();
+        if (popupRoot == null) {
+            return;
+        }
+
+        boolean koyuTema = anaRoot.getStyleClass().contains(DARK_MODE_CLASS);
+        if (koyuTema) {
+            if (!popupRoot.getStyleClass().contains(DARK_POPUP_CLASS)) {
+                popupRoot.getStyleClass().add(DARK_POPUP_CLASS);
+            }
+            return;
+        }
+        popupRoot.getStyleClass().remove(DARK_POPUP_CLASS);
     }
 
     private boolean trayKur(Stage primaryStage) {
