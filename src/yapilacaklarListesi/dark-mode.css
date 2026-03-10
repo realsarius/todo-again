@@ -101,6 +101,11 @@
     -fx-border-color: #4A7CFF;
 }
 
+.root.dark-mode .eisenhower-quadrant.eisenhower-drag-target {
+    -fx-background-color: #1C3A6E;
+    -fx-border-color: #4A7CFF;
+}
+
 .root.dark-mode .nav-rail {
     -fx-background-color: #1C1C1E;
     -fx-border-color: transparent #3A3A3C transparent transparent;

@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -126,6 +127,8 @@ public class EisenhowerController {
                 satir.setAlignment(Pos.CENTER_LEFT);
                 satir.getStyleClass().add("eisenhower-item-box");
                 gorevBasligi.getStyleClass().add("eisenhower-item-text");
+                gorevBasligi.setWrapText(false);
+                gorevBasligi.setTextOverrun(OverrunStyle.ELLIPSIS);
                 gorevBasligi.setMaxWidth(Double.MAX_VALUE);
                 HBox.setHgrow(gorevBasligi, javafx.scene.layout.Priority.ALWAYS);
                 setOnDragDetected(event -> {
@@ -164,6 +167,7 @@ public class EisenhowerController {
     }
 
     private void configureDropTarget(ListView<Yapilacak> listView, Quadrant quadrant) {
+        javafx.scene.Parent quadrantBox = listView.getParent();
         listView.setOnDragOver(event -> {
             Dragboard db = event.getDragboard();
             if (!db.hasString()) {
@@ -182,13 +186,18 @@ public class EisenhowerController {
             if (db.hasString()) {
                 Yapilacak suruklenen = goreviBul(db.getString());
                 if (suruklenen != null && gorevIcinKadran(suruklenen) != quadrant
-                        && !listView.getStyleClass().contains(DRAG_TARGET_CLASS)) {
-                    listView.getStyleClass().add(DRAG_TARGET_CLASS);
+                        && quadrantBox != null
+                        && !quadrantBox.getStyleClass().contains(DRAG_TARGET_CLASS)) {
+                    quadrantBox.getStyleClass().add(DRAG_TARGET_CLASS);
                 }
             }
         });
 
-        listView.setOnDragExited(event -> listView.getStyleClass().remove(DRAG_TARGET_CLASS));
+        listView.setOnDragExited(event -> {
+            if (quadrantBox != null) {
+                quadrantBox.getStyleClass().remove(DRAG_TARGET_CLASS);
+            }
+        });
 
         listView.setOnDragDropped(event -> {
             boolean completed = false;
@@ -201,7 +210,9 @@ public class EisenhowerController {
                     completed = true;
                 }
             }
-            listView.getStyleClass().remove(DRAG_TARGET_CLASS);
+            if (quadrantBox != null) {
+                quadrantBox.getStyleClass().remove(DRAG_TARGET_CLASS);
+            }
             event.setDropCompleted(completed);
             event.consume();
         });

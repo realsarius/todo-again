@@ -410,6 +410,12 @@
     -fx-background-radius: 8px;
 }
 
+.eisenhower-quadrant.eisenhower-drag-target {
+    -fx-background-color: -list-hover;
+    -fx-border-color: -list-accent;
+    -fx-border-width: 3px 1px 1px 3px;
+}
+
 .detail-placeholder-box {
     -fx-alignment: center;
 }
