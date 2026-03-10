@@ -25,6 +25,7 @@ public class Yapilacak {
     private LocalTime dueTime;
     private LocalDateTime completedAt;
     private boolean completed;
+    private boolean urgent;
 
     public Yapilacak(String aciklama, String detay, LocalDate tarih) {
         this(
@@ -40,6 +41,7 @@ public class Yapilacak {
                 null,
                 null,
                 null,
+                false,
                 false
         );
     }
@@ -65,6 +67,7 @@ public class Yapilacak {
                 null,
                 null,
                 null,
+                false,
                 false
         );
     }
@@ -93,7 +96,8 @@ public class Yapilacak {
                 dueTime,
                 null,
                 completedAt,
-                completed
+                completed,
+                false
         );
     }
 
@@ -110,6 +114,38 @@ public class Yapilacak {
                      LocalTime endTime,
                      LocalDateTime completedAt,
                      boolean completed) {
+        this(
+                id,
+                aciklama,
+                detay,
+                tarih,
+                createdAt,
+                updatedAt,
+                oncelik,
+                tags,
+                allDay,
+                startTime,
+                endTime,
+                completedAt,
+                completed,
+                false
+        );
+    }
+
+    public Yapilacak(String id,
+                     String aciklama,
+                     String detay,
+                     LocalDate tarih,
+                     Instant createdAt,
+                     Instant updatedAt,
+                     Oncelik oncelik,
+                     List<String> tags,
+                     boolean allDay,
+                     LocalTime startTime,
+                     LocalTime endTime,
+                     LocalDateTime completedAt,
+                     boolean completed,
+                     boolean urgent) {
         this.id = id == null || id.isBlank() ? UUID.randomUUID().toString() : id;
         this.aciklama = aciklama == null ? "" : aciklama;
         this.detay = detay == null ? "" : detay;
@@ -131,6 +167,7 @@ public class Yapilacak {
 
         this.completed = normalizedCompleted;
         this.completedAt = normalizedCompletedAt;
+        this.urgent = urgent;
     }
 
     public String getId() {
@@ -273,6 +310,15 @@ public class Yapilacak {
         if (!completed) {
             this.completedAt = null;
         }
+        this.updatedAt = Instant.now();
+    }
+
+    public boolean isUrgent() {
+        return urgent;
+    }
+
+    public void setUrgent(boolean urgent) {
+        this.urgent = urgent;
         this.updatedAt = Instant.now();
     }
 

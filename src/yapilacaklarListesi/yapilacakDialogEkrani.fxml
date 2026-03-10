@@ -32,13 +32,16 @@
             </HBox>
             <Label text="Öncelik:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
             <ChoiceBox fx:id="oncelikFXML" prefWidth="180.0" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-            <Label text="Etiketler:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-            <TextField fx:id="taglerFXML" promptText="virgülle ayır (iş, okul)" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+            <Label text="Acil mi?" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+            <CheckBox fx:id="acilMiFXML" mnemonicParsing="false" text="Acil" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+            <Label text="Etiketler:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+            <TextField fx:id="taglerFXML" promptText="virgülle ayır (iş, okul)" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
             <columnConstraints>
                 <ColumnConstraints/>
                 <ColumnConstraints/>
             </columnConstraints>
             <rowConstraints>
+                <RowConstraints/>
                 <RowConstraints/>
                 <RowConstraints/>
                 <RowConstraints/>

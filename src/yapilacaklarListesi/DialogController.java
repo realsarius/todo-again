@@ -26,6 +26,7 @@ public class DialogController {
     @FXML private DatePicker tarihFXML;
     @FXML private ChoiceBox<Oncelik> oncelikFXML;
     @FXML private TextField taglerFXML;
+    @FXML private CheckBox acilMiFXML;
     @FXML private CheckBox tumGunFXML;
     @FXML private ComboBox<String> baslangicSaatFXML;
     @FXML private ComboBox<String> bitisSaatFXML;
@@ -80,6 +81,7 @@ public class DialogController {
         Yapilacak yeni = new Yapilacak(aciklama, detay, tarih);
         yeni.setOncelik(oncelikFXML.getValue() == null ? Oncelik.MEDIUM : oncelikFXML.getValue());
         yeni.setTags(tagleriAyrisitir(taglerFXML.getText()));
+        yeni.setUrgent(acilMiFXML != null && acilMiFXML.isSelected());
         boolean tumGun = tumGunFXML.isSelected();
         LocalTime baslangic = saatMetniniParseEt(baslangicSaatFXML.getValue());
         LocalTime bitis = saatMetniniParseEt(bitisSaatFXML.getValue());

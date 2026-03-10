@@ -280,6 +280,7 @@ public class DataSection extends BaseSettingsSection {
         boolean allDay = parseAllDay(kayit.all_day, kayit.allDay, startTime, dueTime, endTime);
         LocalDateTime completedAt = parseDateTime(kayit.completed_at, kayit.completedAt);
         boolean isCompleted = parseCompleted(kayit.is_completed, kayit.isCompleted, completedAt);
+        boolean isUrgent = parseUrgent(kayit.is_urgent, kayit.isUrgent);
 
         return new Yapilacak(
                 id,
@@ -294,7 +295,8 @@ public class DataSection extends BaseSettingsSection {
                 startTime,
                 endTime,
                 completedAt,
-                isCompleted
+                isCompleted,
+                isUrgent
         );
     }
 
@@ -354,6 +356,16 @@ public class DataSection extends BaseSettingsSection {
         return completedAt != null;
     }
 
+    private boolean parseUrgent(Boolean primary, Boolean fallback) {
+        if (primary != null) {
+            return primary;
+        }
+        if (fallback != null) {
+            return fallback;
+        }
+        return false;
+    }
+
     private boolean parseAllDay(Boolean primary,
                                 Boolean fallback,
                                 LocalTime startTime,
@@ -387,7 +399,7 @@ public class DataSection extends BaseSettingsSection {
 
     private ExportPayload exportPayloadOlustur(List<Yapilacak> gorevler) {
         ExportPayload payload = new ExportPayload();
-        payload.version = 3;
+        payload.version = 4;
         payload.tasks = new ArrayList<>();
         for (Yapilacak gorev : gorevler) {
             TaskRecord kayit = new TaskRecord();
@@ -405,6 +417,7 @@ public class DataSection extends BaseSettingsSection {
             kayit.due_time = gorev.getStartTime() == null ? null : gorev.getStartTime().toString();
             kayit.completed_at = gorev.getCompletedAt() == null ? null : gorev.getCompletedAt().toString();
             kayit.is_completed = gorev.isCompleted();
+            kayit.is_urgent = gorev.isUrgent();
             payload.tasks.add(kayit);
         }
         return payload;
@@ -504,12 +517,14 @@ public class DataSection extends BaseSettingsSection {
         String due_time;
         String completed_at;
         Boolean is_completed;
+        Boolean is_urgent;
         Boolean allDay;
         String startTime;
         String endTime;
         String dueTime;
         String completedAt;
         Boolean isCompleted;
+        Boolean isUrgent;
     }
 
     private static class MergeResult {

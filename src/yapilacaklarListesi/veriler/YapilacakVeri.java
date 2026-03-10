@@ -29,7 +29,7 @@ public class YapilacakVeri {
     private static final YapilacakVeri ornek = new YapilacakVeri();
     private static final String legacyDosyaAdi = "Yapilacaklar.txt";
     private static final String jsonDosyaAdi = "Yapilacaklar.json";
-    private static final int JSON_VERSIYON = 3;
+    private static final int JSON_VERSIYON = 4;
     private static final int BEKLENEN_SUTUN_SAYISI = 3;
 
     private ObservableList<Yapilacak> yapilacaklar;
@@ -193,6 +193,7 @@ public class YapilacakVeri {
                         kayit.isCompleted,
                         completedAt
                 );
+                boolean isUrgent = parseAcilDurum(kayit.is_urgent, kayit.isUrgent);
 
                 yapilacaklar.add(new Yapilacak(
                         id,
@@ -207,7 +208,8 @@ public class YapilacakVeri {
                         startTime,
                         endTime,
                         completedAt,
-                        isCompleted
+                        isCompleted,
+                        isUrgent
                 ));
             }
             return true;
@@ -287,6 +289,7 @@ public class YapilacakVeri {
             kayit.due_time = yapilacak.getStartTime() == null ? null : yapilacak.getStartTime().toString();
             kayit.completed_at = yapilacak.getCompletedAt() == null ? null : yapilacak.getCompletedAt().toString();
             kayit.is_completed = yapilacak.isCompleted();
+            kayit.is_urgent = yapilacak.isUrgent();
             jsonVeri.tasks.add(kayit);
         }
 
@@ -367,6 +370,16 @@ public class YapilacakVeri {
         return completedAt != null;
     }
 
+    private boolean parseAcilDurum(Boolean oncelikliDeger, Boolean alternatifDeger) {
+        if (oncelikliDeger != null) {
+            return oncelikliDeger;
+        }
+        if (alternatifDeger != null) {
+            return alternatifDeger;
+        }
+        return false;
+    }
+
     private boolean parseAllDay(Boolean oncelikliDeger,
                                 Boolean alternatifDeger,
                                 LocalTime startTime,
@@ -437,11 +450,13 @@ public class YapilacakVeri {
         String due_time;
         String completed_at;
         Boolean is_completed;
+        Boolean is_urgent;
         Boolean allDay;
         String startTime;
         String endTime;
         String dueTime;
         String completedAt;
         Boolean isCompleted;
+        Boolean isUrgent;
     }
 }
