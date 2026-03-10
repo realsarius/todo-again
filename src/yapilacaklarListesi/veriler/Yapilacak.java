@@ -18,6 +18,10 @@ public class Yapilacak {
     private Instant updatedAt;
     private Oncelik oncelik;
     private List<String> tags;
+    private boolean allDay;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    @Deprecated
     private LocalTime dueTime;
     private LocalDateTime completedAt;
     private boolean completed;
@@ -32,6 +36,8 @@ public class Yapilacak {
                 Instant.now(),
                 Oncelik.MEDIUM,
                 List.of(),
+                true,
+                null,
                 null,
                 null,
                 false
@@ -55,6 +61,8 @@ public class Yapilacak {
                 updatedAt,
                 oncelik,
                 tags,
+                true,
+                null,
                 null,
                 null,
                 false
@@ -72,6 +80,36 @@ public class Yapilacak {
                      LocalTime dueTime,
                      LocalDateTime completedAt,
                      boolean completed) {
+        this(
+                id,
+                aciklama,
+                detay,
+                tarih,
+                createdAt,
+                updatedAt,
+                oncelik,
+                tags,
+                dueTime == null,
+                dueTime,
+                null,
+                completedAt,
+                completed
+        );
+    }
+
+    public Yapilacak(String id,
+                     String aciklama,
+                     String detay,
+                     LocalDate tarih,
+                     Instant createdAt,
+                     Instant updatedAt,
+                     Oncelik oncelik,
+                     List<String> tags,
+                     boolean allDay,
+                     LocalTime startTime,
+                     LocalTime endTime,
+                     LocalDateTime completedAt,
+                     boolean completed) {
         this.id = id == null || id.isBlank() ? UUID.randomUUID().toString() : id;
         this.aciklama = aciklama == null ? "" : aciklama;
         this.detay = detay == null ? "" : detay;
@@ -80,7 +118,7 @@ public class Yapilacak {
         this.updatedAt = updatedAt == null ? this.createdAt : updatedAt;
         this.oncelik = oncelik == null ? Oncelik.MEDIUM : oncelik;
         this.tags = tags == null ? new ArrayList<>() : new ArrayList<>(tags);
-        this.dueTime = dueTime;
+        zamanDurumunuNormalizeEt(allDay, startTime, endTime);
 
         boolean normalizedCompleted = completed || completedAt != null;
         LocalDateTime normalizedCompletedAt = completedAt;
@@ -163,11 +201,53 @@ public class Yapilacak {
     }
 
     public LocalTime getDueTime() {
-        return dueTime;
+        return allDay ? null : dueTime;
     }
 
+    @Deprecated
     public void setDueTime(LocalTime dueTime) {
-        this.dueTime = dueTime;
+        zamanDurumunuNormalizeEt(dueTime == null, dueTime, endTime);
+        this.updatedAt = Instant.now();
+    }
+
+    public boolean isAllDay() {
+        return allDay;
+    }
+
+    public void setAllDay(boolean allDay) {
+        zamanDurumunuNormalizeEt(allDay, startTime, endTime);
+        this.updatedAt = Instant.now();
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        if (startTime == null) {
+            zamanDurumunuNormalizeEt(true, null, null);
+        } else {
+            zamanDurumunuNormalizeEt(false, startTime, endTime);
+        }
+        this.updatedAt = Instant.now();
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        if (endTime == null) {
+            zamanDurumunuNormalizeEt(allDay, startTime, null);
+        } else {
+            LocalTime baslangic = startTime == null ? endTime : startTime;
+            zamanDurumunuNormalizeEt(false, baslangic, endTime);
+        }
+        this.updatedAt = Instant.now();
+    }
+
+    public void setTimeRange(boolean allDay, LocalTime startTime, LocalTime endTime) {
+        zamanDurumunuNormalizeEt(allDay, startTime, endTime);
         this.updatedAt = Instant.now();
     }
 
@@ -199,5 +279,31 @@ public class Yapilacak {
     @Override
     public String toString() {
         return this.aciklama;
+    }
+
+    private void zamanDurumunuNormalizeEt(boolean allDay, LocalTime startTime, LocalTime endTime) {
+        boolean normalizedAllDay = allDay;
+        LocalTime normalizedStart = startTime;
+        LocalTime normalizedEnd = endTime;
+
+        if (normalizedAllDay) {
+            normalizedStart = null;
+            normalizedEnd = null;
+        } else {
+            if (normalizedStart == null && normalizedEnd != null) {
+                normalizedStart = normalizedEnd;
+            }
+            if (normalizedStart == null) {
+                normalizedAllDay = true;
+                normalizedEnd = null;
+            } else if (normalizedEnd != null && normalizedEnd.isBefore(normalizedStart)) {
+                normalizedEnd = normalizedStart;
+            }
+        }
+
+        this.allDay = normalizedAllDay;
+        this.startTime = normalizedStart;
+        this.endTime = normalizedEnd;
+        this.dueTime = this.allDay ? null : this.startTime;
     }
 }

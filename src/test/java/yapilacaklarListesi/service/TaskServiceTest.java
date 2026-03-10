@@ -11,9 +11,11 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -138,6 +140,33 @@ class TaskServiceTest {
                 .filter(taskService.oncelikFiltresi(null))
                 .count();
         assertEquals(1, sayi);
+    }
+
+    @Test
+    void gorevZamaniAllDayOldugundaSaatlerTemizlenir() {
+        Yapilacak gorev = new Yapilacak("Saat", "detay", LocalDate.now());
+        taskService.gorevEkle(gorev);
+
+        taskService.gorevZamaniniGuncelle(gorev, false, LocalTime.of(9, 0), LocalTime.of(10, 0));
+        assertFalse(gorev.isAllDay());
+        assertEquals(LocalTime.of(9, 0), gorev.getStartTime());
+        assertEquals(LocalTime.of(10, 0), gorev.getEndTime());
+
+        taskService.gorevZamaniniGuncelle(gorev, true, null, null);
+        assertTrue(gorev.isAllDay());
+        assertNull(gorev.getStartTime());
+        assertNull(gorev.getEndTime());
+    }
+
+    @Test
+    void gorevZamaniGecersizAraliktaHataVerir() {
+        Yapilacak gorev = new Yapilacak("Saat", "detay", LocalDate.now());
+        taskService.gorevEkle(gorev);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> taskService.gorevZamaniniGuncelle(gorev, false, LocalTime.of(16, 0), LocalTime.of(15, 0))
+        );
     }
 
     private void testYolunuAyarla(Path yol) throws Exception {
