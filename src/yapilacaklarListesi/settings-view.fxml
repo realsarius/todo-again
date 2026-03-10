@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane styleClass="placeholder-view" xmlns="http://javafx.com/javafx/8.0.282-ea"
+           xmlns:fx="http://javafx.com/fxml/1">
+    <Label styleClass="placeholder-title" text="Ayarlar görünümü Faz F'de taşınacak"/>
+</StackPane>

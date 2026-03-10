@@ -119,7 +119,9 @@ public class Controller {
         oncelikFiltreFXML.getItems().setAll("Tümü", "Yüksek", "Orta", "Düşük");
         oncelikFiltreFXML.setValue("Tümü");
         detayPaneliniHazirla();
-        darkModeUygula(preferences.getBoolean(PREF_DARK_MODE, false));
+        boolean koyuTemaAktif = preferences.getBoolean(PREF_DARK_MODE, false);
+        darkModeUygula(koyuTemaAktif);
+        Platform.runLater(() -> darkModeUygula(koyuTemaAktif));
         otomatikGuncellemeKontrolunuBaslat();
 
         farkliKaydetFXML.setOnAction(actionEvent -> {
@@ -397,21 +399,30 @@ public class Controller {
 
     @FXML
     public void temaDegistir() {
-        boolean aktif = !vbox.getStyleClass().contains(DARK_MODE_CLASS);
+        Parent hedef = temaHedefiniBul();
+        boolean aktif = !hedef.getStyleClass().contains(DARK_MODE_CLASS);
         darkModeUygula(aktif);
         preferences.putBoolean(PREF_DARK_MODE, aktif);
     }
 
     private void darkModeUygula(boolean aktif) {
+        Parent hedef = temaHedefiniBul();
         if (aktif) {
-            if (!vbox.getStyleClass().contains(DARK_MODE_CLASS)) {
-                vbox.getStyleClass().add(DARK_MODE_CLASS);
+            if (!hedef.getStyleClass().contains(DARK_MODE_CLASS)) {
+                hedef.getStyleClass().add(DARK_MODE_CLASS);
             }
             temaToggleButton.setText("☀");
             return;
         }
-        vbox.getStyleClass().remove(DARK_MODE_CLASS);
+        hedef.getStyleClass().remove(DARK_MODE_CLASS);
         temaToggleButton.setText("☾");
+    }
+
+    private Parent temaHedefiniBul() {
+        if (vbox.getScene() != null && vbox.getScene().getRoot() != null) {
+            return vbox.getScene().getRoot();
+        }
+        return vbox;
     }
 
     @FXML
@@ -546,7 +557,8 @@ public class Controller {
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("app.css")).toExternalForm());
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("dark-mode.css")).toExternalForm());
 
-            if (vbox.getStyleClass().contains(DARK_MODE_CLASS) && !root.getStyleClass().contains(DARK_MODE_CLASS)) {
+            Parent temaHedefi = temaHedefiniBul();
+            if (temaHedefi.getStyleClass().contains(DARK_MODE_CLASS) && !root.getStyleClass().contains(DARK_MODE_CLASS)) {
                 root.getStyleClass().add(DARK_MODE_CLASS);
             }
 
