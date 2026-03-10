@@ -47,6 +47,10 @@
     -fx-padding: 6px 10px;
 }
 
+.app-menubar > .container > .menu-button > .label {
+    -fx-text-fill: -text-primary;
+}
+
 .app-menubar > .container > .menu-button:hover {
     -fx-background-color: -menu-hover;
 }
@@ -57,18 +61,35 @@
 
 .app-menubar .context-menu {
     -fx-background-color: -app-bg;
+    -fx-background-insets: 0;
     -fx-background-radius: 10px;
     -fx-border-color: -line-color;
+    -fx-border-insets: 0;
     -fx-border-radius: 10px;
-    -fx-padding: 6px;
+    -fx-padding: 6px 2px 6px 2px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.24), 14, 0.14, 0, 4);
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .app-menubar .menu-item {
     -fx-background-radius: 6px;
 }
 
+.app-menubar .context-menu .menu-item {
+    -fx-background-color: transparent;
+}
+
+.app-menubar .context-menu .menu-item > .label {
+    -fx-text-fill: -text-primary;
+}
+
 .app-menubar .menu-item:focused {
     -fx-background-color: -search-bg;
+}
+
+.app-menubar .context-menu .separator:horizontal .line {
+    -fx-border-color: -line-color transparent transparent transparent;
 }
 
 .pill-toggle {
