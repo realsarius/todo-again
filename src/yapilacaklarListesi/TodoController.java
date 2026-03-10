@@ -52,7 +52,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -80,6 +85,9 @@ public class TodoController {
     @FXML private VBox detayEditorBox;
     @FXML private TextField detayBaslikField;
     @FXML private DatePicker detayTarihPicker;
+    @FXML private CheckBox tumGunCheckBox;
+    @FXML private ComboBox<String> baslangicSaatComboBox;
+    @FXML private ComboBox<String> bitisSaatComboBox;
     @FXML private ToggleButton oncelikDusukButton;
     @FXML private ToggleButton oncelikOrtaButton;
     @FXML private ToggleButton oncelikYuksekButton;
@@ -104,6 +112,7 @@ public class TodoController {
 
     private static final String DARK_MODE_CLASS = "dark-mode";
     private static final String PREF_DARK_MODE = "theme.darkModeEnabled";
+    private static final DateTimeFormatter SAAT_FORMATI = DateTimeFormatter.ofPattern("HH:mm");
 
     public TodoController(){
         zamanlayiciText = new SimpleStringProperty();
@@ -240,12 +249,29 @@ public class TodoController {
         oncelikDusukButton.setUserData(Oncelik.LOW);
         oncelikOrtaButton.setUserData(Oncelik.MEDIUM);
         oncelikYuksekButton.setUserData(Oncelik.HIGH);
+        saatSecenekleriniHazirla();
 
         detayBaslikField.textProperty().addListener((obs, eski, yeni) -> seciliGorevBasliginiGuncelle(yeni));
         detayTarihPicker.valueProperty().addListener((obs, eski, yeni) -> seciliGorevTarihiniGuncelle(yeni));
+        tumGunCheckBox.selectedProperty().addListener((obs, eski, yeni) -> seciliGorevTumGunDurumunuGuncelle(yeni));
+        baslangicSaatComboBox.valueProperty().addListener((obs, eski, yeni) -> seciliGorevBaslangicSaatiniGuncelle(yeni));
+        bitisSaatComboBox.valueProperty().addListener((obs, eski, yeni) -> seciliGorevBitisSaatiniGuncelle(yeni));
         detayFXML.textProperty().addListener((obs, eski, yeni) -> seciliGorevNotunuGuncelle(yeni));
         oncelikToggleGroup.selectedToggleProperty().addListener((obs, eski, yeni) -> seciliGorevOnceliginiGuncelle());
         detayPaneliniDoldur(null);
+    }
+
+    private void saatSecenekleriniHazirla() {
+        List<String> saatSecenekleri = new ArrayList<>();
+        for (int saat = 0; saat < 24; saat++) {
+            for (int dakika = 0; dakika < 60; dakika += 15) {
+                saatSecenekleri.add(String.format("%02d:%02d", saat, dakika));
+            }
+        }
+        baslangicSaatComboBox.getItems().setAll(saatSecenekleri);
+        bitisSaatComboBox.getItems().setAll(saatSecenekleri);
+        baslangicSaatComboBox.setEditable(false);
+        bitisSaatComboBox.setEditable(false);
     }
 
     private void detayPaneliniDoldur(Yapilacak gorev) {
@@ -260,6 +286,10 @@ public class TodoController {
             if (!secimVar) {
                 detayBaslikField.clear();
                 detayTarihPicker.setValue(null);
+                tumGunCheckBox.setSelected(true);
+                baslangicSaatComboBox.setValue(null);
+                bitisSaatComboBox.setValue(null);
+                saatAlanlariniGuncelle(true);
                 detayFXML.clear();
                 oncelikToggleGroup.selectToggle(null);
                 return;
@@ -267,10 +297,41 @@ public class TodoController {
 
             detayBaslikField.setText(gorev.getAciklama());
             detayTarihPicker.setValue(gorev.getTarih());
+            tumGunCheckBox.setSelected(gorev.isAllDay());
+            baslangicSaatComboBox.setValue(saatMetniniFormatla(gorev.getStartTime()));
+            bitisSaatComboBox.setValue(saatMetniniFormatla(gorev.getEndTime()));
+            saatAlanlariniGuncelle(gorev.isAllDay());
             detayFXML.setText(gorev.getDetay());
             oncelikButonunuSec(gorev.getOncelik());
         } finally {
             detayAlanlariGuncelleniyor = false;
+        }
+    }
+
+    private void saatAlanlariniGuncelle(boolean tumGunSecili) {
+        baslangicSaatComboBox.setDisable(tumGunSecili);
+        bitisSaatComboBox.setDisable(tumGunSecili);
+    }
+
+    private String saatMetniniFormatla(LocalTime saat) {
+        if (saat == null) {
+            return null;
+        }
+        return saat.format(SAAT_FORMATI);
+    }
+
+    private LocalTime saatMetniniParseEt(String saatMetni) {
+        if (saatMetni == null || saatMetni.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalTime.parse(saatMetni, SAAT_FORMATI);
+        } catch (DateTimeParseException e) {
+            try {
+                return LocalTime.parse(saatMetni);
+            } catch (DateTimeParseException ignored) {
+                return null;
+            }
         }
     }
 
@@ -318,6 +379,78 @@ public class TodoController {
         if (bugunToggleButton.isSelected()) {
             filtreleriUygula();
         }
+    }
+
+    private void seciliGorevTumGunDurumunuGuncelle(boolean tumGunSecili) {
+        if (detayAlanlariGuncelleniyor) {
+            return;
+        }
+        Yapilacak secili = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+        if (secili == null) {
+            return;
+        }
+
+        LocalTime baslangic = saatMetniniParseEt(baslangicSaatComboBox.getValue());
+        LocalTime bitis = saatMetniniParseEt(bitisSaatComboBox.getValue());
+
+        if (tumGunSecili) {
+            baslangic = null;
+            bitis = null;
+        } else {
+            if (baslangic == null) {
+                baslangic = LocalTime.of(9, 0);
+            }
+            if (bitis != null && bitis.isBefore(baslangic)) {
+                bitis = baslangic;
+            }
+        }
+
+        taskService.gorevZamaniniGuncelle(secili, tumGunSecili, baslangic, bitis);
+        detayPaneliniDoldur(secili);
+    }
+
+    private void seciliGorevBaslangicSaatiniGuncelle(String yeniSaat) {
+        if (detayAlanlariGuncelleniyor || tumGunCheckBox.isSelected()) {
+            return;
+        }
+        Yapilacak secili = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+        if (secili == null) {
+            return;
+        }
+
+        LocalTime baslangic = saatMetniniParseEt(yeniSaat);
+        if (baslangic == null) {
+            return;
+        }
+        LocalTime bitis = saatMetniniParseEt(bitisSaatComboBox.getValue());
+        if (bitis != null && bitis.isBefore(baslangic)) {
+            bitis = baslangic;
+        }
+
+        taskService.gorevZamaniniGuncelle(secili, false, baslangic, bitis);
+        detayPaneliniDoldur(secili);
+    }
+
+    private void seciliGorevBitisSaatiniGuncelle(String yeniSaat) {
+        if (detayAlanlariGuncelleniyor || tumGunCheckBox.isSelected()) {
+            return;
+        }
+        Yapilacak secili = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+        if (secili == null) {
+            return;
+        }
+
+        LocalTime baslangic = saatMetniniParseEt(baslangicSaatComboBox.getValue());
+        if (baslangic == null) {
+            baslangic = LocalTime.of(9, 0);
+        }
+        LocalTime bitis = saatMetniniParseEt(yeniSaat);
+        if (bitis != null && bitis.isBefore(baslangic)) {
+            bitis = baslangic;
+        }
+
+        taskService.gorevZamaniniGuncelle(secili, false, baslangic, bitis);
+        detayPaneliniDoldur(secili);
     }
 
     private void seciliGorevOnceliginiGuncelle() {

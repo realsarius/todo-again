@@ -355,6 +355,36 @@
     -fx-background-color: transparent;
 }
 
+.detail-all-day-check {
+    -fx-text-fill: -text-primary;
+}
+
+.detail-time-combo {
+    -fx-background-color: transparent;
+    -fx-border-color: #D2D2D7;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.detail-time-combo > .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-primary;
+    -fx-padding: 4px 8px;
+}
+
+.detail-time-combo > .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.detail-time-combo:disabled {
+    -fx-opacity: 0.56;
+}
+
+.detail-time-separator {
+    -fx-text-fill: -text-secondary;
+    -fx-font-size: 12px;
+}
+
 .priority-toggle-group {
     -fx-alignment: center-left;
 }

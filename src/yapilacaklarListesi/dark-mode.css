@@ -87,6 +87,10 @@
     -fx-border-color: #4A4A4C;
 }
 
+.root.dark-mode .detail-time-combo {
+    -fx-border-color: #4A4A4C;
+}
+
 .root.dark-mode .nav-rail {
     -fx-background-color: #1C1C1E;
     -fx-border-color: transparent #3A3A3C transparent transparent;
