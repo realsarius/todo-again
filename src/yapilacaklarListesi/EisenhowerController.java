@@ -42,6 +42,7 @@ public class EisenhowerController {
     private ObservableList<Yapilacak> tumGorevler = FXCollections.observableArrayList();
     private Consumer<Yapilacak> secimHandler = gorev -> { };
     private Consumer<Yapilacak> guncellemeHandler = gorev -> { };
+    private boolean secimSenkronuAktif;
 
     public EisenhowerController(ListView<Yapilacak> q1ListView,
                                 ListView<Yapilacak> q2ListView,
@@ -78,6 +79,8 @@ public class EisenhowerController {
     }
 
     public void goreviSec(Yapilacak gorev) {
+        secimSenkronuAktif = true;
+        try {
         if (gorev == null) {
             q1ListView.getSelectionModel().clearSelection();
             q2ListView.getSelectionModel().clearSelection();
@@ -97,6 +100,9 @@ public class EisenhowerController {
             case Q3 -> q3ListView.getSelectionModel().select(gorev);
             case Q4 -> q4ListView.getSelectionModel().select(gorev);
         }
+        } finally {
+            secimSenkronuAktif = false;
+        }
     }
 
     private void configureQuadrant(ListView<Yapilacak> listView,
@@ -108,7 +114,7 @@ public class EisenhowerController {
         listView.setItems(sorted);
         listView.setCellFactory(view -> createTaskCell(targetQuadrant));
         listView.getSelectionModel().selectedItemProperty().addListener((obs, eski, yeni) -> {
-            if (yeni != null) {
+            if (!secimSenkronuAktif && yeni != null) {
                 secimHandler.accept(yeni);
             }
         });
