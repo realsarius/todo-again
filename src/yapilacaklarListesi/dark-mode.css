@@ -41,3 +41,15 @@
 .root.dark-mode .app-menubar .menu-item:focused {
     -fx-background-color: #3A3A3C;
 }
+
+.root.dark-mode .settings-category-button:hover {
+    -fx-background-color: #3A3A3C;
+}
+
+.root.dark-mode .settings-category-button.settings-category-active {
+    -fx-background-color: #3A3A3C;
+}
+
+.root.dark-mode .settings-secondary-button {
+    -fx-border-color: #4A4A4C;
+}

@@ -22,11 +22,14 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.*;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
@@ -48,6 +51,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.prefs.Preferences;
@@ -528,6 +532,36 @@ public class Controller {
         }
     }
 
+
+    @FXML
+    public void ayarlariAc() {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("settings.fxml"));
+        try {
+            Parent root = loader.load();
+            Scene scene = new Scene(root, 560, 480);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("app.css")).toExternalForm());
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("dark-mode.css")).toExternalForm());
+
+            if (vbox.getStyleClass().contains(DARK_MODE_CLASS) && !root.getStyleClass().contains(DARK_MODE_CLASS)) {
+                root.getStyleClass().add(DARK_MODE_CLASS);
+            }
+
+            Stage stage = new Stage();
+            stage.setTitle("Ayarlar");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(vbox.getScene().getWindow());
+            stage.setResizable(false);
+            stage.setScene(scene);
+            stage.showAndWait();
+        } catch (IOException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Ayarlar");
+            alert.setHeaderText("Ayarlar penceresi açılamadı");
+            alert.setContentText("Lütfen tekrar deneyin.");
+            alert.showAndWait();
+        }
+    }
 
     @FXML
     public void emailGonderMetodu() {
