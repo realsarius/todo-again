@@ -63,7 +63,7 @@
                 <MenuItem mnemonicParsing="false" fx:id="kaydetFXML" text="Kaydet"/>
                 <MenuItem mnemonicParsing="false" fx:id="farkliKaydetFXML" text="Farklı Kaydet"/>
                 <SeparatorMenuItem mnemonicParsing="false"/>
-                <MenuItem mnemonicParsing="false" text="Ayarlar"/>
+                <MenuItem mnemonicParsing="false" onAction="#ayarlariAc" text="Ayarlar"/>
                 <SeparatorMenuItem mnemonicParsing="false"/>
                 <MenuItem mnemonicParsing="false" onAction="#kapat" text="Çıkış"/>
             </Menu>

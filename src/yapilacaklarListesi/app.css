@@ -47,6 +47,10 @@
     -fx-padding: 6px 10px;
 }
 
+.app-menubar > .container > .menu-button > .label {
+    -fx-text-fill: -text-primary;
+}
+
 .app-menubar > .container > .menu-button:hover {
     -fx-background-color: -menu-hover;
 }
@@ -57,18 +61,35 @@
 
 .app-menubar .context-menu {
     -fx-background-color: -app-bg;
+    -fx-background-insets: 0;
     -fx-background-radius: 10px;
     -fx-border-color: -line-color;
+    -fx-border-insets: 0;
     -fx-border-radius: 10px;
-    -fx-padding: 6px;
+    -fx-padding: 6px 2px 6px 2px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.24), 14, 0.14, 0, 4);
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .app-menubar .menu-item {
     -fx-background-radius: 6px;
 }
 
+.app-menubar .context-menu .menu-item {
+    -fx-background-color: transparent;
+}
+
+.app-menubar .context-menu .menu-item > .label {
+    -fx-text-fill: -text-primary;
+}
+
 .app-menubar .menu-item:focused {
     -fx-background-color: -search-bg;
+}
+
+.app-menubar .context-menu .separator:horizontal .line {
+    -fx-border-color: -line-color transparent transparent transparent;
 }
 
 .pill-toggle {
@@ -478,4 +499,210 @@
 .task-counter {
     -fx-font-size: 12px;
     -fx-text-fill: -text-secondary;
+}
+
+.settings-root {
+    -fx-background-color: -app-bg;
+}
+
+.settings-header {
+    -fx-padding: 14px 16px;
+    -fx-background-color: -app-bg;
+    -fx-border-color: transparent transparent -line-color transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.settings-title {
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+}
+
+.settings-body {
+    -fx-background-color: -app-bg;
+}
+
+.settings-sidebar {
+    -fx-padding: 10px 8px;
+    -fx-spacing: 4px;
+    -fx-background-color: -panel-bg;
+    -fx-border-color: transparent -line-color transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+.settings-category-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-primary;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: transparent;
+    -fx-padding: 8px 10px;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+}
+
+.settings-category-button:hover {
+    -fx-background-color: -toolbar-hover;
+}
+
+.settings-category-button.settings-category-active {
+    -fx-background-color: -search-bg;
+}
+
+.settings-content {
+    -fx-padding: 16px;
+    -fx-background-color: -app-bg;
+}
+
+.settings-section {
+    -fx-spacing: 10px;
+    -fx-fill-width: true;
+}
+
+.settings-section-title {
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+}
+
+.settings-section-desc {
+    -fx-text-fill: -text-secondary;
+    -fx-font-size: 13px;
+}
+
+.settings-row {
+    -fx-alignment: center-left;
+    -fx-spacing: 10px;
+}
+
+.settings-row-label {
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+}
+
+.settings-row-desc {
+    -fx-text-fill: -text-secondary;
+    -fx-font-size: 12px;
+}
+
+.settings-row-value {
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
+.settings-segment-option {
+    -fx-text-fill: -text-primary;
+    -fx-background-color: transparent;
+    -fx-border-color: #D2D2D7;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 6px 10px;
+    -fx-cursor: hand;
+}
+
+.settings-segment-option:selected {
+    -fx-background-color: -search-bg;
+}
+
+.settings-combo {
+    -fx-background-color: -app-bg;
+    -fx-border-color: #D2D2D7;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.settings-combo > .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.settings-spinner {
+    -fx-background-color: -app-bg;
+    -fx-border-color: #D2D2D7;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.settings-spinner .text-field {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-primary;
+}
+
+.settings-spinner .increment-arrow-button,
+.settings-spinner .decrement-arrow-button {
+    -fx-background-color: transparent;
+}
+
+.settings-checkbox {
+    -fx-text-fill: -text-primary;
+}
+
+.settings-danger-button {
+    -fx-background-color: #FF3B30;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: transparent;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 6px 14px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+}
+
+.settings-danger-button:hover {
+    -fx-background-color: #E6352C;
+}
+
+.settings-status-info {
+    -fx-text-fill: -text-secondary;
+}
+
+.settings-status-ok {
+    -fx-text-fill: #34C759;
+}
+
+.settings-status-warning {
+    -fx-text-fill: #FF9500;
+}
+
+.settings-status-error {
+    -fx-text-fill: #FF3B30;
+}
+
+.settings-footer {
+    -fx-padding: 10px 16px;
+    -fx-background-color: -app-bg;
+    -fx-border-color: -line-color transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.settings-secondary-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-primary;
+    -fx-border-color: #D2D2D7;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 6px 14px;
+    -fx-cursor: hand;
+}
+
+.settings-secondary-button:hover {
+    -fx-background-color: -toolbar-hover;
+}
+
+.settings-primary-button {
+    -fx-background-color: #4A7CFF;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: transparent;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 6px 14px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+}
+
+.settings-primary-button:hover {
+    -fx-background-color: #3A6CEF;
 }

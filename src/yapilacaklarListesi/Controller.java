@@ -22,11 +22,14 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.*;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +39,8 @@ import yapilacaklarListesi.muzik.MuzikOynatici;
 import yapilacaklarListesi.pomodoro.model.Pomodoro;
 import yapilacaklarListesi.pomodoro.model.PomodoroEnum;
 import yapilacaklarListesi.service.TaskService;
+import yapilacaklarListesi.settings.SettingsManager;
+import yapilacaklarListesi.settings.UpdateChecker;
 import yapilacaklarListesi.veriler.Oncelik;
 import yapilacaklarListesi.veriler.Yapilacak;
 import yapilacaklarListesi.veriler.YapilacakVeri;
@@ -48,6 +53,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.prefs.Preferences;
@@ -114,6 +120,7 @@ public class Controller {
         oncelikFiltreFXML.setValue("Tümü");
         detayPaneliniHazirla();
         darkModeUygula(preferences.getBoolean(PREF_DARK_MODE, false));
+        otomatikGuncellemeKontrolunuBaslat();
 
         farkliKaydetFXML.setOnAction(actionEvent -> {
             Stage stage = new Stage();
@@ -530,6 +537,41 @@ public class Controller {
 
 
     @FXML
+    public void ayarlariAc() {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("settings.fxml"));
+        try {
+            Parent root = loader.load();
+            Scene scene = new Scene(root, 560, 480);
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("app.css")).toExternalForm());
+            scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("dark-mode.css")).toExternalForm());
+
+            if (vbox.getStyleClass().contains(DARK_MODE_CLASS) && !root.getStyleClass().contains(DARK_MODE_CLASS)) {
+                root.getStyleClass().add(DARK_MODE_CLASS);
+            }
+
+            Stage stage = new Stage();
+            stage.setTitle("Ayarlar");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(vbox.getScene().getWindow());
+            stage.setResizable(false);
+            stage.setScene(scene);
+            stage.showAndWait();
+
+            SettingsManager settingsManager = new SettingsManager();
+            boolean koyuTema = settingsManager.getEffectiveThemeMode() == SettingsManager.ThemeMode.DARK;
+            darkModeUygula(koyuTema);
+            preferences.putBoolean(PREF_DARK_MODE, koyuTema);
+        } catch (IOException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Ayarlar");
+            alert.setHeaderText("Ayarlar penceresi açılamadı");
+            alert.setContentText("Lütfen tekrar deneyin.");
+            alert.showAndWait();
+        }
+    }
+
+    @FXML
     public void emailGonderMetodu() {
         try {
             String url = "mailto:tehadro@gmail.com?subject=Program%20Hakkinda";
@@ -784,6 +826,19 @@ public class Controller {
             case MEDIUM -> Color.web("#4A7CFF");
             case LOW -> Color.web("#34C759");
         };
+    }
+
+    private void otomatikGuncellemeKontrolunuBaslat() {
+        SettingsManager settingsManager = new SettingsManager();
+        if (!settingsManager.isAutoUpdateCheckEnabled()) {
+            return;
+        }
+        UpdateChecker.latestRelease(UpdateChecker.DEFAULT_GITHUB_OWNER, UpdateChecker.DEFAULT_GITHUB_REPO)
+                .whenComplete((result, throwable) -> {
+                    if (throwable == null && result != null && result.success()) {
+                        settingsManager.setLastUpdateCheckEpoch(System.currentTimeMillis());
+                    }
+                });
     }
 
 }
