@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -59,6 +61,13 @@
                     <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="detail-row">
                         <Label styleClass="detail-row-icon" text="📅"/>
                         <DatePicker fx:id="detayTarihPicker" styleClass="detail-date-picker" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="detail-row">
+                        <Label styleClass="detail-row-icon" text="⏰"/>
+                        <CheckBox fx:id="tumGunCheckBox" mnemonicParsing="false" styleClass="detail-all-day-check" text="Tüm gün"/>
+                        <ComboBox fx:id="baslangicSaatComboBox" prefWidth="94.0" promptText="Başlangıç" styleClass="detail-time-combo"/>
+                        <Label styleClass="detail-time-separator" text="—"/>
+                        <ComboBox fx:id="bitisSaatComboBox" prefWidth="94.0" promptText="Bitiş" styleClass="detail-time-combo"/>
                     </HBox>
                     <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="detail-row">
                         <Label styleClass="detail-row-icon" text="!"/>

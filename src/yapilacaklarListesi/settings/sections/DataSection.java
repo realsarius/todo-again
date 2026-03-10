@@ -271,7 +271,13 @@ public class DataSection extends BaseSettingsSection {
         Instant updatedAt = parseInstant(kayit.updatedAt, createdAt);
         Oncelik oncelik = parseOncelik(kayit.oncelik);
         List<String> tags = temizTagler(kayit.tags);
+        LocalTime startTime = parseTime(kayit.start_time, kayit.startTime);
+        LocalTime endTime = parseTime(kayit.end_time, kayit.endTime);
         LocalTime dueTime = parseTime(kayit.due_time, kayit.dueTime);
+        if (startTime == null && dueTime != null) {
+            startTime = dueTime;
+        }
+        boolean allDay = parseAllDay(kayit.all_day, kayit.allDay, startTime, dueTime, endTime);
         LocalDateTime completedAt = parseDateTime(kayit.completed_at, kayit.completedAt);
         boolean isCompleted = parseCompleted(kayit.is_completed, kayit.isCompleted, completedAt);
 
@@ -284,7 +290,9 @@ public class DataSection extends BaseSettingsSection {
                 updatedAt,
                 oncelik,
                 tags,
-                dueTime,
+                allDay,
+                startTime,
+                endTime,
                 completedAt,
                 isCompleted
         );
@@ -346,6 +354,20 @@ public class DataSection extends BaseSettingsSection {
         return completedAt != null;
     }
 
+    private boolean parseAllDay(Boolean primary,
+                                Boolean fallback,
+                                LocalTime startTime,
+                                LocalTime dueTime,
+                                LocalTime endTime) {
+        if (primary != null) {
+            return primary;
+        }
+        if (fallback != null) {
+            return fallback;
+        }
+        return startTime == null && dueTime == null && endTime == null;
+    }
+
     private List<String> temizTagler(List<String> tags) {
         List<String> temiz = new ArrayList<>();
         if (tags == null) {
@@ -365,7 +387,7 @@ public class DataSection extends BaseSettingsSection {
 
     private ExportPayload exportPayloadOlustur(List<Yapilacak> gorevler) {
         ExportPayload payload = new ExportPayload();
-        payload.version = 2;
+        payload.version = 3;
         payload.tasks = new ArrayList<>();
         for (Yapilacak gorev : gorevler) {
             TaskRecord kayit = new TaskRecord();
@@ -377,7 +399,10 @@ public class DataSection extends BaseSettingsSection {
             kayit.updatedAt = gorev.getUpdatedAt() == null ? null : gorev.getUpdatedAt().toString();
             kayit.oncelik = gorev.getOncelik() == null ? null : gorev.getOncelik().name();
             kayit.tags = gorev.getTags();
-            kayit.due_time = gorev.getDueTime() == null ? null : gorev.getDueTime().toString();
+            kayit.all_day = gorev.isAllDay();
+            kayit.start_time = gorev.getStartTime() == null ? null : gorev.getStartTime().toString();
+            kayit.end_time = gorev.getEndTime() == null ? null : gorev.getEndTime().toString();
+            kayit.due_time = gorev.getStartTime() == null ? null : gorev.getStartTime().toString();
             kayit.completed_at = gorev.getCompletedAt() == null ? null : gorev.getCompletedAt().toString();
             kayit.is_completed = gorev.isCompleted();
             payload.tasks.add(kayit);
@@ -473,9 +498,15 @@ public class DataSection extends BaseSettingsSection {
         String updatedAt;
         String oncelik;
         List<String> tags;
+        Boolean all_day;
+        String start_time;
+        String end_time;
         String due_time;
         String completed_at;
         Boolean is_completed;
+        Boolean allDay;
+        String startTime;
+        String endTime;
         String dueTime;
         String completedAt;
         Boolean isCompleted;

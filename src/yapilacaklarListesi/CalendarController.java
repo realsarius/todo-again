@@ -10,12 +10,15 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
@@ -38,11 +41,14 @@ import yapilacaklarListesi.veriler.Yapilacak;
 import yapilacaklarListesi.veriler.YapilacakVeri;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -54,6 +60,7 @@ public class CalendarController {
     private static final DateTimeFormatter AY_BASLIK_FORMATI = DateTimeFormatter.ofPattern("LLLL yyyy", TR_LOCALE);
     private static final DateTimeFormatter HAFTA_BASLIK_FORMATI = DateTimeFormatter.ofPattern("d MMM", TR_LOCALE);
     private static final DateTimeFormatter GUN_BASLIK_FORMATI = DateTimeFormatter.ofPattern("EEE d", TR_LOCALE);
+    private static final DateTimeFormatter SAAT_FORMATI = DateTimeFormatter.ofPattern("HH:mm");
 
     @FXML private VBox ayGorunumuKutu;
     @FXML private VBox haftaGorunumuKutu;
@@ -69,6 +76,9 @@ public class CalendarController {
     @FXML private VBox detayEditorBox;
     @FXML private TextField detayBaslikField;
     @FXML private DatePicker detayTarihPicker;
+    @FXML private CheckBox tumGunCheckBox;
+    @FXML private ComboBox<String> baslangicSaatComboBox;
+    @FXML private ComboBox<String> bitisSaatComboBox;
     @FXML private ToggleButton oncelikDusukButton;
     @FXML private ToggleButton oncelikOrtaButton;
     @FXML private ToggleButton oncelikYuksekButton;
@@ -94,9 +104,13 @@ public class CalendarController {
         oncelikDusukButton.setUserData(Oncelik.LOW);
         oncelikOrtaButton.setUserData(Oncelik.MEDIUM);
         oncelikYuksekButton.setUserData(Oncelik.HIGH);
+        saatSecenekleriniHazirla();
 
         detayBaslikField.textProperty().addListener((obs, eski, yeni) -> seciliBasligiGuncelle(yeni));
         detayTarihPicker.valueProperty().addListener((obs, eski, yeni) -> seciliTarihiGuncelle(yeni));
+        tumGunCheckBox.selectedProperty().addListener((obs, eski, yeni) -> seciliTumGunDurumunuGuncelle(yeni));
+        baslangicSaatComboBox.valueProperty().addListener((obs, eski, yeni) -> seciliBaslangicSaatiniGuncelle(yeni));
+        bitisSaatComboBox.valueProperty().addListener((obs, eski, yeni) -> seciliBitisSaatiniGuncelle(yeni));
         detayNotArea.textProperty().addListener((obs, eski, yeni) -> seciliNotuGuncelle(yeni));
         oncelikToggleGroup.selectedToggleProperty().addListener((obs, eski, yeni) -> seciliOnceligiGuncelle());
 
@@ -110,6 +124,19 @@ public class CalendarController {
 
         gorevSec(null);
         takvimiYenile();
+    }
+
+    private void saatSecenekleriniHazirla() {
+        List<String> saatSecenekleri = new ArrayList<>();
+        for (int saat = 0; saat < 24; saat++) {
+            for (int dakika = 0; dakika < 60; dakika += 15) {
+                saatSecenekleri.add(String.format("%02d:%02d", saat, dakika));
+            }
+        }
+        baslangicSaatComboBox.getItems().setAll(saatSecenekleri);
+        bitisSaatComboBox.getItems().setAll(saatSecenekleri);
+        baslangicSaatComboBox.setEditable(false);
+        bitisSaatComboBox.setEditable(false);
     }
 
     @FXML
@@ -286,7 +313,7 @@ public class CalendarController {
 
         hucre.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY && !event.isConsumed()) {
-                yeniGorevDialoguAc(gun);
+                yeniGorevDialoguAc(gun, null);
             }
         });
 
@@ -357,12 +384,12 @@ public class CalendarController {
             tumGunKutusu.getStyleClass().addAll("calendar-cell", "calendar-all-day-cell");
             tumGunKutusu.setPadding(new Insets(4));
             List<Yapilacak> tumGunGorevleri = gununGorevleri(gun).stream()
-                    .filter(gorev -> gorev.getDueTime() == null)
+                    .filter(Yapilacak::isAllDay)
                     .toList();
             gorevPilleriEkle(tumGunKutusu, tumGunGorevleri, true);
             tumGunKutusu.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY && !event.isConsumed()) {
-                    yeniGorevDialoguAc(gun);
+                    yeniGorevDialoguAc(gun, null);
                 }
             });
             dropHedefiBagla(tumGunKutusu, gun);
@@ -376,7 +403,9 @@ public class CalendarController {
                     saatKutusu.getStyleClass().add("calendar-week-today-cell");
                 }
                 List<Yapilacak> saatGorevleri = gununGorevleri(gun).stream()
-                        .filter(gorev -> gorev.getDueTime() != null && gorev.getDueTime().getHour() == saatDegeri)
+                        .filter(gorev -> !gorev.isAllDay()
+                                && gorev.getStartTime() != null
+                                && gorev.getStartTime().getHour() == saatDegeri)
                         .toList();
                 if (!saatGorevleri.isEmpty()) {
                     VBox kutu = new VBox(4);
@@ -387,7 +416,7 @@ public class CalendarController {
                 int satir = saatDegeri - 7;
                 saatKutusu.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.PRIMARY && !event.isConsumed()) {
-                        yeniGorevDialoguAc(gun);
+                        yeniGorevDialoguAc(gun, LocalTime.of(saatDegeri, 0));
                     }
                 });
                 dropHedefiBagla(saatKutusu, gun);
@@ -413,10 +442,23 @@ public class CalendarController {
     }
 
     private Label gorevPillOlustur(Yapilacak gorev, boolean kompakt) {
-        Label pill = new Label(StringUtils.abbreviate(gorev.getAciklama(), kompakt ? 18 : 22));
+        Label pill = new Label(StringUtils.abbreviate(gorevPillMetni(gorev), kompakt ? 18 : 22));
         pill.getStyleClass().add("calendar-pill");
         if (kompakt) {
             pill.getStyleClass().add("calendar-pill-compact");
+        }
+        if (!gorev.isAllDay() && gorev.getStartTime() != null) {
+            pill.getStyleClass().add("calendar-pill-timed");
+            if (kompakt) {
+                int sureDakika = gorevSuresiDakika(gorev);
+                double yukseklik = Math.min(52, Math.max(16, 14 + (sureDakika / 60.0) * 18));
+                pill.setMinHeight(yukseklik);
+                pill.setPrefHeight(yukseklik);
+                if (sureDakika >= 120) {
+                    pill.getStyleClass().add("calendar-pill-long");
+                }
+            }
+            Tooltip.install(pill, new Tooltip(gorevSaatAraligiMetni(gorev)));
         }
         pill.getStyleClass().add(oncelikStilSinifi(gorev.getOncelik()));
         pill.setMaxWidth(Double.MAX_VALUE);
@@ -434,6 +476,42 @@ public class CalendarController {
             event.consume();
         });
         return pill;
+    }
+
+    private int gorevSuresiDakika(Yapilacak gorev) {
+        if (gorev == null || gorev.isAllDay() || gorev.getStartTime() == null) {
+            return 0;
+        }
+        if (gorev.getEndTime() == null) {
+            return 60;
+        }
+        long dakika = Duration.between(gorev.getStartTime(), gorev.getEndTime()).toMinutes();
+        return (int) Math.max(15, dakika);
+    }
+
+    private String gorevSaatAraligiMetni(Yapilacak gorev) {
+        if (gorev == null || gorev.getStartTime() == null) {
+            return "Tüm gün";
+        }
+        String baslangic = gorev.getStartTime().format(SAAT_FORMATI);
+        if (gorev.getEndTime() == null) {
+            return baslangic;
+        }
+        return baslangic + " - " + gorev.getEndTime().format(SAAT_FORMATI);
+    }
+
+    private String gorevPillMetni(Yapilacak gorev) {
+        if (gorev == null) {
+            return "";
+        }
+        if (gorev.isAllDay() || gorev.getStartTime() == null) {
+            return gorev.getAciklama();
+        }
+        String saatAraligi = gorev.getStartTime().format(SAAT_FORMATI);
+        if (gorev.getEndTime() != null) {
+            saatAraligi += "-" + gorev.getEndTime().format(SAAT_FORMATI);
+        }
+        return saatAraligi + " " + gorev.getAciklama();
     }
 
     private String oncelikStilSinifi(Oncelik oncelik) {
@@ -490,13 +568,14 @@ public class CalendarController {
                 .filter(gorev -> gun.equals(gorev.getTarih()))
                 .sorted(
                         Comparator
-                                .comparing((Yapilacak gorev) -> gorev.getDueTime() == null ? LocalTime.MAX : gorev.getDueTime())
+                                .comparing((Yapilacak gorev) -> gorev.isAllDay() ? 0 : 1)
+                                .thenComparing(gorev -> gorev.getStartTime() == null ? LocalTime.MAX : gorev.getStartTime())
                                 .thenComparing(gorev -> gorev.getAciklama().toLowerCase(TR_LOCALE))
                 )
                 .toList();
     }
 
-    private void yeniGorevDialoguAc(LocalDate tarih) {
+    private void yeniGorevDialoguAc(LocalDate tarih, LocalTime varsayilanSaat) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Yeni Yapılacak");
         dialog.setHeaderText("Yeni görevi seçilen tarihe ekleyin.");
@@ -517,7 +596,7 @@ public class CalendarController {
         }
 
         DialogController dialogController = loader.getController();
-        dialogController.varsayilanTarihAyarla(tarih);
+        dialogController.varsayilanTarihVeSaatAyarla(tarih, varsayilanSaat);
 
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
@@ -554,6 +633,10 @@ public class CalendarController {
             if (!secimVar) {
                 detayBaslikField.clear();
                 detayTarihPicker.setValue(null);
+                tumGunCheckBox.setSelected(true);
+                baslangicSaatComboBox.setValue(null);
+                bitisSaatComboBox.setValue(null);
+                saatAlanlariniGuncelle(true);
                 detayNotArea.clear();
                 oncelikToggleGroup.selectToggle(null);
                 return;
@@ -561,10 +644,41 @@ public class CalendarController {
 
             detayBaslikField.setText(gorev.getAciklama());
             detayTarihPicker.setValue(gorev.getTarih());
+            tumGunCheckBox.setSelected(gorev.isAllDay());
+            baslangicSaatComboBox.setValue(saatMetniniFormatla(gorev.getStartTime()));
+            bitisSaatComboBox.setValue(saatMetniniFormatla(gorev.getEndTime()));
+            saatAlanlariniGuncelle(gorev.isAllDay());
             detayNotArea.setText(gorev.getDetay());
             oncelikButonunuSec(gorev.getOncelik());
         } finally {
             detayGuncelleniyor = false;
+        }
+    }
+
+    private void saatAlanlariniGuncelle(boolean tumGunSecili) {
+        baslangicSaatComboBox.setDisable(tumGunSecili);
+        bitisSaatComboBox.setDisable(tumGunSecili);
+    }
+
+    private String saatMetniniFormatla(LocalTime saat) {
+        if (saat == null) {
+            return null;
+        }
+        return saat.format(SAAT_FORMATI);
+    }
+
+    private LocalTime saatMetniniParseEt(String saatMetni) {
+        if (saatMetni == null || saatMetni.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalTime.parse(saatMetni, SAAT_FORMATI);
+        } catch (DateTimeParseException e) {
+            try {
+                return LocalTime.parse(saatMetni);
+            } catch (DateTimeParseException ignored) {
+                return null;
+            }
         }
     }
 
@@ -600,6 +714,69 @@ public class CalendarController {
             return;
         }
         seciliGorev.setTarih(tarih);
+        takvimiYenile();
+    }
+
+    private void seciliTumGunDurumunuGuncelle(boolean tumGunSecili) {
+        if (detayGuncelleniyor || seciliGorev == null) {
+            return;
+        }
+
+        LocalTime baslangic = saatMetniniParseEt(baslangicSaatComboBox.getValue());
+        LocalTime bitis = saatMetniniParseEt(bitisSaatComboBox.getValue());
+
+        if (tumGunSecili) {
+            baslangic = null;
+            bitis = null;
+        } else {
+            if (baslangic == null) {
+                baslangic = LocalTime.of(9, 0);
+            }
+            if (bitis != null && bitis.isBefore(baslangic)) {
+                bitis = baslangic;
+            }
+        }
+
+        taskService.gorevZamaniniGuncelle(seciliGorev, tumGunSecili, baslangic, bitis);
+        detayPaneliniDoldur(seciliGorev);
+        takvimiYenile();
+    }
+
+    private void seciliBaslangicSaatiniGuncelle(String yeniSaat) {
+        if (detayGuncelleniyor || seciliGorev == null || tumGunCheckBox.isSelected()) {
+            return;
+        }
+
+        LocalTime baslangic = saatMetniniParseEt(yeniSaat);
+        if (baslangic == null) {
+            return;
+        }
+        LocalTime bitis = saatMetniniParseEt(bitisSaatComboBox.getValue());
+        if (bitis != null && bitis.isBefore(baslangic)) {
+            bitis = baslangic;
+        }
+
+        taskService.gorevZamaniniGuncelle(seciliGorev, false, baslangic, bitis);
+        detayPaneliniDoldur(seciliGorev);
+        takvimiYenile();
+    }
+
+    private void seciliBitisSaatiniGuncelle(String yeniSaat) {
+        if (detayGuncelleniyor || seciliGorev == null || tumGunCheckBox.isSelected()) {
+            return;
+        }
+
+        LocalTime baslangic = saatMetniniParseEt(baslangicSaatComboBox.getValue());
+        if (baslangic == null) {
+            baslangic = LocalTime.of(9, 0);
+        }
+        LocalTime bitis = saatMetniniParseEt(yeniSaat);
+        if (bitis != null && bitis.isBefore(baslangic)) {
+            bitis = baslangic;
+        }
+
+        taskService.gorevZamaniniGuncelle(seciliGorev, false, baslangic, bitis);
+        detayPaneliniDoldur(seciliGorev);
         takvimiYenile();
     }
 

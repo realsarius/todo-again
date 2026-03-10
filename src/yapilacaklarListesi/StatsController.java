@@ -48,6 +48,9 @@ public class StatsController {
     @FXML private Label toplamDegerLabel;
     @FXML private Label toplamOranLabel;
     @FXML private ProgressBar toplamProgress;
+    @FXML private Label saatliDegerLabel;
+    @FXML private Label saatliOranLabel;
+    @FXML private ProgressBar saatliProgress;
 
     @FXML private ProgressBar highPriorityProgress;
     @FXML private ProgressBar mediumPriorityProgress;
@@ -140,6 +143,13 @@ public class StatsController {
         toplamOranLabel.setText(toplamTamamlanan + " tamamlandı");
         toplamProgress.setProgress(progress(toplamTamamlanan, gorevler.size()));
         progressRengiUygula(toplamProgress, progress(toplamTamamlanan, gorevler.size()));
+
+        long saatliGorevSayisi = gorevler.stream().filter(this::saatliGorevMi).count();
+        double saatliOran = progress(saatliGorevSayisi, gorevler.size());
+        saatliDegerLabel.setText(saatliGorevSayisi + "/" + gorevler.size());
+        saatliOranLabel.setText("%" + Math.round(saatliOran * 100));
+        saatliProgress.setProgress(saatliOran);
+        progressRengiUygula(saatliProgress, saatliOran);
     }
 
     private void kartGuncelle(Label degerLabel, Label oranLabel, ProgressBar progressBar, List<Yapilacak> gorevler) {
@@ -243,6 +253,10 @@ public class StatsController {
         }
         LocalDateTime completedAt = gorev.getCompletedAt();
         return completedAt != null;
+    }
+
+    private boolean saatliGorevMi(Yapilacak gorev) {
+        return gorev != null && !gorev.isAllDay() && gorev.getStartTime() != null;
     }
 
     private double progress(long parca, long butun) {

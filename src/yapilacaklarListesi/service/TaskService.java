@@ -7,6 +7,7 @@ import yapilacaklarListesi.veriler.YapilacakVeri;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -56,6 +57,26 @@ public class TaskService {
             return;
         }
         yapilacak.setDetay(detay == null ? "" : detay);
+    }
+
+    public boolean zamanAraligiGecerliMi(boolean allDay, LocalTime startTime, LocalTime endTime) {
+        if (allDay) {
+            return true;
+        }
+        if (startTime == null) {
+            return false;
+        }
+        return endTime == null || !endTime.isBefore(startTime);
+    }
+
+    public void gorevZamaniniGuncelle(Yapilacak yapilacak, boolean allDay, LocalTime startTime, LocalTime endTime) {
+        if (yapilacak == null) {
+            return;
+        }
+        if (!zamanAraligiGecerliMi(allDay, startTime, endTime)) {
+            throw new IllegalArgumentException("Gecersiz zaman araligi");
+        }
+        yapilacak.setTimeRange(allDay, startTime, endTime);
     }
 
     public void kaydet() throws IOException {

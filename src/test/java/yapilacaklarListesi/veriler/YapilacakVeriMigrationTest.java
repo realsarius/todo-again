@@ -102,7 +102,7 @@ class YapilacakVeriMigrationTest {
         Path jsonDosya = veri.getJsonDosyaYolu();
         assertTrue(Files.exists(jsonDosya));
         String jsonIcerik = Files.readString(jsonDosya);
-        assertTrue(jsonIcerik.contains("\"version\": 2"));
+        assertTrue(jsonIcerik.contains("\"version\": 3"));
         assertTrue(jsonIcerik.contains("JSON Gecis"));
     }
 
@@ -225,6 +225,9 @@ class YapilacakVeriMigrationTest {
         assertEquals(Instant.parse("2026-03-09T10:00:00Z"), kayit.getCreatedAt());
         assertEquals(Instant.parse("2026-03-09T12:00:00Z"), kayit.getUpdatedAt());
         assertEquals(List.of("is", "kisisel"), kayit.getTags());
+        assertFalse(kayit.isAllDay());
+        assertEquals(LocalTime.of(14, 30), kayit.getStartTime());
+        assertNull(kayit.getEndTime());
         assertEquals(LocalTime.of(14, 30), kayit.getDueTime());
         assertEquals(LocalDateTime.of(2026, 3, 9, 12, 30), kayit.getCompletedAt());
         assertTrue(kayit.isCompleted());

@@ -29,7 +29,7 @@ public class YapilacakVeri {
     private static final YapilacakVeri ornek = new YapilacakVeri();
     private static final String legacyDosyaAdi = "Yapilacaklar.txt";
     private static final String jsonDosyaAdi = "Yapilacaklar.json";
-    private static final int JSON_VERSIYON = 2;
+    private static final int JSON_VERSIYON = 3;
     private static final int BEKLENEN_SUTUN_SAYISI = 3;
 
     private ObservableList<Yapilacak> yapilacaklar;
@@ -180,7 +180,13 @@ public class YapilacakVeri {
                 Instant updatedAt = parseJsonInstant(kayit.updatedAt, createdAt);
                 Oncelik oncelik = parseOncelik(kayit.oncelik);
                 List<String> tags = temizleTagler(kayit.tags);
+                LocalTime startTime = parseJsonSaat(kayit.start_time, kayit.startTime);
+                LocalTime endTime = parseJsonSaat(kayit.end_time, kayit.endTime);
                 LocalTime dueTime = parseJsonSaat(kayit.due_time, kayit.dueTime);
+                if (startTime == null && dueTime != null) {
+                    startTime = dueTime;
+                }
+                boolean allDay = parseAllDay(kayit.all_day, kayit.allDay, startTime, dueTime, endTime);
                 LocalDateTime completedAt = parseJsonDateTime(kayit.completed_at, kayit.completedAt);
                 boolean isCompleted = parseTamamlanmaDurumu(
                         kayit.is_completed,
@@ -197,7 +203,9 @@ public class YapilacakVeri {
                         updatedAt,
                         oncelik,
                         tags,
-                        dueTime,
+                        allDay,
+                        startTime,
+                        endTime,
                         completedAt,
                         isCompleted
                 ));
@@ -273,7 +281,10 @@ public class YapilacakVeri {
             kayit.updatedAt = yapilacak.getUpdatedAt().toString();
             kayit.oncelik = yapilacak.getOncelik().name();
             kayit.tags = temizleTagler(yapilacak.getTags());
-            kayit.due_time = yapilacak.getDueTime() == null ? null : yapilacak.getDueTime().toString();
+            kayit.all_day = yapilacak.isAllDay();
+            kayit.start_time = yapilacak.getStartTime() == null ? null : yapilacak.getStartTime().toString();
+            kayit.end_time = yapilacak.getEndTime() == null ? null : yapilacak.getEndTime().toString();
+            kayit.due_time = yapilacak.getStartTime() == null ? null : yapilacak.getStartTime().toString();
             kayit.completed_at = yapilacak.getCompletedAt() == null ? null : yapilacak.getCompletedAt().toString();
             kayit.is_completed = yapilacak.isCompleted();
             jsonVeri.tasks.add(kayit);
@@ -356,6 +367,20 @@ public class YapilacakVeri {
         return completedAt != null;
     }
 
+    private boolean parseAllDay(Boolean oncelikliDeger,
+                                Boolean alternatifDeger,
+                                LocalTime startTime,
+                                LocalTime dueTime,
+                                LocalTime endTime) {
+        if (oncelikliDeger != null) {
+            return oncelikliDeger;
+        }
+        if (alternatifDeger != null) {
+            return alternatifDeger;
+        }
+        return startTime == null && dueTime == null && endTime == null;
+    }
+
     private List<String> temizleTagler(List<String> tags) {
         List<String> temizListe = new ArrayList<>();
         if (tags == null) {
@@ -406,9 +431,15 @@ public class YapilacakVeri {
         String updatedAt;
         String oncelik;
         List<String> tags;
+        Boolean all_day;
+        String start_time;
+        String end_time;
         String due_time;
         String completed_at;
         Boolean is_completed;
+        Boolean allDay;
+        String startTime;
+        String endTime;
         String dueTime;
         String completedAt;
         Boolean isCompleted;
