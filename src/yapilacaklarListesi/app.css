@@ -751,10 +751,218 @@
     -fx-font-weight: 600;
 }
 
+.calendar-view-root {
+    -fx-background-color: -app-bg;
+}
+
+.calendar-toolbar {
+    -fx-alignment: center-left;
+    -fx-spacing: 8px;
+    -fx-padding: 10px 14px;
+    -fx-background-color: -app-bg;
+    -fx-border-color: transparent transparent -line-color transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.calendar-nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-primary;
+    -fx-border-color: #D2D2D7;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-min-width: 32px;
+    -fx-pref-width: 32px;
+    -fx-max-width: 32px;
+    -fx-min-height: 32px;
+    -fx-pref-height: 32px;
+    -fx-max-height: 32px;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.calendar-nav-button:hover {
+    -fx-background-color: -toolbar-hover;
+}
+
+.calendar-period-title {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-padding: 6px 10px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.calendar-period-title:hover {
+    -fx-background-color: -toolbar-hover;
+}
+
+.calendar-view-toggle {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-primary;
+    -fx-border-color: #D2D2D7;
+    -fx-border-radius: 14px;
+    -fx-background-radius: 14px;
+    -fx-padding: 5px 12px;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+}
+
+.calendar-view-toggle:selected {
+    -fx-background-color: #4A7CFF;
+    -fx-border-color: #4A7CFF;
+    -fx-text-fill: #FFFFFF;
+}
+
+.calendar-content-split {
+    -fx-background-color: -app-bg;
+}
+
+.calendar-content-split > .split-pane-divider {
+    -fx-padding: 0 0 0 1px;
+    -fx-background-color: -line-color;
+}
+
+.calendar-main-pane {
+    -fx-background-color: -app-bg;
+}
+
+.calendar-month-wrap,
+.calendar-week-wrap {
+    -fx-background-color: -app-bg;
+}
+
+.calendar-day-header-grid,
+.calendar-week-header-grid {
+    -fx-background-color: -app-bg;
+    -fx-border-color: transparent transparent -line-color transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.calendar-day-header,
+.calendar-week-header {
+    -fx-text-fill: -text-secondary;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-padding: 8px 0;
+}
+
+.calendar-week-header-today {
+    -fx-text-fill: #4A7CFF;
+}
+
+.calendar-week-header-corner {
+    -fx-text-fill: -text-secondary;
+}
+
+.calendar-month-grid {
+    -fx-background-color: -app-bg;
+}
+
 .calendar-cell {
     -fx-background-color: -app-bg;
     -fx-border-color: -line-color;
-    -fx-border-width: 0.5;
+    -fx-border-width: 0 1 1 0;
+}
+
+.calendar-month-cell {
+    -fx-min-height: 80px;
+}
+
+.calendar-day-number {
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+}
+
+.calendar-day-number-muted {
+    -fx-text-fill: #AEAEB2;
+}
+
+.calendar-today-badge {
+    -fx-background-color: #4A7CFF;
+    -fx-text-fill: #FFFFFF;
+    -fx-padding: 1px 8px;
+    -fx-background-radius: 10px;
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+}
+
+.calendar-pill {
+    -fx-text-fill: #FFFFFF;
+    -fx-padding: 2px 8px;
+    -fx-background-radius: 10px;
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+}
+
+.calendar-pill-compact {
+    -fx-padding: 1px 6px;
+}
+
+.calendar-pill.low {
+    -fx-background-color: #34C759;
+}
+
+.calendar-pill.medium {
+    -fx-background-color: #FF9500;
+}
+
+.calendar-pill.high {
+    -fx-background-color: #FF3B30;
+}
+
+.calendar-more-label {
+    -fx-text-fill: -text-secondary;
+    -fx-font-size: 11px;
+    -fx-padding: 1px 0 0 0;
+    -fx-cursor: hand;
+}
+
+.calendar-more-label:hover {
+    -fx-text-fill: #4A7CFF;
+}
+
+.calendar-week-scroll {
+    -fx-background-color: -app-bg;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.calendar-week-scroll > .viewport {
+    -fx-background-color: -app-bg;
+}
+
+.calendar-week-grid {
+    -fx-background-color: -app-bg;
+}
+
+.calendar-time-label {
+    -fx-text-fill: -text-secondary;
+    -fx-font-size: 11px;
+    -fx-padding: 6px 6px 0 6px;
+}
+
+.calendar-all-day-cell {
+    -fx-background-color: derive(-panel-bg, 6%);
+}
+
+.calendar-week-cell {
+    -fx-background-color: -app-bg;
+}
+
+.calendar-week-today-cell {
+    -fx-background-color: derive(#4A7CFF, 88%);
+}
+
+.calendar-detail-pane {
+    -fx-background-color: -panel-bg;
+    -fx-padding: 16px;
 }
 
 .stat-card {

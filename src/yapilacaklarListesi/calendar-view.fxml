@@ -1,9 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<StackPane styleClass="placeholder-view" xmlns="http://javafx.com/javafx/8.0.282-ea"
-           xmlns:fx="http://javafx.com/fxml/1">
-    <Label styleClass="placeholder-title" text="Takvim görünümü Faz D'de eklenecek"/>
-</StackPane>
+<BorderPane fx:id="calendarRoot" styleClass="calendar-view-root" xmlns="http://javafx.com/javafx/8.0.282-ea"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="yapilacaklarListesi.CalendarController">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="calendar-toolbar">
+            <Button fx:id="oncekiButton" mnemonicParsing="false" onAction="#oncekiPeriyot" styleClass="calendar-nav-button" text="‹"/>
+            <Button fx:id="sonrakiButton" mnemonicParsing="false" onAction="#sonrakiPeriyot" styleClass="calendar-nav-button" text="›"/>
+            <Button fx:id="donemBaslikButton" mnemonicParsing="false" onAction="#yilSeciciyiAc" styleClass="calendar-period-title" text="Mart 2026"/>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <ToggleButton fx:id="ayGorunumuButton" mnemonicParsing="false" onAction="#ayGorunumuSec" styleClass="calendar-view-toggle" text="Ay"/>
+            <ToggleButton fx:id="haftaGorunumuButton" mnemonicParsing="false" onAction="#haftaGorunumuSec" styleClass="calendar-view-toggle" text="Hafta"/>
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.72" styleClass="calendar-content-split">
+            <StackPane styleClass="calendar-main-pane">
+                <VBox fx:id="ayGorunumuKutu" spacing="0.0" styleClass="calendar-month-wrap" StackPane.alignment="CENTER">
+                    <GridPane fx:id="ayGunBaslikGrid" styleClass="calendar-day-header-grid"/>
+                    <GridPane fx:id="ayTakvimGrid" styleClass="calendar-month-grid" VBox.vgrow="ALWAYS"/>
+                </VBox>
+
+                <VBox fx:id="haftaGorunumuKutu" managed="false" spacing="0.0" styleClass="calendar-week-wrap" visible="false"
+                      StackPane.alignment="CENTER">
+                    <GridPane fx:id="haftaGunBaslikGrid" styleClass="calendar-week-header-grid"/>
+                    <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" styleClass="calendar-week-scroll" VBox.vgrow="ALWAYS">
+                        <content>
+                            <GridPane fx:id="haftaTakvimGrid" styleClass="calendar-week-grid"/>
+                        </content>
+                    </ScrollPane>
+                </VBox>
+            </StackPane>
+
+            <VBox spacing="10.0" styleClass="panel-right calendar-detail-pane">
+                <VBox fx:id="detayBosDurumBox" alignment="CENTER" spacing="8.0" styleClass="detail-placeholder-box" VBox.vgrow="ALWAYS">
+                    <Label styleClass="detail-placeholder-text" text="Bir görev seçin"/>
+                </VBox>
+
+                <VBox fx:id="detayEditorBox" managed="false" spacing="10.0" styleClass="detail-editor-box" visible="false" VBox.vgrow="ALWAYS">
+                    <TextField fx:id="detayBaslikField" promptText="Görev başlığı" styleClass="detail-title-field"/>
+                    <Region styleClass="detail-divider"/>
+                    <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="detail-row">
+                        <Label styleClass="detail-row-icon" text="📅"/>
+                        <DatePicker fx:id="detayTarihPicker" styleClass="detail-date-picker" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="detail-row">
+                        <Label styleClass="detail-row-icon" text="!"/>
+                        <HBox spacing="8.0" styleClass="priority-toggle-group">
+                            <ToggleButton fx:id="oncelikDusukButton" mnemonicParsing="false" styleClass="priority-toggle low" text="Düşük"/>
+                            <ToggleButton fx:id="oncelikOrtaButton" mnemonicParsing="false" styleClass="priority-toggle medium" text="Orta"/>
+                            <ToggleButton fx:id="oncelikYuksekButton" mnemonicParsing="false" styleClass="priority-toggle high" text="Yüksek"/>
+                        </HBox>
+                    </HBox>
+                    <TextArea fx:id="detayNotArea" promptText="Not ekle..." styleClass="detail-note-area" wrapText="true" VBox.vgrow="ALWAYS"/>
+                </VBox>
+            </VBox>
+        </SplitPane>
+    </center>
+</BorderPane>

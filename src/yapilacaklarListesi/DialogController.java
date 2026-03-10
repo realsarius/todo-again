@@ -27,6 +27,13 @@ public class DialogController {
         oncelikFXML.setValue(Oncelik.MEDIUM);
     }
 
+    public void varsayilanTarihAyarla(LocalDate varsayilanTarih) {
+        if (varsayilanTarih == null) {
+            return;
+        }
+        tarihFXML.setValue(varsayilanTarih);
+    }
+
     // FXML'deki aciklamaFXML, detayFXML, tarihFXML'in içeriklerini alıp yeni bir Yapilacak sınıfı oluşturarak return ediyoruz ki yeni Yapilacagi text dökümantasyonuna yazdırabilelim.
     public Yapilacak ciktiyiGoster(){
         String aciklama = this.aciklamaFXML.getText().trim();

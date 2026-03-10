@@ -100,3 +100,49 @@
 .root.dark-mode .placeholder-title {
     -fx-text-fill: #8A8A8E;
 }
+
+.root.dark-mode .calendar-nav-button,
+.root.dark-mode .calendar-view-toggle {
+    -fx-border-color: #4A4A4C;
+}
+
+.root.dark-mode .calendar-nav-button:hover,
+.root.dark-mode .calendar-period-title:hover {
+    -fx-background-color: #3A3A3C;
+}
+
+.root.dark-mode .calendar-day-header-grid,
+.root.dark-mode .calendar-week-header-grid {
+    -fx-border-color: transparent transparent #3A3A3C transparent;
+}
+
+.root.dark-mode .calendar-cell {
+    -fx-border-color: #3A3A3C;
+}
+
+.root.dark-mode .calendar-day-number-muted,
+.root.dark-mode .calendar-time-label {
+    -fx-text-fill: #8A8A8E;
+}
+
+.root.dark-mode .calendar-more-label {
+    -fx-text-fill: #8A8A8E;
+}
+
+.root.dark-mode .calendar-more-label:hover {
+    -fx-text-fill: #8AB4FF;
+}
+
+.root.dark-mode .calendar-week-scroll,
+.root.dark-mode .calendar-week-scroll > .viewport,
+.root.dark-mode .calendar-week-grid {
+    -fx-background-color: #1C1C1E;
+}
+
+.root.dark-mode .calendar-all-day-cell {
+    -fx-background-color: #2C2C2E;
+}
+
+.root.dark-mode .calendar-week-today-cell {
+    -fx-background-color: #1C3A6E;
+}
