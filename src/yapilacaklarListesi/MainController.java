@@ -3,6 +3,7 @@ package yapilacaklarListesi;
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
@@ -49,6 +50,7 @@ public class MainController {
         navSettingsButton.setTooltip(new Tooltip("Ayarlar"));
 
         switchView(AppView.TODO);
+        Platform.runLater(this::kaydedilenAyarlariUygula);
     }
 
     @FXML

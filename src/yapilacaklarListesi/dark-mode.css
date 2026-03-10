@@ -47,12 +47,11 @@
 }
 
 .root.dark-mode .app-menubar .context-menu {
-    -fx-background-color: #2C2C2E;
-    -fx-background-insets: 0;
-    -fx-background-radius: 10px;
-    -fx-border-color: #3A3A3C;
-    -fx-border-insets: 0;
-    -fx-border-radius: 10px;
+    -fx-background-color: #3A3A3C, #2C2C2E;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 10px, 9px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.42), 16, 0.18, 0, 5);
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
