@@ -40,6 +40,7 @@ import yapilacaklarListesi.veriler.Yapilacak;
 import yapilacaklarListesi.veriler.YapilacakVeri;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -445,6 +446,19 @@ public class CalendarController {
         if (kompakt) {
             pill.getStyleClass().add("calendar-pill-compact");
         }
+        if (!gorev.isAllDay() && gorev.getStartTime() != null) {
+            pill.getStyleClass().add("calendar-pill-timed");
+            if (kompakt) {
+                int sureDakika = gorevSuresiDakika(gorev);
+                double yukseklik = Math.min(52, Math.max(16, 14 + (sureDakika / 60.0) * 18));
+                pill.setMinHeight(yukseklik);
+                pill.setPrefHeight(yukseklik);
+                if (sureDakika >= 120) {
+                    pill.getStyleClass().add("calendar-pill-long");
+                }
+            }
+            Tooltip.install(pill, new Tooltip(gorevSaatAraligiMetni(gorev)));
+        }
         pill.getStyleClass().add(oncelikStilSinifi(gorev.getOncelik()));
         pill.setMaxWidth(Double.MAX_VALUE);
 
@@ -461,6 +475,28 @@ public class CalendarController {
             event.consume();
         });
         return pill;
+    }
+
+    private int gorevSuresiDakika(Yapilacak gorev) {
+        if (gorev == null || gorev.isAllDay() || gorev.getStartTime() == null) {
+            return 0;
+        }
+        if (gorev.getEndTime() == null) {
+            return 60;
+        }
+        long dakika = Duration.between(gorev.getStartTime(), gorev.getEndTime()).toMinutes();
+        return (int) Math.max(15, dakika);
+    }
+
+    private String gorevSaatAraligiMetni(Yapilacak gorev) {
+        if (gorev == null || gorev.getStartTime() == null) {
+            return "Tüm gün";
+        }
+        String baslangic = gorev.getStartTime().format(SAAT_FORMATI);
+        if (gorev.getEndTime() == null) {
+            return baslangic;
+        }
+        return baslangic + " - " + gorev.getEndTime().format(SAAT_FORMATI);
     }
 
     private String gorevPillMetni(Yapilacak gorev) {
