@@ -80,7 +80,15 @@ public class TodoController {
     @FXML private ComboBox<String> oncelikFiltreFXML;
     @FXML private TextField aramaFXML;
     @FXML private ListView<Yapilacak> yapilacakListeFXML;
+    @FXML private ListView<Yapilacak> q1ListView;
+    @FXML private ListView<Yapilacak> q2ListView;
+    @FXML private ListView<Yapilacak> q3ListView;
+    @FXML private ListView<Yapilacak> q4ListView;
     @FXML private Label gorevSayaciLabel;
+    @FXML private Label q1CountBadge;
+    @FXML private Label q2CountBadge;
+    @FXML private Label q3CountBadge;
+    @FXML private Label q4CountBadge;
     @FXML private VBox detayBosDurumBox;
     @FXML private VBox detayEditorBox;
     @FXML private TextField detayBaslikField;
@@ -109,6 +117,7 @@ public class TodoController {
     private boolean detayAlanlariGuncelleniyor;
     private Timeline timeLine;
     private Runnable ayarlarNavigasyonHandler;
+    private EisenhowerController eisenhowerController;
 
     private static final String DARK_MODE_CLASS = "dark-mode";
     private static final String PREF_DARK_MODE = "theme.darkModeEnabled";
@@ -154,6 +163,9 @@ public class TodoController {
         // Yapılacak seçildiğinde detayın da gelmesi için kullanılan metod
         yapilacakListeFXML.getSelectionModel().selectedItemProperty().addListener((observable, eskiDeger, yeniDeger) -> {
             detayPaneliniDoldur(yeniDeger);
+            if (eisenhowerController != null) {
+                eisenhowerController.goreviSec(yeniDeger);
+            }
         });
 
         detayFXML.setOnKeyPressed(keyEvent -> {
@@ -235,6 +247,17 @@ public class TodoController {
             }
         });
         yapilacakListeFXML.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        eisenhowerController = new EisenhowerController(
+                q1ListView,
+                q2ListView,
+                q3ListView,
+                q4ListView,
+                q1CountBadge,
+                q2CountBadge,
+                q3CountBadge,
+                q4CountBadge
+        );
+        eisenhowerController.initialize(taskService.tumGorevler(), this::matristenGorevSec, this::matristenGorevGuncelle);
         yapilacakListeFXML.getSelectionModel().selectFirst();
         filtreleriUygula();
 
@@ -282,6 +305,9 @@ public class TodoController {
             detayBosDurumBox.setManaged(!secimVar);
             detayEditorBox.setVisible(secimVar);
             detayEditorBox.setManaged(secimVar);
+            if (eisenhowerController != null) {
+                eisenhowerController.goreviSec(gorev);
+            }
 
             if (!secimVar) {
                 detayBaslikField.clear();
@@ -501,6 +527,22 @@ public class TodoController {
             yapilacakListeFXML.getSelectionModel().select(gorev);
         }
         yapilacakListeFXML.refresh();
+    }
+
+    private void matristenGorevSec(Yapilacak gorev) {
+        if (gorev == null) {
+            return;
+        }
+        yapilacakListeFXML.getSelectionModel().select(gorev);
+        detayPaneliniDoldur(gorev);
+    }
+
+    private void matristenGorevGuncelle(Yapilacak gorev) {
+        if (gorev == null) {
+            return;
+        }
+        gorevSatiriniYenile(gorev);
+        filtreleriUygula();
     }
 
     private void gorevSayaciniGuncelle() {
