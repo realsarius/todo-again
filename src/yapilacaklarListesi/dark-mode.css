@@ -1,0 +1,43 @@
+.root.dark-mode {
+    -app-bg: #1C1C1E;
+    -panel-bg: #2C2C2E;
+    -list-hover: #3A3A3C;
+    -list-selected: #1C3A6E;
+    -text-primary: #F2F2F7;
+    -text-secondary: #8A8A8E;
+    -line-color: #3A3A3C;
+    -search-bg: #3A3A3C;
+    -menu-hover: #3A3A3C;
+    -menu-active: #48484A;
+    -toolbar-hover: #3A3A3C;
+}
+
+.root.dark-mode .pill-toggle {
+    -fx-border-color: #4A4A4C;
+}
+
+.root.dark-mode .pill-filter .arrow {
+    -fx-background-color: #C7C7CC;
+}
+
+.root.dark-mode .search-icon {
+    -fx-background-color: #C7C7CC;
+}
+
+.root.dark-mode .task-list .list-cell {
+    -fx-border-color: transparent transparent -line-color transparent;
+}
+
+.root.dark-mode .task-list .list-cell:filled:selected,
+.root.dark-mode .task-list .list-cell:filled:selected:hover {
+    -fx-border-color: transparent transparent -line-color transparent;
+}
+
+.root.dark-mode .empty-state,
+.root.dark-mode .task-list .placeholder .label {
+    -fx-text-fill: #8A8A8E;
+}
+
+.root.dark-mode .app-menubar .menu-item:focused {
+    -fx-background-color: #3A3A3C;
+}

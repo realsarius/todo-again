@@ -6,6 +6,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ListChangeListener;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
@@ -14,6 +15,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
@@ -43,10 +46,11 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.prefs.Preferences;
 
 // Controller kısmının içerisinde nesneye yönelik kısmı ile ilgili bir şey yok ancak açıklamaları yapacağım.
 public class Controller {
@@ -61,11 +65,20 @@ public class Controller {
     @FXML private ToggleButton pomodoroToggleButtonFXML;
     @FXML private VBox vbox;
     @FXML private ToggleButton bugunToggleButton;
+    @FXML private Button temaToggleButton;
     @FXML private ComboBox<String> oncelikFiltreFXML;
     @FXML private TextField aramaFXML;
     @FXML private ListView<Yapilacak> yapilacakListeFXML;
-    @FXML private Label tarihLabel;
+    @FXML private Label gorevSayaciLabel;
+    @FXML private VBox detayBosDurumBox;
+    @FXML private VBox detayEditorBox;
+    @FXML private TextField detayBaslikField;
+    @FXML private DatePicker detayTarihPicker;
+    @FXML private ToggleButton oncelikDusukButton;
+    @FXML private ToggleButton oncelikOrtaButton;
+    @FXML private ToggleButton oncelikYuksekButton;
     @FXML private TextArea detayFXML;
+    @FXML private Button hizliEkleButton;
 
     private FilteredList<Yapilacak> yapilacakFilteredList;
     private Predicate<Yapilacak> tumYapilacaklarPredicate;
@@ -77,11 +90,18 @@ public class Controller {
     private Pomodoro suankiPomodoro;
     private final StringProperty zamanlayiciText;
     private final TaskService taskService;
+    private final Preferences preferences;
+    private ToggleGroup oncelikToggleGroup;
+    private boolean detayAlanlariGuncelleniyor;
     private Timeline timeLine;
+
+    private static final String DARK_MODE_CLASS = "dark-mode";
+    private static final String PREF_DARK_MODE = "theme.darkModeEnabled";
 
     public Controller(){
         zamanlayiciText = new SimpleStringProperty();
         taskService = new TaskService(YapilacakVeri.getInstance());
+        preferences = Preferences.userNodeForPackage(Controller.class);
         setTimerText(0);
     }
 
@@ -92,6 +112,8 @@ public class Controller {
         silFXML.setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
         oncelikFiltreFXML.getItems().setAll("Tümü", "Yüksek", "Orta", "Düşük");
         oncelikFiltreFXML.setValue("Tümü");
+        detayPaneliniHazirla();
+        darkModeUygula(preferences.getBoolean(PREF_DARK_MODE, false));
 
         farkliKaydetFXML.setOnAction(actionEvent -> {
             Stage stage = new Stage();
@@ -112,13 +134,7 @@ public class Controller {
 
         // Yapılacak seçildiğinde detayın da gelmesi için kullanılan metod
         yapilacakListeFXML.getSelectionModel().selectedItemProperty().addListener((observable, eskiDeger, yeniDeger) -> {
-            if (yeniDeger != null) {
-                Yapilacak yapilacak = yapilacakListeFXML.getSelectionModel().getSelectedItem();
-                detayFXML.setText(yapilacak.getDetay());
-                DateTimeFormatter df = DateTimeFormatter.ofPattern("d MMMM, yyyy");
-                tarihLabel.setText(df.format(yapilacak.getTarih()));
-
-            }
+            detayPaneliniDoldur(yeniDeger);
         });
 
         detayFXML.setOnKeyPressed(keyEvent -> {
@@ -172,6 +188,8 @@ public class Controller {
             }
         });
 
+        taskService.tumGorevler().addListener((ListChangeListener<Yapilacak>) change -> gorevSayaciniGuncelle());
+
         yapilacakListeFXML.setItems(sortedList);
         yapilacakListeFXML.setCellFactory(list -> new ListCell<>() {
             private final Circle oncelikNoktasi = new Circle(4.5);
@@ -191,7 +209,7 @@ public class Controller {
                     setGraphic(null);
                     return;
                 }
-                oncelikNoktasi.setFill(oncelikRenkNoktasi(item.getOncelik()));
+                oncelikNoktasi.setFill(oncelikNoktasiRengi(item.getOncelik()));
                 gorevBasligi.setText(item.getAciklama());
                 setText(null);
                 setGraphic(satir);
@@ -201,6 +219,192 @@ public class Controller {
         yapilacakListeFXML.getSelectionModel().selectFirst();
         filtreleriUygula();
 
+    }
+
+    private void detayPaneliniHazirla() {
+        oncelikToggleGroup = new ToggleGroup();
+        oncelikDusukButton.setToggleGroup(oncelikToggleGroup);
+        oncelikOrtaButton.setToggleGroup(oncelikToggleGroup);
+        oncelikYuksekButton.setToggleGroup(oncelikToggleGroup);
+
+        oncelikDusukButton.setUserData(Oncelik.LOW);
+        oncelikOrtaButton.setUserData(Oncelik.MEDIUM);
+        oncelikYuksekButton.setUserData(Oncelik.HIGH);
+
+        detayBaslikField.textProperty().addListener((obs, eski, yeni) -> seciliGorevBasliginiGuncelle(yeni));
+        detayTarihPicker.valueProperty().addListener((obs, eski, yeni) -> seciliGorevTarihiniGuncelle(yeni));
+        detayFXML.textProperty().addListener((obs, eski, yeni) -> seciliGorevNotunuGuncelle(yeni));
+        oncelikToggleGroup.selectedToggleProperty().addListener((obs, eski, yeni) -> seciliGorevOnceliginiGuncelle());
+        detayPaneliniDoldur(null);
+    }
+
+    private void detayPaneliniDoldur(Yapilacak gorev) {
+        detayAlanlariGuncelleniyor = true;
+        try {
+            boolean secimVar = gorev != null;
+            detayBosDurumBox.setVisible(!secimVar);
+            detayBosDurumBox.setManaged(!secimVar);
+            detayEditorBox.setVisible(secimVar);
+            detayEditorBox.setManaged(secimVar);
+
+            if (!secimVar) {
+                detayBaslikField.clear();
+                detayTarihPicker.setValue(null);
+                detayFXML.clear();
+                oncelikToggleGroup.selectToggle(null);
+                return;
+            }
+
+            detayBaslikField.setText(gorev.getAciklama());
+            detayTarihPicker.setValue(gorev.getTarih());
+            detayFXML.setText(gorev.getDetay());
+            oncelikButonunuSec(gorev.getOncelik());
+        } finally {
+            detayAlanlariGuncelleniyor = false;
+        }
+    }
+
+    private void oncelikButonunuSec(Oncelik oncelik) {
+        if (oncelik == null) {
+            oncelikToggleGroup.selectToggle(oncelikOrtaButton);
+            return;
+        }
+        switch (oncelik) {
+            case LOW -> oncelikToggleGroup.selectToggle(oncelikDusukButton);
+            case MEDIUM -> oncelikToggleGroup.selectToggle(oncelikOrtaButton);
+            case HIGH -> oncelikToggleGroup.selectToggle(oncelikYuksekButton);
+        }
+    }
+
+    private void seciliGorevBasliginiGuncelle(String yeniBaslik) {
+        if (detayAlanlariGuncelleniyor) {
+            return;
+        }
+        Yapilacak secili = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+        if (secili == null) {
+            return;
+        }
+        String temizBaslik = yeniBaslik == null ? "" : yeniBaslik.trim();
+        if (temizBaslik.isEmpty() || temizBaslik.equals(secili.getAciklama())) {
+            return;
+        }
+        secili.setAciklama(temizBaslik);
+        gorevSatiriniYenile(secili);
+        if (aramaAktifMi()) {
+            filtreleriUygula();
+        }
+    }
+
+    private void seciliGorevTarihiniGuncelle(LocalDate yeniTarih) {
+        if (detayAlanlariGuncelleniyor || yeniTarih == null) {
+            return;
+        }
+        Yapilacak secili = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+        if (secili == null || yeniTarih.equals(secili.getTarih())) {
+            return;
+        }
+        secili.setTarih(yeniTarih);
+        gorevSatiriniYenile(secili);
+        if (bugunToggleButton.isSelected()) {
+            filtreleriUygula();
+        }
+    }
+
+    private void seciliGorevOnceliginiGuncelle() {
+        if (detayAlanlariGuncelleniyor) {
+            return;
+        }
+        Yapilacak secili = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+        if (secili == null) {
+            return;
+        }
+        Toggle seciliToggle = oncelikToggleGroup.getSelectedToggle();
+        if (seciliToggle == null || seciliToggle.getUserData() == null) {
+            return;
+        }
+        Oncelik yeniOncelik = (Oncelik) seciliToggle.getUserData();
+        if (yeniOncelik == secili.getOncelik()) {
+            return;
+        }
+        secili.setOncelik(yeniOncelik);
+        gorevSatiriniYenile(secili);
+        if (oncelikFiltreAktifMi()) {
+            filtreleriUygula();
+        }
+    }
+
+    private void seciliGorevNotunuGuncelle(String yeniNot) {
+        if (detayAlanlariGuncelleniyor) {
+            return;
+        }
+        Yapilacak secili = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+        if (secili == null) {
+            return;
+        }
+        String guncelNot = yeniNot == null ? "" : yeniNot;
+        if (guncelNot.equals(secili.getDetay())) {
+            return;
+        }
+        taskService.gorevDetayiGuncelle(secili, guncelNot);
+        if (aramaAktifMi()) {
+            filtreleriUygula();
+        }
+    }
+
+    private void gorevSatiriniYenile(Yapilacak gorev) {
+        int index = taskService.tumGorevler().indexOf(gorev);
+        if (index >= 0) {
+            taskService.tumGorevler().set(index, gorev);
+            yapilacakListeFXML.getSelectionModel().select(gorev);
+        }
+        yapilacakListeFXML.refresh();
+    }
+
+    private void gorevSayaciniGuncelle() {
+        if (gorevSayaciLabel == null || yapilacakFilteredList == null) {
+            return;
+        }
+        int toplam = taskService.tumGorevler().size();
+        int gosterilen = yapilacakFilteredList.size();
+
+        if (filtreAktifMi()) {
+            gorevSayaciLabel.setText(String.format("%d / %d görev gösteriliyor", gosterilen, toplam));
+            return;
+        }
+        gorevSayaciLabel.setText(String.format("%d görev", toplam));
+    }
+
+    private boolean filtreAktifMi() {
+        boolean bugunAktif = bugunToggleButton.isSelected();
+        return bugunAktif || aramaAktifMi() || oncelikFiltreAktifMi();
+    }
+
+    private boolean aramaAktifMi() {
+        return aramaFXML.getText() != null && !aramaFXML.getText().isBlank();
+    }
+
+    private boolean oncelikFiltreAktifMi() {
+        String secim = oncelikFiltreFXML.getValue();
+        return secim != null && !secim.equals("Tümü");
+    }
+
+    @FXML
+    public void temaDegistir() {
+        boolean aktif = !vbox.getStyleClass().contains(DARK_MODE_CLASS);
+        darkModeUygula(aktif);
+        preferences.putBoolean(PREF_DARK_MODE, aktif);
+    }
+
+    private void darkModeUygula(boolean aktif) {
+        if (aktif) {
+            if (!vbox.getStyleClass().contains(DARK_MODE_CLASS)) {
+                vbox.getStyleClass().add(DARK_MODE_CLASS);
+            }
+            temaToggleButton.setText("☀");
+            return;
+        }
+        vbox.getStyleClass().remove(DARK_MODE_CLASS);
+        temaToggleButton.setText("☾");
     }
 
     @FXML
@@ -531,16 +735,20 @@ public class Controller {
         yapilacakFilteredList.setPredicate(tarihFiltresi.and(aramaPredicate).and(oncelikPredicate));
 
         if (yapilacakFilteredList.isEmpty()) {
-            detayFXML.clear();
-            tarihLabel.setText("");
+            detayPaneliniDoldur(null);
+            gorevSayaciniGuncelle();
             return;
         }
 
         if (seciliYapilacak != null && yapilacakFilteredList.contains(seciliYapilacak)) {
             yapilacakListeFXML.getSelectionModel().select(seciliYapilacak);
+            detayPaneliniDoldur(seciliYapilacak);
+            gorevSayaciniGuncelle();
             return;
         }
         yapilacakListeFXML.getSelectionModel().selectFirst();
+        detayPaneliniDoldur(yapilacakListeFXML.getSelectionModel().getSelectedItem());
+        gorevSayaciniGuncelle();
     }
 
     private Predicate<Yapilacak> aramaFiltresiOlustur() {
@@ -570,11 +778,11 @@ public class Controller {
         };
     }
 
-    private Color oncelikRenkNoktasi(Oncelik oncelik) {
+    private Color oncelikNoktasiRengi(Oncelik oncelik) {
         return switch (oncelik) {
-            case HIGH -> Color.web("#FF5C5C");
+            case HIGH -> Color.web("#FF3B30");
             case MEDIUM -> Color.web("#4A7CFF");
-            case LOW -> Color.web("#8E8E93");
+            case LOW -> Color.web("#34C759");
         };
     }
 
