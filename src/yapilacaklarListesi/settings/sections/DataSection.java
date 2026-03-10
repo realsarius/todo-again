@@ -25,6 +25,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -269,8 +271,23 @@ public class DataSection extends BaseSettingsSection {
         Instant updatedAt = parseInstant(kayit.updatedAt, createdAt);
         Oncelik oncelik = parseOncelik(kayit.oncelik);
         List<String> tags = temizTagler(kayit.tags);
+        LocalTime dueTime = parseTime(kayit.due_time, kayit.dueTime);
+        LocalDateTime completedAt = parseDateTime(kayit.completed_at, kayit.completedAt);
+        boolean isCompleted = parseCompleted(kayit.is_completed, kayit.isCompleted, completedAt);
 
-        return new Yapilacak(id, kayit.aciklama.trim(), detay, tarih, createdAt, updatedAt, oncelik, tags);
+        return new Yapilacak(
+                id,
+                kayit.aciklama.trim(),
+                detay,
+                tarih,
+                createdAt,
+                updatedAt,
+                oncelik,
+                tags,
+                dueTime,
+                completedAt,
+                isCompleted
+        );
     }
 
     private Instant parseInstant(String value, Instant fallback) {
@@ -295,6 +312,40 @@ public class DataSection extends BaseSettingsSection {
         }
     }
 
+    private LocalTime parseTime(String primary, String fallback) {
+        String value = (primary == null || primary.isBlank()) ? fallback : primary;
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalTime.parse(value);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    private LocalDateTime parseDateTime(String primary, String fallback) {
+        String value = (primary == null || primary.isBlank()) ? fallback : primary;
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalDateTime.parse(value);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    private boolean parseCompleted(Boolean primary, Boolean fallback, LocalDateTime completedAt) {
+        if (primary != null) {
+            return primary;
+        }
+        if (fallback != null) {
+            return fallback;
+        }
+        return completedAt != null;
+    }
+
     private List<String> temizTagler(List<String> tags) {
         List<String> temiz = new ArrayList<>();
         if (tags == null) {
@@ -314,7 +365,7 @@ public class DataSection extends BaseSettingsSection {
 
     private ExportPayload exportPayloadOlustur(List<Yapilacak> gorevler) {
         ExportPayload payload = new ExportPayload();
-        payload.version = 1;
+        payload.version = 2;
         payload.tasks = new ArrayList<>();
         for (Yapilacak gorev : gorevler) {
             TaskRecord kayit = new TaskRecord();
@@ -326,6 +377,9 @@ public class DataSection extends BaseSettingsSection {
             kayit.updatedAt = gorev.getUpdatedAt() == null ? null : gorev.getUpdatedAt().toString();
             kayit.oncelik = gorev.getOncelik() == null ? null : gorev.getOncelik().name();
             kayit.tags = gorev.getTags();
+            kayit.due_time = gorev.getDueTime() == null ? null : gorev.getDueTime().toString();
+            kayit.completed_at = gorev.getCompletedAt() == null ? null : gorev.getCompletedAt().toString();
+            kayit.is_completed = gorev.isCompleted();
             payload.tasks.add(kayit);
         }
         return payload;
@@ -419,6 +473,12 @@ public class DataSection extends BaseSettingsSection {
         String updatedAt;
         String oncelik;
         List<String> tags;
+        String due_time;
+        String completed_at;
+        Boolean is_completed;
+        String dueTime;
+        String completedAt;
+        Boolean isCompleted;
     }
 
     private static class MergeResult {

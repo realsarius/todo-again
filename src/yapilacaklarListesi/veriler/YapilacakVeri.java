@@ -16,6 +16,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ public class YapilacakVeri {
     private static final YapilacakVeri ornek = new YapilacakVeri();
     private static final String legacyDosyaAdi = "Yapilacaklar.txt";
     private static final String jsonDosyaAdi = "Yapilacaklar.json";
-    private static final int JSON_VERSIYON = 1;
+    private static final int JSON_VERSIYON = 2;
     private static final int BEKLENEN_SUTUN_SAYISI = 3;
 
     private ObservableList<Yapilacak> yapilacaklar;
@@ -178,6 +180,13 @@ public class YapilacakVeri {
                 Instant updatedAt = parseJsonInstant(kayit.updatedAt, createdAt);
                 Oncelik oncelik = parseOncelik(kayit.oncelik);
                 List<String> tags = temizleTagler(kayit.tags);
+                LocalTime dueTime = parseJsonSaat(kayit.due_time, kayit.dueTime);
+                LocalDateTime completedAt = parseJsonDateTime(kayit.completed_at, kayit.completedAt);
+                boolean isCompleted = parseTamamlanmaDurumu(
+                        kayit.is_completed,
+                        kayit.isCompleted,
+                        completedAt
+                );
 
                 yapilacaklar.add(new Yapilacak(
                         id,
@@ -187,7 +196,10 @@ public class YapilacakVeri {
                         createdAt,
                         updatedAt,
                         oncelik,
-                        tags
+                        tags,
+                        dueTime,
+                        completedAt,
+                        isCompleted
                 ));
             }
             return true;
@@ -261,6 +273,9 @@ public class YapilacakVeri {
             kayit.updatedAt = yapilacak.getUpdatedAt().toString();
             kayit.oncelik = yapilacak.getOncelik().name();
             kayit.tags = temizleTagler(yapilacak.getTags());
+            kayit.due_time = yapilacak.getDueTime() == null ? null : yapilacak.getDueTime().toString();
+            kayit.completed_at = yapilacak.getCompletedAt() == null ? null : yapilacak.getCompletedAt().toString();
+            kayit.is_completed = yapilacak.isCompleted();
             jsonVeri.tasks.add(kayit);
         }
 
@@ -299,6 +314,46 @@ public class YapilacakVeri {
         } catch (IllegalArgumentException e) {
             return Oncelik.MEDIUM;
         }
+    }
+
+    private LocalTime parseJsonSaat(String oncelikliDeger, String alternatifDeger) {
+        String deger = oncelikliDeger;
+        if (deger == null || deger.isBlank()) {
+            deger = alternatifDeger;
+        }
+        if (deger == null || deger.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalTime.parse(deger);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    private LocalDateTime parseJsonDateTime(String oncelikliDeger, String alternatifDeger) {
+        String deger = oncelikliDeger;
+        if (deger == null || deger.isBlank()) {
+            deger = alternatifDeger;
+        }
+        if (deger == null || deger.isBlank()) {
+            return null;
+        }
+        try {
+            return LocalDateTime.parse(deger);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    private boolean parseTamamlanmaDurumu(Boolean oncelikliDeger, Boolean alternatifDeger, LocalDateTime completedAt) {
+        if (oncelikliDeger != null) {
+            return oncelikliDeger;
+        }
+        if (alternatifDeger != null) {
+            return alternatifDeger;
+        }
+        return completedAt != null;
     }
 
     private List<String> temizleTagler(List<String> tags) {
@@ -351,5 +406,11 @@ public class YapilacakVeri {
         String updatedAt;
         String oncelik;
         List<String> tags;
+        String due_time;
+        String completed_at;
+        Boolean is_completed;
+        String dueTime;
+        String completedAt;
+        Boolean isCompleted;
     }
 }
