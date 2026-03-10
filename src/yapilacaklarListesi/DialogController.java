@@ -40,6 +40,7 @@ public class DialogController {
         tumGunFXML.setSelected(true);
         saatAlanlariniGuncelle(true);
         tumGunFXML.selectedProperty().addListener((obs, eski, yeni) -> saatAlanlariniGuncelle(yeni));
+        baslangicSaatFXML.valueProperty().addListener((obs, eski, yeni) -> baslangicSaatiniOtomatikTamamla(yeni));
     }
 
     public void varsayilanTarihAyarla(LocalDate varsayilanTarih) {
@@ -59,7 +60,7 @@ public class DialogController {
         }
         tumGunFXML.setSelected(false);
         baslangicSaatFXML.setValue(varsayilanSaat.format(SAAT_FORMATI));
-        bitisSaatFXML.setValue(null);
+        bitisSaatFXML.setValue(saatMetniniFormatla(varsayilanBitisSaati(varsayilanSaat)));
     }
 
     // FXML'deki aciklamaFXML, detayFXML, tarihFXML'in içeriklerini alıp yeni bir Yapilacak sınıfı oluşturarak return ediyoruz ki yeni Yapilacagi text dökümantasyonuna yazdırabilelim.
@@ -118,6 +119,39 @@ public class DialogController {
     private void saatAlanlariniGuncelle(boolean tumGunSecili) {
         baslangicSaatFXML.setDisable(tumGunSecili);
         bitisSaatFXML.setDisable(tumGunSecili);
+    }
+
+    private void baslangicSaatiniOtomatikTamamla(String yeniBaslangicMetni) {
+        if (tumGunFXML.isSelected()) {
+            return;
+        }
+        LocalTime baslangic = saatMetniniParseEt(yeniBaslangicMetni);
+        if (baslangic == null) {
+            return;
+        }
+
+        LocalTime bitis = saatMetniniParseEt(bitisSaatFXML.getValue());
+        if (bitis == null || !bitis.isAfter(baslangic)) {
+            bitisSaatFXML.setValue(saatMetniniFormatla(varsayilanBitisSaati(baslangic)));
+        }
+    }
+
+    private LocalTime varsayilanBitisSaati(LocalTime baslangic) {
+        if (baslangic == null) {
+            return null;
+        }
+        LocalTime birSaatSonra = baslangic.plusHours(1);
+        if (!birSaatSonra.isAfter(baslangic)) {
+            return baslangic;
+        }
+        return birSaatSonra;
+    }
+
+    private String saatMetniniFormatla(LocalTime saat) {
+        if (saat == null) {
+            return null;
+        }
+        return saat.format(SAAT_FORMATI);
     }
 
     private LocalTime saatMetniniParseEt(String saatMetni) {
