@@ -105,7 +105,7 @@
         </StackPane>
         <Button fx:id="temaToggleButton" mnemonicParsing="false" onAction="#temaDegistir" styleClass="theme-toggle-button" text="☾"/>
     </HBox>
-    <SplitPane dividerPositions="0.27, 0.63" focusTraversable="true" styleClass="app-split-pane" VBox.vgrow="ALWAYS">
+    <SplitPane fx:id="anaSplitPane" dividerPositions="0.27, 0.63" focusTraversable="true" styleClass="app-split-pane" VBox.vgrow="ALWAYS">
         <VBox styleClass="panel-left">
             <GridPane hgap="8.0" vgap="8.0" VBox.vgrow="ALWAYS" styleClass="eisenhower-grid">
                 <columnConstraints>

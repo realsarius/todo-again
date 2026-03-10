@@ -77,6 +77,7 @@ public class TodoController {
     @FXML private VBox vbox;
     @FXML private ToggleButton bugunToggleButton;
     @FXML private Button temaToggleButton;
+    @FXML private SplitPane anaSplitPane;
     @FXML private ComboBox<String> oncelikFiltreFXML;
     @FXML private TextField aramaFXML;
     @FXML private ListView<Yapilacak> yapilacakListeFXML;
@@ -122,6 +123,8 @@ public class TodoController {
 
     private static final String DARK_MODE_CLASS = "dark-mode";
     private static final String PREF_DARK_MODE = "theme.darkModeEnabled";
+    private static final String PREF_TODO_SPLIT_DIVIDER_1 = "todo.split.divider.1";
+    private static final String PREF_TODO_SPLIT_DIVIDER_2 = "todo.split.divider.2";
     private static final DateTimeFormatter SAAT_FORMATI = DateTimeFormatter.ofPattern("HH:mm");
 
     public TodoController(){
@@ -142,6 +145,7 @@ public class TodoController {
         boolean koyuTemaAktif = preferences.getBoolean(PREF_DARK_MODE, false);
         darkModeUygula(koyuTemaAktif);
         Platform.runLater(() -> darkModeUygula(koyuTemaAktif));
+        splitPaneKonumlariniYukleVeDinle();
         otomatikGuncellemeKontrolunuBaslat();
 
         farkliKaydetFXML.setOnAction(actionEvent -> {
@@ -544,6 +548,37 @@ public class TodoController {
             yapilacakListeFXML.getSelectionModel().select(gorev);
         }
         yapilacakListeFXML.refresh();
+    }
+
+    private void splitPaneKonumlariniYukleVeDinle() {
+        if (anaSplitPane == null) {
+            return;
+        }
+        Platform.runLater(() -> {
+            double divider1 = clamp(preferences.getDouble(PREF_TODO_SPLIT_DIVIDER_1, 0.27), 0.1, 0.8);
+            double divider2 = clamp(preferences.getDouble(PREF_TODO_SPLIT_DIVIDER_2, 0.63), divider1 + 0.1, 0.95);
+            anaSplitPane.setDividerPositions(divider1, divider2);
+
+            if (anaSplitPane.getDividers().size() < 2) {
+                return;
+            }
+            anaSplitPane.getDividers().get(0).positionProperty().addListener((obs, eski, yeni) ->
+                    preferences.putDouble(PREF_TODO_SPLIT_DIVIDER_1, clamp(yeni.doubleValue(), 0.1, 0.8))
+            );
+            anaSplitPane.getDividers().get(1).positionProperty().addListener((obs, eski, yeni) ->
+                    preferences.putDouble(PREF_TODO_SPLIT_DIVIDER_2, clamp(yeni.doubleValue(), 0.2, 0.95))
+            );
+        });
+    }
+
+    private double clamp(double value, double min, double max) {
+        if (value < min) {
+            return min;
+        }
+        if (value > max) {
+            return max;
+        }
+        return value;
     }
 
     private void matristenGorevSec(Yapilacak gorev) {

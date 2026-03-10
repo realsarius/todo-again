@@ -56,13 +56,13 @@ public class Main extends Application {
         Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("main.fxml")));
         primaryStage.setTitle("Yapılacaklar Listesi");
-        Scene scene = new Scene(root, 960, 550);
+        Scene scene = new Scene(root, 1220, 760);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("app.css")).toExternalForm());
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("dark-mode.css")).toExternalForm());
         primaryStage.setScene(scene);
         popupStilKoprusuKur(scene, root);
-        primaryStage.setMinWidth(900);
-        primaryStage.setMinHeight(580);
+        primaryStage.setMinWidth(980);
+        primaryStage.setMinHeight(620);
         primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/files.png"))));
 
         trayReady = trayKur(primaryStage);
