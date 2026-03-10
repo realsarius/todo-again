@@ -58,8 +58,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.prefs.Preferences;
 
-// Controller kısmının içerisinde nesneye yönelik kısmı ile ilgili bir şey yok ancak açıklamaları yapacağım.
-public class Controller {
+// Todo ekrani controller'i.
+public class TodoController {
 
     @FXML private MenuItem yeniFXML;
     @FXML private MenuItem farkliKaydetFXML;
@@ -104,10 +104,10 @@ public class Controller {
     private static final String DARK_MODE_CLASS = "dark-mode";
     private static final String PREF_DARK_MODE = "theme.darkModeEnabled";
 
-    public Controller(){
+    public TodoController(){
         zamanlayiciText = new SimpleStringProperty();
         taskService = new TaskService(YapilacakVeri.getInstance());
-        preferences = Preferences.userNodeForPackage(Controller.class);
+        preferences = Preferences.userNodeForPackage(TodoController.class);
         setTimerText(0);
     }
 

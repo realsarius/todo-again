@@ -127,7 +127,7 @@ public class MainController {
         }
 
         String fxml = switch (view) {
-            case TODO -> "test.fxml";
+            case TODO -> "todo-view.fxml";
             case CALENDAR -> "calendar-view.fxml";
             case STATS -> "stats-view.fxml";
             case SETTINGS -> "settings-view.fxml";
