@@ -146,3 +146,16 @@
 .root.dark-mode .calendar-week-today-cell {
     -fx-background-color: #1C3A6E;
 }
+
+.root.dark-mode .stat-progress > .track,
+.root.dark-mode .stats-priority-progress > .track {
+    -fx-background-color: #3A3A3C;
+}
+
+.root.dark-mode .chart-bar.series1 {
+    -fx-bar-fill: #FF8A80;
+}
+
+.root.dark-mode .chart-legend-item {
+    -fx-text-fill: #8A8A8E;
+}

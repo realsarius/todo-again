@@ -970,10 +970,165 @@
     -fx-background-radius: 10px;
     -fx-border-color: -line-color;
     -fx-border-radius: 10px;
+    -fx-padding: 12px;
 }
 
 .stat-progress {
     -fx-accent: #4A7CFF;
+}
+
+.stats-scroll {
+    -fx-background-color: -app-bg;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.stats-scroll > .viewport {
+    -fx-background-color: -app-bg;
+}
+
+.stats-root {
+    -fx-background-color: -app-bg;
+    -fx-padding: 12px;
+}
+
+.stats-row {
+    -fx-alignment: top-left;
+}
+
+.stat-card-title {
+    -fx-text-fill: -text-secondary;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+}
+
+.stat-card-value {
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 22px;
+    -fx-font-weight: 700;
+}
+
+.stat-card-sub {
+    -fx-text-fill: -text-secondary;
+    -fx-font-size: 12px;
+}
+
+.stat-progress > .track {
+    -fx-background-color: #E7E7EC;
+    -fx-background-radius: 4px;
+}
+
+.stat-progress > .bar {
+    -fx-background-radius: 4px;
+}
+
+.stat-progress-good {
+    -fx-accent: #34C759;
+}
+
+.stat-progress-mid {
+    -fx-accent: #FF9500;
+}
+
+.stat-progress-low {
+    -fx-accent: #FF3B30;
+}
+
+.stats-priority-row {
+    -fx-alignment: center-left;
+}
+
+.stats-priority-dot {
+    -fx-font-size: 14px;
+}
+
+.stats-priority-dot.high {
+    -fx-text-fill: #FF3B30;
+}
+
+.stats-priority-dot.medium {
+    -fx-text-fill: #FF9500;
+}
+
+.stats-priority-dot.low {
+    -fx-text-fill: #34C759;
+}
+
+.stats-priority-label {
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 13px;
+    -fx-min-width: 52px;
+}
+
+.stats-priority-count {
+    -fx-text-fill: -text-secondary;
+    -fx-font-size: 12px;
+    -fx-min-width: 52px;
+}
+
+.stats-priority-progress {
+    -fx-pref-height: 8px;
+}
+
+.stats-priority-progress > .track {
+    -fx-background-color: #E7E7EC;
+    -fx-background-radius: 4px;
+}
+
+.stats-priority-progress.high {
+    -fx-accent: #FF3B30;
+}
+
+.stats-priority-progress.medium {
+    -fx-accent: #FF9500;
+}
+
+.stats-priority-progress.low {
+    -fx-accent: #34C759;
+}
+
+.chart {
+    -fx-background-color: transparent;
+    -fx-padding: 4px 0 0 0;
+}
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.axis {
+    -fx-tick-label-fill: -text-secondary;
+}
+
+.axis-label {
+    -fx-text-fill: -text-secondary;
+}
+
+.chart-vertical-grid-lines,
+.chart-horizontal-grid-lines,
+.chart-alternative-column-fill,
+.chart-alternative-row-fill {
+    -fx-stroke: transparent;
+}
+
+.chart-bar.series0 {
+    -fx-bar-fill: #34C759;
+}
+
+.chart-bar.series1 {
+    -fx-bar-fill: #FF6B6B;
+}
+
+.chart-legend {
+    -fx-background-color: transparent;
+}
+
+.chart-legend-item {
+    -fx-text-fill: -text-secondary;
+}
+
+.chart-legend-item-symbol {
+    -fx-background-radius: 3px;
 }
 
 .settings-footer {
