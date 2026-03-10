@@ -613,6 +613,21 @@
     -fx-text-fill: -text-primary;
 }
 
+.settings-danger-button {
+    -fx-background-color: #FF3B30;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: transparent;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 6px 14px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+}
+
+.settings-danger-button:hover {
+    -fx-background-color: #E6352C;
+}
+
 .settings-footer {
     -fx-padding: 10px 16px;
     -fx-background-color: -app-bg;
