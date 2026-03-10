@@ -474,6 +474,12 @@
     -fx-text-fill: -text-primary;
 }
 
+.detail-urgent-check {
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+}
+
 .detail-time-combo {
     -fx-background-color: transparent;
     -fx-border-color: #D2D2D7;

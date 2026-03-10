@@ -120,7 +120,7 @@
                 <VBox styleClass="eisenhower-quadrant quadrant-q1" GridPane.columnIndex="0" GridPane.rowIndex="0">
                     <HBox alignment="CENTER_LEFT" spacing="6.0">
                         <Label styleClass="eisenhower-title-dot q1-dot" text="●"/>
-                        <Label styleClass="eisenhower-title" text="Q1"/>
+                        <Label styleClass="eisenhower-title" text="Önemli + Acil"/>
                         <Pane HBox.hgrow="ALWAYS"/>
                         <Label fx:id="q1CountBadge" styleClass="eisenhower-count-badge" text="0"/>
                     </HBox>
@@ -136,7 +136,7 @@
                 <VBox styleClass="eisenhower-quadrant quadrant-q2" GridPane.columnIndex="1" GridPane.rowIndex="0">
                     <HBox alignment="CENTER_LEFT" spacing="6.0">
                         <Label styleClass="eisenhower-title-dot q2-dot" text="●"/>
-                        <Label styleClass="eisenhower-title" text="Q2"/>
+                        <Label styleClass="eisenhower-title" text="Önemli + Acil Değil"/>
                         <Pane HBox.hgrow="ALWAYS"/>
                         <Label fx:id="q2CountBadge" styleClass="eisenhower-count-badge" text="0"/>
                     </HBox>
@@ -152,7 +152,7 @@
                 <VBox styleClass="eisenhower-quadrant quadrant-q3" GridPane.columnIndex="0" GridPane.rowIndex="1">
                     <HBox alignment="CENTER_LEFT" spacing="6.0">
                         <Label styleClass="eisenhower-title-dot q3-dot" text="●"/>
-                        <Label styleClass="eisenhower-title" text="Q3"/>
+                        <Label styleClass="eisenhower-title" text="Önemsiz + Acil"/>
                         <Pane HBox.hgrow="ALWAYS"/>
                         <Label fx:id="q3CountBadge" styleClass="eisenhower-count-badge" text="0"/>
                     </HBox>
@@ -168,7 +168,7 @@
                 <VBox styleClass="eisenhower-quadrant quadrant-q4" GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <HBox alignment="CENTER_LEFT" spacing="6.0">
                         <Label styleClass="eisenhower-title-dot q4-dot" text="●"/>
-                        <Label styleClass="eisenhower-title" text="Q4"/>
+                        <Label styleClass="eisenhower-title" text="Önemsiz + Acil Değil"/>
                         <Pane HBox.hgrow="ALWAYS"/>
                         <Label fx:id="q4CountBadge" styleClass="eisenhower-count-badge" text="0"/>
                     </HBox>
@@ -215,6 +215,7 @@
                             <ToggleButton fx:id="oncelikOrtaButton" mnemonicParsing="false" styleClass="priority-toggle medium" text="Orta"/>
                             <ToggleButton fx:id="oncelikYuksekButton" mnemonicParsing="false" styleClass="priority-toggle high" text="Yüksek"/>
                         </HBox>
+                        <CheckBox fx:id="acilCheckBox" mnemonicParsing="false" styleClass="detail-urgent-check" text="Acil"/>
                     </HBox>
                     <TextArea fx:id="detayFXML" onKeyPressed="#yapilacakAlertsizKaydet" promptText="Not ekle..."
                               styleClass="detail-note-area" VBox.vgrow="ALWAYS" wrapText="true"/>

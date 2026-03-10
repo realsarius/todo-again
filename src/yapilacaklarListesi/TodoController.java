@@ -99,6 +99,7 @@ public class TodoController {
     @FXML private ToggleButton oncelikDusukButton;
     @FXML private ToggleButton oncelikOrtaButton;
     @FXML private ToggleButton oncelikYuksekButton;
+    @FXML private CheckBox acilCheckBox;
     @FXML private TextArea detayFXML;
     @FXML private Button hizliEkleButton;
 
@@ -281,6 +282,7 @@ public class TodoController {
         bitisSaatComboBox.valueProperty().addListener((obs, eski, yeni) -> seciliGorevBitisSaatiniGuncelle(yeni));
         detayFXML.textProperty().addListener((obs, eski, yeni) -> seciliGorevNotunuGuncelle(yeni));
         oncelikToggleGroup.selectedToggleProperty().addListener((obs, eski, yeni) -> seciliGorevOnceliginiGuncelle());
+        acilCheckBox.selectedProperty().addListener((obs, eski, yeni) -> seciliGorevAcilDurumunuGuncelle(yeni));
         detayPaneliniDoldur(null);
     }
 
@@ -318,6 +320,7 @@ public class TodoController {
                 saatAlanlariniGuncelle(true);
                 detayFXML.clear();
                 oncelikToggleGroup.selectToggle(null);
+                acilCheckBox.setSelected(false);
                 return;
             }
 
@@ -329,6 +332,7 @@ public class TodoController {
             saatAlanlariniGuncelle(gorev.isAllDay());
             detayFXML.setText(gorev.getDetay());
             oncelikButonunuSec(gorev.getOncelik());
+            acilCheckBox.setSelected(gorev.isUrgent());
         } finally {
             detayAlanlariGuncelleniyor = false;
         }
@@ -518,6 +522,19 @@ public class TodoController {
         if (aramaAktifMi()) {
             filtreleriUygula();
         }
+    }
+
+    private void seciliGorevAcilDurumunuGuncelle(boolean acilMi) {
+        if (detayAlanlariGuncelleniyor) {
+            return;
+        }
+        Yapilacak secili = yapilacakListeFXML.getSelectionModel().getSelectedItem();
+        if (secili == null || secili.isUrgent() == acilMi) {
+            return;
+        }
+        secili.setUrgent(acilMi);
+        gorevSatiriniYenile(secili);
+        filtreleriUygula();
     }
 
     private void gorevSatiriniYenile(Yapilacak gorev) {
