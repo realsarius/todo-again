@@ -9,9 +9,9 @@ import java.util.UUID;
 public class Yapilacak {
 
     private final String id;
-    private final String aciklama;
+    private String aciklama;
     private String detay;
-    private final LocalDate tarih;
+    private LocalDate tarih;
     private final Instant createdAt;
     private Instant updatedAt;
     private Oncelik oncelik;
@@ -47,6 +47,11 @@ public class Yapilacak {
         return aciklama;
     }
 
+    public void setAciklama(String aciklama) {
+        this.aciklama = aciklama == null ? "" : aciklama;
+        this.updatedAt = Instant.now();
+    }
+
     public String getDetay() {
         return detay;
     }
@@ -58,6 +63,14 @@ public class Yapilacak {
 
     public LocalDate getTarih() {
         return tarih;
+    }
+
+    public void setTarih(LocalDate tarih) {
+        if (tarih == null) {
+            return;
+        }
+        this.tarih = tarih;
+        this.updatedAt = Instant.now();
     }
 
     public Instant getCreatedAt() {

@@ -52,6 +52,7 @@ public class Main extends Application {
         primaryStage.setTitle("Yapılacaklar Listesi");
         Scene scene = new Scene(root, 960, 550);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("app.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("dark-mode.css")).toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(900);
         primaryStage.setMinHeight(580);
