@@ -551,6 +551,68 @@
     -fx-font-size: 13px;
 }
 
+.settings-row {
+    -fx-alignment: center-left;
+    -fx-spacing: 10px;
+}
+
+.settings-row-label {
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+}
+
+.settings-row-desc {
+    -fx-text-fill: -text-secondary;
+    -fx-font-size: 12px;
+}
+
+.settings-segment-option {
+    -fx-text-fill: -text-primary;
+    -fx-background-color: transparent;
+    -fx-border-color: #D2D2D7;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 6px 10px;
+    -fx-cursor: hand;
+}
+
+.settings-segment-option:selected {
+    -fx-background-color: -search-bg;
+}
+
+.settings-combo {
+    -fx-background-color: -app-bg;
+    -fx-border-color: #D2D2D7;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.settings-combo > .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.settings-spinner {
+    -fx-background-color: -app-bg;
+    -fx-border-color: #D2D2D7;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.settings-spinner .text-field {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-primary;
+}
+
+.settings-spinner .increment-arrow-button,
+.settings-spinner .decrement-arrow-button {
+    -fx-background-color: transparent;
+}
+
+.settings-checkbox {
+    -fx-text-fill: -text-primary;
+}
+
 .settings-footer {
     -fx-padding: 10px 16px;
     -fx-background-color: -app-bg;

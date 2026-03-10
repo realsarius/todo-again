@@ -53,3 +53,9 @@
 .root.dark-mode .settings-secondary-button {
     -fx-border-color: #4A4A4C;
 }
+
+.root.dark-mode .settings-segment-option,
+.root.dark-mode .settings-combo,
+.root.dark-mode .settings-spinner {
+    -fx-border-color: #4A4A4C;
+}

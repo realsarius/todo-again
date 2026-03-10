@@ -39,6 +39,7 @@ import yapilacaklarListesi.muzik.MuzikOynatici;
 import yapilacaklarListesi.pomodoro.model.Pomodoro;
 import yapilacaklarListesi.pomodoro.model.PomodoroEnum;
 import yapilacaklarListesi.service.TaskService;
+import yapilacaklarListesi.settings.SettingsManager;
 import yapilacaklarListesi.veriler.Oncelik;
 import yapilacaklarListesi.veriler.Yapilacak;
 import yapilacaklarListesi.veriler.YapilacakVeri;
@@ -554,6 +555,11 @@ public class Controller {
             stage.setResizable(false);
             stage.setScene(scene);
             stage.showAndWait();
+
+            SettingsManager settingsManager = new SettingsManager();
+            boolean koyuTema = settingsManager.getEffectiveThemeMode() == SettingsManager.ThemeMode.DARK;
+            darkModeUygula(koyuTema);
+            preferences.putBoolean(PREF_DARK_MODE, koyuTema);
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Ayarlar");

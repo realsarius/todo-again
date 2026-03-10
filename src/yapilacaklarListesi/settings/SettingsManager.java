@@ -1,5 +1,9 @@
 package yapilacaklarListesi.settings;
 
+import javafx.application.ConditionalFeature;
+import javafx.application.Platform;
+
+import java.lang.reflect.Method;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.prefs.Preferences;
@@ -265,6 +269,32 @@ public class SettingsManager {
 
     public void setLastUpdateCheckEpoch(long epochMillis) {
         preferences.putLong(KEY_UPDATE_LAST_CHECK_EPOCH, Math.max(epochMillis, 0L));
+    }
+
+    public ThemeMode getEffectiveThemeMode() {
+        ThemeMode mode = getThemeMode();
+        if (mode != ThemeMode.SYSTEM) {
+            return mode;
+        }
+        return isSystemDarkModePreferred() ? ThemeMode.DARK : ThemeMode.LIGHT;
+    }
+
+    public boolean isSystemDarkModePreferred() {
+        if (!Platform.isSupported(ConditionalFeature.GRAPHICS)) {
+            return false;
+        }
+        try {
+            Method getPreferences = Platform.class.getMethod("getPreferences");
+            Object preferencesObj = getPreferences.invoke(null);
+            if (preferencesObj == null) {
+                return false;
+            }
+            Method colorScheme = preferencesObj.getClass().getMethod("getColorScheme");
+            Object scheme = colorScheme.invoke(preferencesObj);
+            return scheme != null && "DARK".equalsIgnoreCase(String.valueOf(scheme));
+        } catch (ReflectiveOperationException e) {
+            return false;
+        }
     }
 
     private int sinirla(int value, int min, int max) {

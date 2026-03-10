@@ -1,7 +1,13 @@
 package yapilacaklarListesi;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import yapilacaklarListesi.settings.SettingsManager;
@@ -31,9 +37,21 @@ public class SettingsController {
     @FXML private VBox veriSection;
     @FXML private VBox guncellemelerSection;
 
+    @FXML private RadioButton temaAcikRadio;
+    @FXML private RadioButton temaKoyuRadio;
+    @FXML private RadioButton temaSistemRadio;
+    @FXML private ComboBox<String> dilComboBox;
+
+    @FXML private Spinner<Integer> pomodoroCalismaSpinner;
+    @FXML private Spinner<Integer> pomodoroKisaMolaSpinner;
+    @FXML private Spinner<Integer> pomodoroUzunMolaSpinner;
+    @FXML private Spinner<Integer> pomodoroUzunMolaAraligiSpinner;
+    @FXML private CheckBox pomodoroSesBildirimCheckBox;
+
     private static final String ACTIVE_CATEGORY_STYLE = "settings-category-active";
 
     private final SettingsManager settingsManager = new SettingsManager();
+    private final ToggleGroup temaToggleGroup = new ToggleGroup();
     private final Map<String, Button> kategoriButonlari = new LinkedHashMap<>();
     private final Map<String, VBox> sectionPanelleri = new LinkedHashMap<>();
     private final Map<String, SettingsSection> sectionlar = new LinkedHashMap<>();
@@ -87,8 +105,21 @@ public class SettingsController {
     }
 
     private void sectionKayitlariniHazirla() {
-        sectionKaydet(new AppearanceSection(), gorunumKategoriButton, gorunumSection);
-        sectionKaydet(new PomodoroSection(), pomodoroKategoriButton, pomodoroSection);
+        sectionKaydet(new AppearanceSection(
+                temaToggleGroup,
+                temaAcikRadio,
+                temaKoyuRadio,
+                temaSistemRadio,
+                dilComboBox,
+                this::dilYenidenBaslatUyarisiniGoster
+        ), gorunumKategoriButton, gorunumSection);
+        sectionKaydet(new PomodoroSection(
+                pomodoroCalismaSpinner,
+                pomodoroKisaMolaSpinner,
+                pomodoroUzunMolaSpinner,
+                pomodoroUzunMolaAraligiSpinner,
+                pomodoroSesBildirimCheckBox
+        ), pomodoroKategoriButton, pomodoroSection);
         sectionKaydet(new NotificationsSection(), bildirimlerKategoriButton, bildirimlerSection);
         sectionKaydet(new DataSection(), veriKategoriButton, veriSection);
         sectionKaydet(new UpdatesSection(), guncellemelerKategoriButton, guncellemelerSection);
@@ -133,5 +164,16 @@ public class SettingsController {
         if (stage != null) {
             stage.close();
         }
+    }
+
+    private void dilYenidenBaslatUyarisiniGoster() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Dil Ayarı");
+        alert.setHeaderText("Uygulama yeniden başlatılmalı");
+        alert.setContentText("Dil değişikliği uygulamayı yeniden başlatınca geçerli olur.");
+        if (settingsRoot.getScene() != null && settingsRoot.getScene().getWindow() != null) {
+            alert.initOwner(settingsRoot.getScene().getWindow());
+        }
+        alert.showAndWait();
     }
 }
