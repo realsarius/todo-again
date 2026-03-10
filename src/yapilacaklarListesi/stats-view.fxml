@@ -44,7 +44,7 @@
                 <VBox spacing="8.0" styleClass="stat-card" HBox.hgrow="ALWAYS" maxWidth="Infinity">
                     <Label styleClass="stat-card-title" text="Saatli Görev"/>
                     <Label fx:id="saatliDegerLabel" styleClass="stat-card-value" text="0/0"/>
-                    <Label fx:id="saatliOranLabel" styleClass="stat-card-sub" text="%0"/>
+                    <Label fx:id="saatliOranLabel" styleClass="stat-card-sub" text="0%"/>
                     <ProgressBar fx:id="saatliProgress" progress="0.0" styleClass="stat-progress" maxWidth="Infinity"/>
                 </VBox>
             </HBox>
