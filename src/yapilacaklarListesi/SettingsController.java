@@ -5,6 +5,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.ToggleGroup;
@@ -62,6 +64,12 @@ public class SettingsController {
     @FXML private Button veriSifirlaButton;
     @FXML private CheckBox otomatikYedeklemeCheckBox;
     @FXML private ComboBox<String> otomatikYedeklemeAralikComboBox;
+
+    @FXML private Label mevcutSurumValueLabel;
+    @FXML private Label guncellemeDurumLabel;
+    @FXML private Hyperlink guncellemeIndirLinki;
+    @FXML private Button guncellemeleriKontrolEtButton;
+    @FXML private CheckBox guncellemeOtomatikKontrolCheckBox;
 
     private static final String ACTIVE_CATEGORY_STYLE = "settings-category-active";
 
@@ -153,7 +161,13 @@ public class SettingsController {
                 otomatikYedeklemeAralikComboBox,
                 settingsRoot
         ), veriKategoriButton, veriSection);
-        sectionKaydet(new UpdatesSection(), guncellemelerKategoriButton, guncellemelerSection);
+        sectionKaydet(new UpdatesSection(
+                mevcutSurumValueLabel,
+                guncellemeDurumLabel,
+                guncellemeIndirLinki,
+                guncellemeleriKontrolEtButton,
+                guncellemeOtomatikKontrolCheckBox
+        ), guncellemelerKategoriButton, guncellemelerSection);
     }
 
     private void sectionKaydet(SettingsSection section, Button kategoriButton, VBox panel) {

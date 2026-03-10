@@ -3,6 +3,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Spinner?>
@@ -129,9 +130,25 @@
                     <Button fx:id="veriSifirlaButton" mnemonicParsing="false" styleClass="settings-danger-button" text="Sıfırla"/>
                 </HBox>
             </VBox>
-            <VBox fx:id="guncellemelerSection" spacing="8.0" styleClass="settings-section" visible="false" managed="false">
+            <VBox fx:id="guncellemelerSection" spacing="12.0" styleClass="settings-section" visible="false" managed="false">
                 <Label styleClass="settings-section-title" text="Güncellemeler"/>
-                <Label styleClass="settings-section-desc" text="Bu bölüm Faz E'de tamamlanacak."/>
+                <HBox alignment="CENTER_LEFT" styleClass="settings-row">
+                    <Label minWidth="140.0" prefWidth="140.0" styleClass="settings-row-label" text="Mevcut sürüm"/>
+                    <Label fx:id="mevcutSurumValueLabel" styleClass="settings-row-value" text="-"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" styleClass="settings-row" spacing="8.0">
+                    <Label minWidth="140.0" prefWidth="140.0" styleClass="settings-row-label" text="Kontrol"/>
+                    <Button fx:id="guncellemeleriKontrolEtButton" mnemonicParsing="false" styleClass="settings-secondary-button" text="Güncellemeleri Kontrol Et"/>
+                    <Hyperlink fx:id="guncellemeIndirLinki" text="İndir"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" styleClass="settings-row">
+                    <Label minWidth="140.0" prefWidth="140.0" styleClass="settings-row-label" text="Durum"/>
+                    <Label fx:id="guncellemeDurumLabel" styleClass="settings-row-desc settings-status-info" text="Henüz kontrol edilmedi." wrapText="true"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" styleClass="settings-row">
+                    <Label minWidth="140.0" prefWidth="140.0" styleClass="settings-row-label" text="Otomatik kontrol"/>
+                    <CheckBox fx:id="guncellemeOtomatikKontrolCheckBox" mnemonicParsing="false" styleClass="settings-checkbox" text="Açık"/>
+                </HBox>
             </VBox>
         </StackPane>
     </HBox>
