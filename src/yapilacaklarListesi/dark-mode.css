@@ -42,6 +42,34 @@
     -fx-background-color: #3A3A3C;
 }
 
+.root.dark-mode .app-menubar > .container > .menu-button > .label {
+    -fx-text-fill: #F2F2F7;
+}
+
+.root.dark-mode .app-menubar .context-menu {
+    -fx-background-color: #2C2C2E;
+    -fx-background-insets: 0;
+    -fx-background-radius: 10px;
+    -fx-border-color: #3A3A3C;
+    -fx-border-insets: 0;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.42), 16, 0.18, 0, 5);
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.root.dark-mode .app-menubar .context-menu .menu-item > .label {
+    -fx-text-fill: #F2F2F7;
+}
+
+.root.dark-mode .app-menubar .context-menu .menu-item:focused > .label {
+    -fx-text-fill: #FFFFFF;
+}
+
+.root.dark-mode .app-menubar .context-menu .separator:horizontal .line {
+    -fx-border-color: #3A3A3C transparent transparent transparent;
+}
+
 .root.dark-mode .settings-category-button:hover {
     -fx-background-color: #3A3A3C;
 }
