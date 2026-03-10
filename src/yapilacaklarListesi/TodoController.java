@@ -100,6 +100,7 @@ public class TodoController {
     private ToggleGroup oncelikToggleGroup;
     private boolean detayAlanlariGuncelleniyor;
     private Timeline timeLine;
+    private Runnable ayarlarNavigasyonHandler;
 
     private static final String DARK_MODE_CLASS = "dark-mode";
     private static final String PREF_DARK_MODE = "theme.darkModeEnabled";
@@ -549,6 +550,11 @@ public class TodoController {
 
     @FXML
     public void ayarlariAc() {
+        if (ayarlarNavigasyonHandler != null) {
+            ayarlarNavigasyonHandler.run();
+            return;
+        }
+
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("settings.fxml"));
         try {
@@ -581,6 +587,15 @@ public class TodoController {
             alert.setContentText("Lütfen tekrar deneyin.");
             alert.showAndWait();
         }
+    }
+
+    public void setAyarlarNavigasyonHandler(Runnable ayarlarNavigasyonHandler) {
+        this.ayarlarNavigasyonHandler = ayarlarNavigasyonHandler;
+    }
+
+    public void disTemaTercihiniUygula(boolean koyuTema) {
+        darkModeUygula(koyuTema);
+        preferences.putBoolean(PREF_DARK_MODE, koyuTema);
     }
 
     @FXML

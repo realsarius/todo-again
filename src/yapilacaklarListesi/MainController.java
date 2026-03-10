@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
+import yapilacaklarListesi.settings.SettingsManager;
 
 import java.io.IOException;
 import java.util.EnumMap;
@@ -32,6 +33,8 @@ public class MainController {
     private final Map<AppView, Parent> viewCache = new EnumMap<>(AppView.class);
     private final Map<AppView, Button> navButtons = new EnumMap<>(AppView.class);
     private AppView currentView;
+    private TodoController todoController;
+    private SettingsController settingsController;
 
     @FXML
     public void initialize() {
@@ -135,7 +138,45 @@ public class MainController {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
         Parent loaded = loader.load();
+
+        if (view == AppView.TODO) {
+            todoController = loader.getController();
+            if (todoController != null) {
+                todoController.setAyarlarNavigasyonHandler(this::showSettings);
+            }
+        }
+
+        if (view == AppView.SETTINGS) {
+            settingsController = loader.getController();
+            if (settingsController != null) {
+                settingsController.setEmbeddedMode(true);
+                settingsController.setOnSaveListener(this::kaydedilenAyarlariUygula);
+            }
+        }
+
         viewCache.put(view, loaded);
         return loaded;
+    }
+
+    private void kaydedilenAyarlariUygula() {
+        if (contentHost.getScene() == null || contentHost.getScene().getRoot() == null) {
+            return;
+        }
+
+        SettingsManager settingsManager = new SettingsManager();
+        boolean koyuTema = settingsManager.getEffectiveThemeMode() == SettingsManager.ThemeMode.DARK;
+        Parent uygulamaKoku = contentHost.getScene().getRoot();
+
+        if (koyuTema) {
+            if (!uygulamaKoku.getStyleClass().contains("dark-mode")) {
+                uygulamaKoku.getStyleClass().add("dark-mode");
+            }
+        } else {
+            uygulamaKoku.getStyleClass().remove("dark-mode");
+        }
+
+        if (todoController != null) {
+            todoController.disTemaTercihiniUygula(koyuTema);
+        }
     }
 }
