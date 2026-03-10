@@ -25,6 +25,9 @@ import java.util.Map;
 
 public class SettingsController {
 
+    private boolean embeddedMode;
+    private Runnable onSaveListener = () -> {};
+
     @FXML private VBox settingsRoot;
 
     @FXML private Button gorunumKategoriButton;
@@ -116,7 +119,12 @@ public class SettingsController {
         for (SettingsSection section : sectionlar.values()) {
             section.save(settingsManager);
         }
-        pencereyiKapat();
+        if (onSaveListener != null) {
+            onSaveListener.run();
+        }
+        if (!embeddedMode) {
+            pencereyiKapat();
+        }
     }
 
     @FXML
@@ -124,7 +132,17 @@ public class SettingsController {
         for (SettingsSection section : sectionlar.values()) {
             section.rollback();
         }
-        pencereyiKapat();
+        if (!embeddedMode) {
+            pencereyiKapat();
+        }
+    }
+
+    public void setEmbeddedMode(boolean embeddedMode) {
+        this.embeddedMode = embeddedMode;
+    }
+
+    public void setOnSaveListener(Runnable onSaveListener) {
+        this.onSaveListener = onSaveListener == null ? () -> {} : onSaveListener;
     }
 
     private void sectionKayitlariniHazirla() {

@@ -9,11 +9,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class YapilacakVeriMigrationTest {
@@ -83,6 +86,9 @@ class YapilacakVeriMigrationTest {
         assertEquals(LocalDate.of(2026, 3, 9), veri.getYapilacaklar().get(0).getTarih());
         assertNotNull(veri.getYapilacaklar().get(0).getId());
         assertEquals(Oncelik.MEDIUM, veri.getYapilacaklar().get(0).getOncelik());
+        assertNull(veri.getYapilacaklar().get(0).getDueTime());
+        assertNull(veri.getYapilacaklar().get(0).getCompletedAt());
+        assertFalse(veri.getYapilacaklar().get(0).isCompleted());
     }
 
     @Test
@@ -96,7 +102,7 @@ class YapilacakVeriMigrationTest {
         Path jsonDosya = veri.getJsonDosyaYolu();
         assertTrue(Files.exists(jsonDosya));
         String jsonIcerik = Files.readString(jsonDosya);
-        assertTrue(jsonIcerik.contains("\"version\": 1"));
+        assertTrue(jsonIcerik.contains("\"version\": 2"));
         assertTrue(jsonIcerik.contains("JSON Gecis"));
     }
 
@@ -203,7 +209,10 @@ class YapilacakVeriMigrationTest {
                         "      \"createdAt\": \"2026-03-09T10:00:00Z\",\n" +
                         "      \"updatedAt\": \"2026-03-09T12:00:00Z\",\n" +
                         "      \"oncelik\": \"HIGH\",\n" +
-                        "      \"tags\": [\"is\", \"kisisel\"]\n" +
+                        "      \"tags\": [\"is\", \"kisisel\"],\n" +
+                        "      \"due_time\": \"14:30\",\n" +
+                        "      \"completed_at\": \"2026-03-09T12:30:00\",\n" +
+                        "      \"is_completed\": true\n" +
                         "    }\n" +
                         "  ]\n" +
                         "}\n");
@@ -216,5 +225,8 @@ class YapilacakVeriMigrationTest {
         assertEquals(Instant.parse("2026-03-09T10:00:00Z"), kayit.getCreatedAt());
         assertEquals(Instant.parse("2026-03-09T12:00:00Z"), kayit.getUpdatedAt());
         assertEquals(List.of("is", "kisisel"), kayit.getTags());
+        assertEquals(LocalTime.of(14, 30), kayit.getDueTime());
+        assertEquals(LocalDateTime.of(2026, 3, 9, 12, 30), kayit.getCompletedAt());
+        assertTrue(kayit.isCompleted());
     }
 }

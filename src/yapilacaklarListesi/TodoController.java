@@ -58,8 +58,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.prefs.Preferences;
 
-// Controller kısmının içerisinde nesneye yönelik kısmı ile ilgili bir şey yok ancak açıklamaları yapacağım.
-public class Controller {
+// Todo ekrani controller'i.
+public class TodoController {
 
     @FXML private MenuItem yeniFXML;
     @FXML private MenuItem farkliKaydetFXML;
@@ -100,14 +100,15 @@ public class Controller {
     private ToggleGroup oncelikToggleGroup;
     private boolean detayAlanlariGuncelleniyor;
     private Timeline timeLine;
+    private Runnable ayarlarNavigasyonHandler;
 
     private static final String DARK_MODE_CLASS = "dark-mode";
     private static final String PREF_DARK_MODE = "theme.darkModeEnabled";
 
-    public Controller(){
+    public TodoController(){
         zamanlayiciText = new SimpleStringProperty();
         taskService = new TaskService(YapilacakVeri.getInstance());
-        preferences = Preferences.userNodeForPackage(Controller.class);
+        preferences = Preferences.userNodeForPackage(TodoController.class);
         setTimerText(0);
     }
 
@@ -119,7 +120,9 @@ public class Controller {
         oncelikFiltreFXML.getItems().setAll("Tümü", "Yüksek", "Orta", "Düşük");
         oncelikFiltreFXML.setValue("Tümü");
         detayPaneliniHazirla();
-        darkModeUygula(preferences.getBoolean(PREF_DARK_MODE, false));
+        boolean koyuTemaAktif = preferences.getBoolean(PREF_DARK_MODE, false);
+        darkModeUygula(koyuTemaAktif);
+        Platform.runLater(() -> darkModeUygula(koyuTemaAktif));
         otomatikGuncellemeKontrolunuBaslat();
 
         farkliKaydetFXML.setOnAction(actionEvent -> {
@@ -397,21 +400,30 @@ public class Controller {
 
     @FXML
     public void temaDegistir() {
-        boolean aktif = !vbox.getStyleClass().contains(DARK_MODE_CLASS);
+        Parent hedef = temaHedefiniBul();
+        boolean aktif = !hedef.getStyleClass().contains(DARK_MODE_CLASS);
         darkModeUygula(aktif);
         preferences.putBoolean(PREF_DARK_MODE, aktif);
     }
 
     private void darkModeUygula(boolean aktif) {
+        Parent hedef = temaHedefiniBul();
         if (aktif) {
-            if (!vbox.getStyleClass().contains(DARK_MODE_CLASS)) {
-                vbox.getStyleClass().add(DARK_MODE_CLASS);
+            if (!hedef.getStyleClass().contains(DARK_MODE_CLASS)) {
+                hedef.getStyleClass().add(DARK_MODE_CLASS);
             }
             temaToggleButton.setText("☀");
             return;
         }
-        vbox.getStyleClass().remove(DARK_MODE_CLASS);
+        hedef.getStyleClass().remove(DARK_MODE_CLASS);
         temaToggleButton.setText("☾");
+    }
+
+    private Parent temaHedefiniBul() {
+        if (vbox.getScene() != null && vbox.getScene().getRoot() != null) {
+            return vbox.getScene().getRoot();
+        }
+        return vbox;
     }
 
     @FXML
@@ -538,6 +550,11 @@ public class Controller {
 
     @FXML
     public void ayarlariAc() {
+        if (ayarlarNavigasyonHandler != null) {
+            ayarlarNavigasyonHandler.run();
+            return;
+        }
+
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("settings.fxml"));
         try {
@@ -546,7 +563,8 @@ public class Controller {
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("app.css")).toExternalForm());
             scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("dark-mode.css")).toExternalForm());
 
-            if (vbox.getStyleClass().contains(DARK_MODE_CLASS) && !root.getStyleClass().contains(DARK_MODE_CLASS)) {
+            Parent temaHedefi = temaHedefiniBul();
+            if (temaHedefi.getStyleClass().contains(DARK_MODE_CLASS) && !root.getStyleClass().contains(DARK_MODE_CLASS)) {
                 root.getStyleClass().add(DARK_MODE_CLASS);
             }
 
@@ -569,6 +587,15 @@ public class Controller {
             alert.setContentText("Lütfen tekrar deneyin.");
             alert.showAndWait();
         }
+    }
+
+    public void setAyarlarNavigasyonHandler(Runnable ayarlarNavigasyonHandler) {
+        this.ayarlarNavigasyonHandler = ayarlarNavigasyonHandler;
+    }
+
+    public void disTemaTercihiniUygula(boolean koyuTema) {
+        darkModeUygula(koyuTema);
+        preferences.putBoolean(PREF_DARK_MODE, koyuTema);
     }
 
     @FXML
