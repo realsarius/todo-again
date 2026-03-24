@@ -273,14 +273,6 @@ Detailed guide: [`docs/local-test.md`](docs/local-test.md)
 
 ---
 
-## 8. Screenshots
-
-![screenshot-1](ss1.png)
-![screenshot-2](ss2.png)
-![screenshot-3](ss3.png)
-
----
-
 ## 9. Packaging and Distribution
 
 ### 9.1 CI Pipeline
